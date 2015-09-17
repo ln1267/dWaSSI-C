@@ -1,3 +1,37 @@
 Message for Ning Liu
 Please update this file with relevant information about how to run this code.
 
+-----------------
+The Struction of WaSSI model
+
+Main program:
+
+general.f90 
+	This is the main file for the whole program. It contants the main 3 nested do loops for grids, year and month. Besides, the year and month loops should be run orderedly, and they are relevant to previous loop. 
+	It reads input data from 5 TXT files where colums are separated by ",".
+	
+Subroutines:
+	
+warmup.f90
+	This subroutine is mainly used for reading data from input files and write some basic runnning information to ouput file.
+
+PET.f90 
+	It is used for simulating PAET(year,month) for the following simulation.(As PAET did not include grid information, We may be need to change it in the future.)
+	There is no relevant in this matrix
+	
+Waterbal.f90 
+	This is the main file for data processing.
+	It contants a day loop for the following simulation. The struction details can be found in the "Waterbal.png".( There is a bit differece between this framwork and the code, but the main calculation part is the same. The code does not have the K loop)" 
+
+Output.f90 
+	This is used for summary the main results and write them to outputs files.
+	It has two nested loops. (Year and month loop)
+	
+Summary.f90
+	This is similar to output file, but it only have year loop.
+
+Carbonbal.f90	
+	This is also for output.
+	
+Validation.f90 
+	Write data to output file.
