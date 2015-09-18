@@ -35,9 +35,9 @@
       DO 100 J = 1, ISTEP
 !------ 排除异常的气候值，异常值，气候和温度设置为-99999
        
-       IF  (ANURAIN(J+IYSTART-BYEAR) .eq.-99999 .or. &
-      ANUAET(J+IYSTART-BYEAR) .eq.-99999 .or. ANUPET(J+IYSTART-BYEAR) &
-        .eq.-99999 .or. ANURUN(J+IYSTART-BYEAR) .eq.-99999 ) then 
+       IF  (ANURAIN(J+IYSTART-BYEAR) < -50.0 .or. &
+      ANUAET(J+IYSTART-BYEAR) < -50.0 .or. ANUPET(J+IYSTART-BYEAR) &
+        < -50.0 .or. ANURUN(J+IYSTART-BYEAR) < -50.0 ) then 
       
       ELSE
             RAINALL = RAINALL + ANURAIN(J+IYSTART-BYEAR)    

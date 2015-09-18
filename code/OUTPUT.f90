@@ -16,10 +16,10 @@
       INTEGER I,J,IM
       REAL TANURAIN, TANUPET,TANUAET,TANUPAET,TANURUN
       REAL ISM,TSP,TDM,TRUNOFF,ETRATIO
-      REAL ARUNRT(32), AETRT(32)
+      REAL ARUNRT(MAX_YEARS), AETRT(MAX_YEARS)
 
 !      REAL MWASSI(12),DEMAND(12),SUPPLY(12),
-!     >  ANUDM(32), ANUSP(32)
+!     >  ANUDM(MAX_YEARS), ANUSP(MAX_YEARS)
 
 !      REAL TDM, TSP
       
@@ -91,15 +91,15 @@
 
 
 
-			    IF (RAIN(I,J,IM) .eq. -9999 .or. TEMP(I,J,IM) .eq. -99999) then
+			    IF (RAIN(I,J,IM) < -50.0 .or. TEMP(I,J,IM) < -50.0) then
 					
 					
-					 TANURAIN = -99999
-					 TANUPET = -99999
-					 TANUAET = -99999
-					 TANUPAET= -99999
-					 TANURUN = -99999
-					 TSNOWP    = -99999
+					 TANURAIN = -999.0
+					 TANUPET = -999.0
+					 TANUAET = -999.0
+					 TANUPAET= -999.0
+					 TANURUN = -999.0
+					 TSNOWP  = -999.0
 
 					 GOTO 22200
 
