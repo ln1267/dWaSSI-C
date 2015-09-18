@@ -107,24 +107,6 @@
       COMMON/R/ RFACTOR(MAX_YEARS)
       end
 
-!-------------------Parallel Lib moduel-----------
-    module omp_lib
-    implicit none  
-    !Defines standard variable precisions of the OpenMP-implementation
-     !Gives the explicit interface for each routine of the run-time library
-    interface
-
-    function OMP_get_num_threads()
-    integer OMP_get_num_threads
-    end function OMP_get_num_threads
-   
-    function OMP_get_thread_num()
-    integer(kind=4) :: OMP_get_thread_num
-    end function OMP_get_thread_num
-    
-    end interface
-    end module omp_lib
-
 
 !**************---Program Starting--------*************************
      
@@ -132,12 +114,9 @@
       PROGRAM WaSSICBZB 
          
        use common_var
-      !use omp_lib
+
       implicit none 
     
-
-      INTEGER NTHREADS, TID, OMP_GET_NUM_THREADS,OMP_GET_THREAD_NUM
-      INTEGER  THREAD_NUM
            
       INTEGER ICELL,ICOUNT,IYEAR,MONTHD(12),MONTHL(12)
       INTEGER YEAR,NDAY,IM,MNDAY
@@ -189,23 +168,23 @@
 ! ---Open Output files---------------------------------------- 
  
        
-      OPEN(77,FILE='../output/BASICOUT.TXT')
-      OPEN(78,FILE='../output/MONTHFLOW.TXT')
-      OPEN(79,FILE='../output/ANNUALFLOW.TXT')
-      OPEN(80,FILE='../output/HUCFLOW.TXT')
-      OPEN(99,FILE='../output/ceshi.TXT')
-      OPEN(400,FILE='../output/MONTHCARBON.TXT')
-      OPEN(500,FILE='../output/ANNUALCARBON.TXT')
-      OPEN(600,FILE='../output/HUCCARBON.TXT')
-!      OPEN(700,FILE='../output/ANNUALBIO.TXT')
-!      OPEN(800,FILE='../output/HUCBIO.TXT')    
-      OPEN(900,FILE='../output/SOILSTORAGE.TXT')
-!      OPEN(910,FILE='../output/RUNOFFBYLANDUSE.TXT')
-!      OPEN(920,FILE='../output/FLOWVOLBYLANDUSE.TXT')     
-!      OPEN(1000,FILE='../output/RUNLAND.TXT')
+      OPEN(77,FILE='../../output/BASICOUT.TXT')
+      OPEN(78,FILE='../../output/MONTHFLOW.TXT')
+      OPEN(79,FILE='../../output/ANNUALFLOW.TXT')
+      OPEN(80,FILE='../../output/HUCFLOW.TXT')
+      OPEN(99,FILE='../../output/ceshi.TXT')
+      OPEN(400,FILE='../../output/MONTHCARBON.TXT')
+      OPEN(500,FILE='../../output/ANNUALCARBON.TXT')
+      OPEN(600,FILE='../../output/HUCCARBON.TXT')
+!      OPEN(700,FILE='../../output/ANNUALBIO.TXT')
+!      OPEN(800,FILE='../../output/HUCBIO.TXT')    
+      OPEN(900,FILE='../../output/SOILSTORAGE.TXT')
+!      OPEN(910,FILE='../../output/RUNOFFBYLANDUSE.TXT')
+!      OPEN(920,FILE='../../output/FLOWVOLBYLANDUSE.TXT')     
+!      OPEN(1000,FILE='../../output/RUNLAND.TXT')
 ! --- Open Output FILES (WARMUP.FOR)
-       OPEN(2002,FILE='../output/DATA_V_F.TXT') 
-!       OPEN(2003,FILE='../output/VALIDATION.TXT')  
+       OPEN(2002,FILE='../../output/DATA_V_F.TXT') 
+!       OPEN(2003,FILE='../../output/VALIDATION.TXT')  
     
 !  --------- Read input data -------------------------------
        
@@ -259,9 +238,7 @@
     
       DO 200 ICELL=1, NGRID
 
-        THREAD_NUM=OMP_GET_THREAD_NUM()
-        PRINT *, THREAD_NUM, ICELL
-
+       
          ICOUNT=0 
                 
          DO 300 IYEAR=1, NYEAR

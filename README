@@ -1,7 +1,15 @@
 Message for Ning Liu
 Please update this file with relevant information about how to run this code.
 
------------------
+
+!----------- Ning Liu 10.43 AM 18/09/2015
+1. In order to test the pro., The WaSSI.exe was built in the code foder.
+
+2. OpenMP funtions have been deleted in "GENERAL.f90" in order to correctly run in Gfortran.
+
+3. Besides, output foder in "GENERAL.f90" was changed to "../../output", so that output files will not be stored in the github.
+
+!--------------Ning Liu 10.13 PM 17/09/2015
 The Struction of WaSSI model
 
 Main program:
