@@ -35,3 +35,22 @@ Carbonbal.f90
 	
 Validation.f90 
 	Write data to output file.
+
+
+
+
+#########################################
+# 	  How to use Makefile 		#
+#########################################
+
+To compile first make sure that the Makefile is updated for the machine that you are compiling on.
+The default setting is for Magnus. To compile, type:
+make
+
+This should produce some objects with extensions *.o and a.out which is your executable.
+
+To clean the project just type:
+make clean 
+and it should delete all except the source files. 
+
+
