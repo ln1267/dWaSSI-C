@@ -18,13 +18,13 @@
       
       REAL AETTEMP, RUNOFFTEMP, PBFTEMP, SBFTEMP,IFTEMP, GEPTEMP,&
             RECOTEMP, NEETEMP
-          
+      REAL UZTWC, UZFWC, LZTWC, LZFSC, LZFPC ! soil moisture content parameters    
          
       REAL ETUZTW(MAX_YEARS,12), RESIDET(MAX_YEARS,12), ETUZFW(MAX_YEARS,12)
       
       REAL ETLZTW(MAX_YEARS,12), RATLZT, RATLZ
       
-      REAL SNOW, SNOWW
+      REAL SNOW,SNOWPACK, SNOWW
       
       REAL LTASM, TAREA
       
@@ -45,17 +45,13 @@
      
       REAL TASM,AUZTWC,AUZFWC,ALZTWC,ALZFPC,ALZFSC,ASM           
             ! TAREA,TAREA,TAUZTWC,TAUZFWC,TALZTWC,TALZFPC,TALZFSC
-      
-     
+           
       INTEGER GEPFLAG
            
 ! *****************************************************************************************************
 
 ! ----   Allocates array RUNLAND,
 
-!      ALLOCATE (RUNLAND(60000,MAX_YEARS,12,31))
-!	  ALLOCATE (ETLAND(60000,MAX_YEARS,12,31))
-!	  ALLOCATE (GEPLAND(60000,MAX_YEARS,12,31))
 	  
       ALLOCATE (RUNLAND(NGRID,NYEAR,12,31))
       ALLOCATE (ETLAND(NGRID,NYEAR,12,31))
@@ -82,7 +78,26 @@
            LZTWC = 0.1*LZTWM(I)
            LZFSC = 0.75*LZFSM(I)
            LZFPC = 0.75*LZFPM(I)
-           
+           SNOWPACK=0.0
+		ELSE
+			IF(M .EQ. 1) then
+			IAM =0						  
+			   UZTWC = EMUZTWC(I,J-1,12)
+			   UZFWC = EMUZFWC(I,J-1,12)
+			   LZTWC = EMLZTWC(I,J-1,12)
+			   LZFSC = EMLZFSC(I,J-1,12)
+			   LZFPC = EMLZFPC(I,J-1,12)
+			   SNOWPACK=SP(I,J-1,12)
+			ELSE
+			IAM =0
+			   UZTWC = EMUZTWC(I,J,M-1)
+			   UZFWC = EMUZFWC(I,J,M-1)
+			   LZTWC = EMLZTWC(I,J,M-1)
+			   LZFSC = EMLZFSC(I,J,M-1)
+			   LZFPC = EMLZFPC(I,J,M-1)
+			   SNOWPACK=SP(I,J,M-1)
+			ENDIF
+		
         ENDIF 
          
 ! *****************************************************************************************************
@@ -199,7 +214,7 @@
 ! --- NOTE THAT SAC-SMA ALLOWS ET TO ALSO BE SUPPLIED UNRESTRICTED BY LZ TENSION WATER STORAGE
 
                 
-                   DPAET = PAET(J, M)/MNDAY
+                   DPAET = PAET(I,J, M)/MNDAY
                
                    ET(J, M) = DPAET
                 
@@ -882,7 +897,7 @@
             ETLAND(I,J,M,DAY) = ET(J,M)
             GEPLAND(I,J,M,DAY) = GEP(J,M)
 			
-!--- calculate the soil moisture 
+!--- calculate the monthly total soil moisture 
               
               TAUZTWC = TAUZTWC + UZTWC
               
@@ -897,44 +912,54 @@
               TASM = TASM + (UZTWC+UZFWC+LZTWC+LZFPC+LZFSC)
                       
 !40         CONTINUE
-           
-!! -- CALCULATE AVG SMC
-!
-!              AUZTWC = TAUZTWC / TAREA
-!              AUZFWC = TAUZFWC / TAREA
-!              ALZTWC = TALZTWC / TAREA
-!              ALZFPC = TALZFPC / TAREA
-!              ALZFSC = TALZFSC / TAREA
-!              ASM = TASM/TAREA
-
+ 
 100        CONTINUE
 
 
-           AET(M) = AETTEMP        
-           RUNOFF(M) = RUNOFFTEMP
-           PRIBF(M) = PBFTEMP
-           SECBF(M) = SBFTEMP
-           INTF(M) = IFTEMP
-           SMC (M) = TASM          
-           SP(M) = SNOWPACK
-           AVUZTWC(M) = TAUZTWC
-           AVUZFWC(M) = TAUZFWC
-           AVLZTWC(M) = TALZTWC
-           AVLZFPC(M) = TALZFPC
-           AVLZFSC(M) = TALZFSC
+           AET(I,J,M) = AETTEMP        
+           RUNOFF(I,J,M) = RUNOFFTEMP
+           PRIBF(I,J,M) = PBFTEMP
+           SECBF(I,J,M) = SBFTEMP
+           INTF(I,J,M) = IFTEMP
+		   SP(I,J,M)=SNOWPACK
+			
+!! --  AVERAGE soil moisture
+ 		   	   
+           AVSMC(I,J,M)= TASM/MNDAY
+		   AVUZTWC(I,J,M) = TAUZTWC/MNDAY
+           AVUZFWC(I,J,M) = TAUZFWC/MNDAY
+           AVLZTWC(I,J,M) = TALZTWC/MNDAY
+           AVLZFPC(I,J,M) = TALZFPC/MNDAY
+           AVLZFSC(I,J,M) = TALZFSC/MNDAY
+		   
+!--- End of month soil moisture 
+              
+              EMUZTWC(I,J,M) = UZTWC
+              
+              EMUZFWC(I,J,M) = UZFWC
+              
+              EMLZTWC(I,J,M) = LZTWC
+              
+              EMLZFPC(I,J,M) = LZFPC
+              
+              EMLZFSC(I,J,M) = LZFSC
+              
+              EMSMC(I,J,M) = UZTWC+UZFWC+LZTWC+LZFPC+LZFSC		   
+  
+		   
                    
-           IF (RUNOFF(M) .LT. 0.) THEN
+           IF (RUNOFF(I,J,M) .LT. 0.) THEN
            
-           RUNOFF(M)=0.
+           RUNOFF(I,J,M)=0.
            
            ENDIF            
        
-           GEPM(I,J, M) = GEPTEMP
+           GEPM(I,J,M) = GEPTEMP
            RECOM(I,J,M)  = RECOTEMP
            NEEM(I,J,M) = NEETEMP
 
 ! -- STREAMFLOW IN MILLION M3 FOR EACH HUC FOR MONTH M. HUCAREA IN SQ. METERS 
-        STRFLOW(I, J, M) = (RUNOFF(M) + PRIBF(M) + SECBF(M) + INTF(M))*25/1000. 
+        STRFLOW(I, J, M) = (RUNOFF(I,J,M) + PRIBF(I,J,M) + SECBF(I,J,M) + INTF(I,J,M))*1/1000. 
         ! 64 is the area of each cell (KM2)
 
 

@@ -36,13 +36,11 @@
 
 
 ! OUTPUT1
-      REAL PET,APET,PAET,APAET,AET,RUNOFF,INTER,PRIBF,SECBF,INTF, &
-         AVUZTWC,TPAET,AVUZFWC,AVLZTWC,AVLZFPC,AVLZFSC,A_ET,P_ET,Sun_ET,RUN_HRU,BASE_HRU
-      COMMON/OUTPUT1/ PET(MAX_YEARS,12),APET(12),PAET(MAX_YEARS,12),APAET(12),&
-         AET(12), RUNOFF(12), INTER(12), PRIBF(12), SECBF(12), INTF(12), &
-         AVUZTWC(12), AVUZFWC(12), AVLZTWC(12), AVLZFPC(12),AVLZFSC(12),&
-         A_ET(MAX_GRIDS,MAX_YEARS, 12),P_ET(MAX_GRIDS,MAX_YEARS,12),Sun_ET(MAX_GRIDS,MAX_YEARS,12),&
-         RUN_HRU(MAX_GRIDS,MAX_YEARS,12),BASE_HRU(MAX_GRIDS,MAX_YEARS,12)  
+      REAL PET,PAET,AET,RUNOFF,PRIBF,SECBF,INTF, &
+         RUN_HRU,BASE_HRU
+      COMMON/OUTPUT1/ PET(MAX_GRIDS,MAX_YEARS,12),PAET(MAX_GRIDS,MAX_YEARS,12),AET(MAX_GRIDS,MAX_YEARS, 12),&
+          RUNOFF(MAX_GRIDS,MAX_YEARS,12) ,PRIBF(MAX_GRIDS,MAX_YEARS,12) , SECBF(MAX_GRIDS,MAX_YEARS,12) , &
+         INTF(MAX_GRIDS,MAX_YEARS,12), RUN_HRU(MAX_GRIDS,MAX_YEARS,12),BASE_HRU(MAX_GRIDS,MAX_YEARS,12)  
 
 ! Monthly RUNOFF
 
@@ -58,24 +56,26 @@
       COMMON/LAI/LAI(MAX_GRIDS,MAX_YEARS,12)
 
 ! SNOWPACK	
-      REAL SP,SNOWPACK,NSPM
-      COMMON/SNOWPACK/SP(12),SNOWPACK, NSPM(MAX_YEARS)
+      REAL SP,NSPM
+      COMMON/SNOWPACK/SP(MAX_GRIDS,MAX_YEARS,12), NSPM(MAX_GRIDS,MAX_YEARS)
 
 ! SUMMARY1 
       REAL ANURAIN,ANURUN,ANUPET,ANUAET,ANUPAET
-      COMMON/SUMMARY1/ANURAIN(MAX_YEARS),ANURUN(MAX_YEARS),ANUPET(MAX_YEARS),ANUAET(MAX_YEARS),&
-        ANUPAET(MAX_YEARS)
+      COMMON/SUMMARY1/ANURAIN(MAX_YEARS),ANURUN(MAX_YEARS),ANUPET(MAX_YEARS),ANUAET(MAX_YEARS),ANUPAET(MAX_YEARS)
 
-! SOIL
+! SOIL parameters input
       REAL LZTWM, LZFPM, LZFSM,LZSK,LZPK, UZTWM, UZFWM, UZK, ZPERC,&
-        REXP, PFREE, SMC        
-      COMMON/SOIL/LZTWM(MAX_GRIDS), LZFPM(MAX_GRIDS), LZFSM(MAX_GRIDS), LZSK(MAX_GRIDS),&
-        LZPK(MAX_GRIDS), UZTWM(MAX_GRIDS), UZFWM(MAX_GRIDS), UZK(MAX_GRIDS), ZPERC(MAX_GRIDS),&
-        REXP(MAX_GRIDS), PFREE(MAX_GRIDS), SMC(12)
+        REXP, PFREE        
+      COMMON/SOIL/LZTWM(MAX_GRIDS), LZFPM(MAX_GRIDS), LZFSM(MAX_GRIDS), LZSK(MAX_GRIDS),LZPK(MAX_GRIDS), UZTWM(MAX_GRIDS), &
+        &UZFWM(MAX_GRIDS),UZK(MAX_GRIDS), ZPERC(MAX_GRIDS),REXP(MAX_GRIDS), PFREE(MAX_GRIDS)
 
-! Soil Mositure
-       REAL UZTWC, UZFWC, LZTWC, LZFSC, LZFPC
-       COMMON/SMC/UZTWC, UZFWC, LZTWC, LZFSC, LZFPC
+! Soil Mositure (AV-average,EM-end of month)
+       REAL AVSMC,AVUZTWC,AVUZFWC,AVLZTWC,AVLZFPC,AVLZFSC,EMSMC,EMUZTWC,EMUZFWC,EMLZTWC,EMLZFPC,EMLZFSC
+	   COMMON/SMC/AVSMC(MAX_GRIDS,MAX_YEARS,12),AVUZTWC(MAX_GRIDS,MAX_YEARS,12), AVUZFWC(MAX_GRIDS,MAX_YEARS,12), &
+	   AVLZTWC(MAX_GRIDS,MAX_YEARS,12), AVLZFPC(MAX_GRIDS,MAX_YEARS,12),AVLZFSC(MAX_GRIDS,MAX_YEARS,12), &
+	   EMSMC(MAX_GRIDS,MAX_YEARS,12),EMUZTWC(MAX_GRIDS,MAX_YEARS,12),EMUZFWC(MAX_GRIDS,MAX_YEARS,12),&
+	   EMLZTWC(MAX_GRIDS,MAX_YEARS,12), EMLZFPC(MAX_GRIDS,MAX_YEARS,12),EMLZFSC(MAX_GRIDS,MAX_YEARS,12)
+	   
 ! FLOW 
       REAL STRFLOW,STRET,STRGEP     
       COMMON/FLOW/STRFLOW(MAX_GRIDS,MAX_YEARS,12),STRET(MAX_GRIDS,MAX_YEARS,12)&
@@ -148,44 +148,70 @@
       WRITE(*,30)
    30 FORMAT('       *** PROGRAM IS RUNNING, PLEASE WAIT ***')
 
+!!!!-----------Open files------------------   
+!!! This is for Linux  
 !--Open Input files----------------------------------------------
-    
-	     input_mulu="../Inputs_01_12"
-	     output_mulu='../Inputs_01_12/outputs_82_12'
-
-      OPEN(1,FILE='../Inputs_01_12/GENERAL.TXT')
-      OPEN(2,FILE='../Inputs_01_12/CELLINFO.TXT') 
+ 
+!      OPEN(1,FILE='../Inputs_01_12/GENERAL.TXT')
+!      OPEN(2,FILE='../Inputs_01_12/CELLINFO.TXT') 
 !      OPEN(3,FILE='../Inputs_01_12/vegINFO.TXT')
-      OPEN(4,FILE='../Inputs_01_12/CLIMATE.TXT')
+!      OPEN(4,FILE='../Inputs_01_12/CLIMATE.TXT')
 
-      OPEN(7,FILE='../Inputs_01_12/SOILINFO.TXT')
-      OPEN(8,FILE='../Inputs_01_12/LANDLAI.TXT')
+!      OPEN(7,FILE='../Inputs_01_12/SOILINFO.TXT')
+!      OPEN(8,FILE='../Inputs_01_12/LANDLAI.TXT')
 
 !      OPEN(11,FILE='../Inputs_01_12/HUCAREA.TXT')
 !      OPEN(22,FILE='../Inputs_01_12/V_FLOW.TXT')
 
-
 ! ---Open Output files---------------------------------------- 
- 
-       
-      OPEN(77,FILE='../../output/BASICOUT.TXT')
-      OPEN(78,FILE='../../output/MONTHFLOW.TXT')
-      OPEN(79,FILE='../../output/ANNUALFLOW.TXT')
-      OPEN(80,FILE='../../output/HUCFLOW.TXT')
-      OPEN(99,FILE='../../output/ceshi.TXT')
-      OPEN(400,FILE='../../output/MONTHCARBON.TXT')
-      OPEN(500,FILE='../../output/ANNUALCARBON.TXT')
-      OPEN(600,FILE='../../output/HUCCARBON.TXT')
+
+!      OPEN(77,FILE='../../output/BASICOUT.TXT')
+!      OPEN(78,FILE='../../output/MONTHFLOW.TXT')
+!      OPEN(79,FILE='../../output/ANNUALFLOW.TXT')
+!      OPEN(80,FILE='../../output/HUCFLOW.TXT')
+!      OPEN(99,FILE='../../output/ceshi.TXT')
+!      OPEN(400,FILE='../../output/MONTHCARBON.TXT')
+!      OPEN(500,FILE='../../output/ANNUALCARBON.TXT')
+!      OPEN(600,FILE='../../output/HUCCARBON.TXT')
 !      OPEN(700,FILE='../../output/ANNUALBIO.TXT')
 !      OPEN(800,FILE='../../output/HUCBIO.TXT')    
-      OPEN(900,FILE='../../output/SOILSTORAGE.TXT')
+!      OPEN(900,FILE='../../output/SOILSTORAGE.TXT')
 !      OPEN(910,FILE='../../output/RUNOFFBYLANDUSE.TXT')
 !      OPEN(920,FILE='../../output/FLOWVOLBYLANDUSE.TXT')     
 !      OPEN(1000,FILE='../../output/RUNLAND.TXT')
 ! --- Open Output FILES (WARMUP.FOR)
-       OPEN(2002,FILE='../../output/DATA_V_F.TXT') 
+!        OPEN(2002,FILE='../../output/DATA_V_F.TXT') 
 !       OPEN(2003,FILE='../../output/VALIDATION.TXT')  
-    
+
+!!! This is for Windows
+!--Open Input files------------------ 
+      OPEN(1,FILE='E:\Github\WaSSI\Inputs_01_12\GENERAL.TXT')
+      OPEN(2,FILE='E:\Github\WaSSI\Inputs_01_12\CELLINFO.TXT') 
+!      OPEN(3,FILE='E:\Github\WaSSI\Inputs_01_12\vegINFO.TXT')
+      OPEN(4,FILE='E:\Github\WaSSI\Inputs_01_12\CLIMATE.TXT')
+
+      OPEN(7,FILE='E:\Github\WaSSI\Inputs_01_12\SOILINFO.TXT')
+      OPEN(8,FILE='E:\Github\WaSSI\Inputs_01_12\LANDLAI.TXT')
+ ! ---Open Output files---------------------------------------- 
+
+      OPEN(77,FILE='E:\Github\output\BASICOUT.TXT')
+      OPEN(78,FILE='E:\Github\output\MONTHFLOW.TXT')
+      OPEN(79,FILE='E:\Github\output\ANNUALFLOW.TXT')
+      OPEN(80,FILE='E:\Github\output\HUCFLOW.TXT')
+      OPEN(99,FILE='E:\Github\output\ceshi.TXT')
+      OPEN(400,FILE='E:\Github\output\MONTHCARBON.TXT')
+      OPEN(500,FILE='E:\Github\output\ANNUALCARBON.TXT')
+      OPEN(600,FILE='E:\Github\output\HUCCARBON.TXT')
+!      OPEN(700,FILE='E:\Github\output\ANNUALBIO.TXT')
+!      OPEN(800,FILE='E:\Github\output\HUCBIO.TXT')    
+      OPEN(900,FILE='E:\Github\output\SOILSTORAGE.TXT')
+!      OPEN(910,FILE='E:\Github\output\RUNOFFBYLANDUSE.TXT')
+!      OPEN(920,FILE='E:\Github\output\FLOWVOLBYLANDUSE.TXT')     
+!      OPEN(1000,FILE='E:\Github\output\RUNLAND.TXT')
+! --- Open Output FILES (WARMUP.FOR)
+       OPEN(2002,FILE='E:\Github\output\DATA_V_F.TXT')
+ 
+ 
 !  --------- Read input data -------------------------------
        
       CALL RPSDF       ! Set up column headings for each output files

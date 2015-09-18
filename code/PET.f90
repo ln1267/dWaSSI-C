@@ -14,7 +14,7 @@
                  
       INTEGER MONTHD(12),MONTHL(12), MJD(12), MMD
       
-      REAL TPET,PE,DEGLAT,LAI_temp,DTEMP
+      REAL PE,DEGLAT,DTEMP
              
 ! --- Number of days for each month during regular year
       DATA MONTHD/31,28,31,30,31,30,31,31,30,31,30,31/
@@ -29,9 +29,7 @@
         
             DTEMP=TEMP(I,J,M)
             
-            TPET=0. 
             
-            TPAET=0. 
 !			   PET=0.
                          
               
@@ -46,30 +44,15 @@
             CALL HAMON(DTEMP,M,MMD,DEGLAT,PE)
             
             
-! ----PET (YEAR, MONTH, LANDUSE) FOR THE CURRENT CELL)
+! ----PET (GRID,YEAR, MONTH) FOR THE CURRENT CELL)
            
-             PET(J,M) = PE  
+             PET(I,J,M) = PE  
                   
-             PET(J,M) = PET(J,M) * MNDAY 
-             
-             
-! ----ASSIGN LAI FOR EACH LAND USE
-            
+             PET(I,J,M) = PET(I,J,M) * MNDAY 
                
 
 ! ----CALCULATE PAET 
-! ----PAET (YEAR, MONTH, LANDUSE) FOR THE CURRENT CELL)
-! ----PAET IS THE POTENTIAL AET, ASSUMING SOIL MOISTURE NOT LIMITING
-
-!             IF ((LAI.GE.1.0).OR.(AAPPT(I).GE.600.0)) THEN
-             
-!     CALCULATE PAET USING MODIFIED SUN HAMON EQUATION FOR HIGHER LAI
-!     NO COWEETA
-!     NO -LAI*RAIN TERM (MAKES PAET INVERSELY PROPORTIONAL TO LAI DURING WINTER
-!     R2=0.87, N=90, MODEL ET= 9.37+0.87*MEASURED ET
-
-!             PAET(J,M) = 9.95+(PET(J,M))*LAI*0.205+0.153*
-!     &RAIN(I,J,M)+0.246*(PET(J,M))
+! ----PAET (GRID,YEAR, MONTH) FOR THE CURRENT CELL)
 
 !  new model with coweeta Hamon ET Sep 10,2010
 ! 对纬度>40的采用别的公式
@@ -83,7 +66,7 @@
 !             rain(i,j,m)+0.502*pet(j,m) + 5.31*lai(i,j,m)
 
 !       endif
-!           PRINT *, 'pet', LAI(I,J,M),RAIN(I,J,M), PET(J,M), PAET(J,M)
+!           PRINT *, 'pet', LAI(I,J,M),RAIN(I,J,M), PET(I,J,M), PAET(I,J,M)
      
      
 !             ELSE
@@ -91,51 +74,24 @@
 !     CALCULATE PAET FOR GRASSLAND AND LOW LAI
 !     R2=0.696
              
-!             PAET(J,M) = 1.49 + 0.325*(PET(J,M))+0.353*(RAIN(I,J,M))
+!             PAET(I,J,M) = 1.49 + 0.325*(PET(I,J,M))+0.353*(RAIN(I,J,M))
              
 !             ENDIF
           
-!             WRITE(910,5039)  HUCNO(I), J, M, K, PAET(J,M)
+!             WRITE(910,5039)  HUCNO(I), J, M, K, PAET(I,J,M)
 !5039         FORMAT(4I10, F20.1)
 
 
 ! Latest model By Yuan Fang Sep 10,2015
 !          R2=0.68, p<0.0001,RMSE=18.1 mm
 
-            PAET(J,M) = -4.79 + 0.75*PET(J,M) + 3.92*LAI(I,J,M)
-
-
-
-! ----CALCULATE TOTAL PET AND PAET FOR THE HUC FOR A GIVEN YEAR AND MONTH
-        
-             
-             TPET = TPET + PET(J,M)
-             
-             TPAET = TPAET + PAET(J,M)
-             
-             
-        
-!          WRITE(77, 5040) HUCNO(I), J, M, LADUSE(I), LAI          
-       
-!5040  FORMAT (3I10, 2F10.5)
-     
- 
-
-!-------流域单元月APET、APAET（各植被类型的加权平均值）
-! ------APET =AVERAGE PET FOR CURRENT CELL, FOR ALL YEAR, MONTH
-
-
-              APET(M) = TPET    
-              
-! ------APAET =AVERAGE PAET FOR CURRENT CELL, FOR ALL YEAR, MONTH
-
-              APAET(M) = TPAET
-              
+            PAET(I,J,M) = -4.79 + 0.75*PET(I,J,M) + 3.92*LAI(I,J,M)
+   
 
 ! ------TEST OUTPUT
 
 
-!       WRITE(*, 5050) HUCNO(I),J,M, APET(M), APAET(M) 
+!       WRITE(*, 5050) HUCNO(I),J,M, PET(I,J,M), PAET(I,J,M) 
 !      
 !5050  FORMAT (3I10, 2F10.5)
 
