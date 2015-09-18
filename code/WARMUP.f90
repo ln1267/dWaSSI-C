@@ -594,7 +594,7 @@
       SUBROUTINE RPSLAI
       
       USE Common_var
-                   
+      implicit none             
       INTEGER YEAR
       
       
@@ -743,15 +743,16 @@
 !C**********************************************************************C
       SUBROUTINE RPSCLIMATE
       
-       USE Common_var
-
+      USE Common_var
+	  implicit none
+	  
       INTEGER YEAR
             
       INTEGER I, J, M,Mon
      
-      REAL ANNPPT(50000,32)
+      REAL ANNPPT(MAX_GRIDS,MAX_YEARS)
       
-      REAL SUMANPPT(50000)
+      REAL SUMANPPT(MAX_GRIDS)
       
       CHARACTER*10 TEMPHEAD (10)
 
@@ -795,7 +796,7 @@
                
 
 5002        CONTINUE
-       Write(99,*), I,J
+
             SUMANPPT(I) = SUMANPPT(I) + ANNPPT(I, J)
 
 5001     CONTINUE
@@ -822,19 +823,19 @@
       SUBROUTINE RPSVALID
       
       USE Common_var
-
+	  IMPLICIT NONE
       INTEGER  YEAR
             
       INTEGER I, J, M,Mon
      
-      REAL ANNPPT(10000,32)
+      REAL ANNPPT(MAX_GRIDS,MAX_YEARS)
             
       CHARACTER*10 TEMPHEAD (10)
 
       
-      DO 20001 J=19,25
+    DO  J=19,25
 
-      DO 20002 M=1,12
+		DO  M=1,12
 
           IF (J .eq. 1 .and. M .eq. 1) then
           
@@ -847,8 +848,8 @@
 !         READ(22,*) YEAR,Mon,RUNOFF_V(J,M)!,FLOW_V(J,M),BASEFLOW_V(J,M)
 !      READ (22, *) YEAR,Mon,RUNOFF_V(J,M), FLOW_V(J,M), BASEFLOW_V(J,M)
 
-20002  CONTINUE
-20001  CONTINUE
+		END DO
+	END DO
 
 
       RETURN
