@@ -132,16 +132,16 @@
       
 ! --- Write introductory information to screen
       
- !     WRITE(*,10)
- !  10 FORMAT(' *************************************************'//,&
- !           '                   *** Revised Gridded daily WaSSI-CB by Ning Liu  ***'//,&
- !      '   Water Supply Stress Index Modeling System'//,&
- !       ' Eastern Forest Environmental Threat Assessment Center'/,&
- !        ' USDA Forest Service Southern Research Station '/,&
- !           ' Raleigh, NC'//,&
- !           ' April 2015 -'//,&
- !           ' Press Y OR y to continue : ' //)
-!      READ(*,20) PRESS
+      WRITE(*,10)
+   10 FORMAT(' *************************************************'//,&
+            '                   *** Revised Gridded daily WaSSI-CB by Ning Liu  ***'//,&
+       '   Water Supply Stress Index Modeling System'//,&
+       ' Eastern Forest Environmental Threat Assessment Center'/,&
+         ' USDA Forest Service Southern Research Station '/,&
+            ' Raleigh, NC'//,&
+            ' April 2015 -'//,&
+            ' Press Y OR y to continue : ' //)
+      READ(*,20) PRESS
 !      PRESS = "Y"
 !	IF (press.eq."y" .or.press.eq."Y") THEN
    20 FORMAT(A1)
