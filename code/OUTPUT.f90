@@ -15,8 +15,7 @@
 ! -----------------------------------------------------------------------------     
       INTEGER I,J,IM
       REAL TANURAIN, TANUPET,TANUAET,TANUPAET,TANURUN
-      REAL ISM,TSP,TDM,TRUNOFF,ETRATIO
-      REAL ARUNRT(MAX_YEARS), AETRT(MAX_YEARS)
+      REAL ISM,TSP,TDM,TRUNOFF
 
 !      REAL MWASSI(12),DEMAND(12),SUPPLY(12),
 !     >  ANUDM(MAX_YEARS), ANUSP(MAX_YEARS)
@@ -61,9 +60,14 @@
 				BASEFLOW(I,J,IM)=PRIBF(I,J,IM) + SECBF(I,J,IM)
 !------PRINT MONTHLY WATER BALANCE DATA TO MONTHFLOW.TXT
 
-! For Check
-!Print *,I,J,IM,RUNOFF(I,J,IM),PRIBF(I,J,IM),SECBF(I,J,IM),INTF(I,J,IM)
-                   
+! For Water ballance output and Check
+				WRITE(2003,2325) I,IDY,IM,RAIN(I,J,IM),SP(I,J,IM), PET(I,J,IM), &
+				AET(I,J,IM),PAET(I,J,IM),RUNOFF(I,J,IM),PRIBF(I,J,IM),SECBF(I,J,IM),&
+				INTF(I,J,IM),AVSMC(I,J,IM),EMUZTWC(I,J,IM), EMUZFWC(I,J,IM),&
+					EMLZTWC(I,J,IM), EMLZFPC(I,J,IM), EMLZFSC(I,J,IM)
+					
+2325            FORMAT (I10, I6, I4,15F10.1)        
+				   
 			    WRITE(78,2025) I,IDY, IM, RAIN(I,J,IM),TEMP(I,J,IM),&
 				AVSMC(I,J,IM), SP(I,J,IM), PET(I,J,IM), AET(I,J,IM),PAET(I,J,IM), TRUNOFF, &
 				BASEFLOW(I,J,IM),STRFLOW(I,J,IM)
@@ -127,30 +131,30 @@
 !------ASSIGN TOTAL ANNUAL RAIN, PET, AET, DISCHARGE, INT, SNOWP
 ! -----TANURUN 为流域的总出流量(RUNOFF(I,J,IM)+PRIBF(I,J,IM)+SECBF(I,J,IM)+INTF(I,J,IM))
          
-22200       ANURAIN(J) = TANURAIN
-		    ANUPET(J) = TANUPET
-		    ANUAET(J) = TANUAET
-		    ANUPAET(J)=TANUPAET
-		    ANURUN(J) = TANURUN
+22200       ANURAIN(I,J) = TANURAIN
+		    ANUPET(I,J) = TANUPET
+		    ANUAET(I,J) = TANUAET
+		    ANUPAET(I,J)=TANUPAET
+		    ANURUN(I,J) = TANURUN
       
 		    IF (TANURAIN .GE. 1.0) THEN        
-				ARUNRT(J) = TANURUN/TANURAIN
-				AETRT(J)  = TANUAET/TANURAIN
+				ARUNRT(I,J) = TANURUN/TANURAIN
+				AETRT(I,J)  = TANUAET/TANURAIN
 			
 		    ELSE
 		  
-			   ARUNRT (J) = 0.0
-			   AETRT (J) = 0.0
+			   ARUNRT (I,J) = 0.0
+			   AETRT (I,J) = 0.0
 		  
 		    ENDIF 
       
       
-			  ETRATIO = AETRT(J) + ARUNRT(J)
+			  ETRATIO(I,J) = AETRT(I,J) + ARUNRT(I,J)
 			  NSPM(I,J) = ISNOWP 
 				 
-			  HUCAET(I,J) = ANUAET(J)
-			  HUCPET(I,J) = ANUPET(J)     
-			  HUCPAET(I,J)=ANUPAET(J)
+			  HUCAET(I,J) = ANUAET(I,J)
+			  HUCPET(I,J) = ANUPET(I,J)     
+			  HUCPAET(I,J)=ANUPAET(I,J)
 !------PRINT ANNUAL WATER BALANCE COMPONENTS TO ANNUALFLOW.TXT
 
                                
@@ -166,24 +170,24 @@
 			   IF (F .LT. 55) THEN
 				   
 				
-			 RFACTOR (J) = (0.07397 * F**1.847 )/17.2
+			 RFACTOR(I,J) = (0.07397 * F**1.847 )/17.2
 		   
 			   ELSE
 		   
-			   RFACTOR (J) = (95.77-6.081*F+0.4770*F**2) /17.2
+			   RFACTOR(I,J) = (95.77-6.081*F+0.4770*F**2) /17.2
 				   
 			   ENDIF
 				
 		    ELSE
 		   
-			 RFACTOR(J) =0.
+			 RFACTOR(I,J) =0.
 		   
 		    ENDIF  
 
 
-		    WRITE (79,2100) HUCNO(I), IDY, ANURAIN(J),&
-			 ANUPET(J), ANUAET(J),ANUPAET(J), ANURUN(J), ARUNRT(J),  &
-			 AETRT(J),ETRATIO, NSPM(I,J), RFACTOR (J)
+		    WRITE (79,2100) HUCNO(I), IDY, ANURAIN(I,J),&
+			 ANUPET(I,J), ANUAET(I,J),ANUPAET(I,J), ANURUN(I,J), ARUNRT(I,J),  &
+			 AETRT(I,J),ETRATIO(I,J), NSPM(I,J), RFACTOR (I,J)
 
 ! TEST OUTPUT
 !            WRITE (*,2100) HUCNO(I), IDY, ANURAIN(J),&

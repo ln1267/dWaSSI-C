@@ -960,7 +960,7 @@
 
 ! -- STREAMFLOW IN MILLION M3 FOR EACH HUC FOR MONTH M. HUCAREA IN SQ. METERS 
         STRFLOW(I, J, M) = (RUNOFF(I,J,M) + PRIBF(I,J,M) + SECBF(I,J,M) + INTF(I,J,M))*1/1000. 
-        ! 64 is the area of each cell (KM2)
+        ! 64=8*8 8 is the area of each cell (KM2)
 
 
 ! TEST OUTPUT

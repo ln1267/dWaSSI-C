@@ -15,12 +15,11 @@
 
 !-----------------------------------------------------------------------      
 
-      REAL RAINALL, AETALL, PETALL, RUNALL, RUNRATIO, ETRATIO, TRATIO
+      REAL RAINALL, AETALL, PETALL, RUNALL, RUNRATIO,ETRATIO_GRD,TRATIO
             
       INTEGER I,J, M,ISTEP
       
       REAL RALL
-      
       
       RAINALL =0.
       AETALL =0.   
@@ -35,17 +34,17 @@
       DO 100 J = 1, ISTEP
 !------ 排除异常的气候值，异常值，气候和温度设置为-99999
        
-       IF  (ANURAIN(J+IYSTART-BYEAR) < -50.0 .or. &
-      ANUAET(J+IYSTART-BYEAR) < -50.0 .or. ANUPET(J+IYSTART-BYEAR) &
-        < -50.0 .or. ANURUN(J+IYSTART-BYEAR) < -50.0 ) then 
+       IF  (ANURAIN(I,J+IYSTART-BYEAR) < -50.0 .or. &
+      ANUAET(I,J+IYSTART-BYEAR) < -50.0 .or. ANUPET(I,J+IYSTART-BYEAR) &
+        < -50.0 .or. ANURUN(I,J+IYSTART-BYEAR) < -50.0 ) then 
       
       ELSE
-            RAINALL = RAINALL + ANURAIN(J+IYSTART-BYEAR)    
-            AETALL = AETALL + ANUAET(J+IYSTART-BYEAR)  
-            PETALL = PETALL + ANUPET(J+IYSTART-BYEAR)
-            RUNALL = RUNALL + ANURUN(J+IYSTART-BYEAR)
+            RAINALL = RAINALL + ANURAIN(I,J+IYSTART-BYEAR)    
+            AETALL = AETALL + ANUAET(I,J+IYSTART-BYEAR)  
+            PETALL = PETALL + ANUPET(I,J+IYSTART-BYEAR)
+            RUNALL = RUNALL + ANURUN(I,J+IYSTART-BYEAR)
             
-            RALL = RALL + RFACTOR(J+IYSTART-BYEAR)
+            RALL = RALL + RFACTOR(I,J+IYSTART-BYEAR)
                  
             M = M + 1
       ENDIF
@@ -64,21 +63,21 @@
 
       IF (RAINALL .GE. 0.) THEN  
       RUNRATIO = RUNALL/RAINALL
-      ETRATIO = AETALL/RAINALL   
+      ETRATIO_GRD = AETALL/RAINALL   
       ELSE
       
       RUNRATIO = 0.0
-      ETRATIO = 0.0
+      ETRATIO_GRD = 0.0
       
       
       ENDIF
 
-      TRATIO = RUNRATIO + ETRATIO
+      TRATIO = RUNRATIO + ETRATIO_GRD
    
 !--WRITE TO FILE SUMMARRUNOFF.TXT
 
          WRITE (80,250) HUCNO(I), RAINALL, PETALL, AETALL, RUNALL, &
-         RUNRATIO, ETRATIO, TRATIO, M
+         RUNRATIO, ETRATIO_GRD, TRATIO, M
 
      
 250      FORMAT (I10, ',', F10.1, ',', F10.1,',',  &

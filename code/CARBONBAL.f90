@@ -13,22 +13,18 @@
       SUBROUTINE CARBONBAL
       
 		USE Common_var
-	     implicit none 
+	    Implicit none 
 ! --------------------------------------------------------------
       INTEGER I,J,M,IY,IDY
       Real AHUCTRS,AHUCMAMMALS,AHUCBIRD,AHUCAMPHIB,AHUCREPTILES,AHUCVERTEB
       
-
 ! ---------------------------------------------------------------      
-
       
       REAL ANGEP, ANRECO, ANNEE,  AHUCGEP, AHUCNEE,AHUCRE
       REAL HUCGEP, HUCNEE, HUCRE
 
-      
       REAL HUCTRS,TRS, HUCMAMMALS,MAMMALS,HUCBIRD,BIRD,HUCAMPHIB,&
        AMPHIB,HUCREPTILES, REPTILES, HUCVERTEB, VERTEB
-
 
 !----------------------------------------------------------------      
 
