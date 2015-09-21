@@ -125,9 +125,9 @@
     
            
       INTEGER ICELL,ICOUNT,IYEAR,MONTHD(12),MONTHL(12)
-      INTEGER YEAR,NDAY,IM,MNDAY
+      INTEGER YEAR,NDAY,IM,MNDAY,PRESS
 
-      CHARACTER PRESS,input_mulu,output_mulu
+      CHARACTER input_mulu,output_mulu
       REAL VAL_L1 ,VAL_L2      
       
 ! --- Number of days for each month during regular year
@@ -151,13 +151,12 @@
 !      PRESS = "Y"
 !	IF (press.eq."y" .or.press.eq."Y") THEN
    20 FORMAT(A1)
-      WRITE(*,30)
-   30 FORMAT('       *** PROGRAM IS RUNNING, PLEASE WAIT ***')
+    
 
 Print*, "Please chose LINUX or PC version model."
 Print*, "Input 1 for LINUX and 2 for PC"
-   READ(*,20) PRESS
- IF (PRESS==1)  then 
+   READ(*,*) PRESS
+ IF (PRESS == 1)  then 
  !!!!-----------Open files------------------   
 !!! This is for Linux  
 !--Open Input files----------------------------------------------
@@ -192,7 +191,7 @@ Print*, "Input 1 for LINUX and 2 for PC"
 ! --- Open Output FILES (WARMUP.FOR)
         OPEN(2002,FILE='../../output/DATA_V_F.TXT') 
        OPEN(2003,FILE='../../output/VALIDATION.TXT') 
- ELSEIF (PRESS==2) then
+ ELSEIF (PRESS == 2) then
  
  !!! This is for Windows
 !!--Open Input files------------------ 
@@ -229,6 +228,8 @@ Print*, "Input 1 for LINUX and 2 for PC"
    
  ENDIF  
  
+   WRITE(*,30)
+   30 FORMAT('       *** PROGRAM IS RUNNING, PLEASE WAIT ***')
  
 !  --------- Read input data -------------------------------
        
