@@ -158,65 +158,65 @@
 !!! This is for Linux  
 !--Open Input files----------------------------------------------
  
-!      OPEN(1,FILE='../Inputs_01_12/GENERAL.TXT')
-!      OPEN(2,FILE='../Inputs_01_12/CELLINFO.TXT') 
+      OPEN(1,FILE='../Inputs_01_12/GENERAL.TXT')
+      OPEN(2,FILE='../Inputs_01_12/CELLINFO.TXT') 
 !      OPEN(3,FILE='../Inputs_01_12/vegINFO.TXT')
-!      OPEN(4,FILE='../Inputs_01_12/CLIMATE.TXT')
+      OPEN(4,FILE='../Inputs_01_12/CLIMATE.TXT')
 
-!      OPEN(7,FILE='../Inputs_01_12/SOILINFO.TXT')
-!      OPEN(8,FILE='../Inputs_01_12/LANDLAI.TXT')
+      OPEN(7,FILE='../Inputs_01_12/SOILINFO.TXT')
+      OPEN(8,FILE='../Inputs_01_12/LANDLAI.TXT')
 
 !      OPEN(11,FILE='../Inputs_01_12/HUCAREA.TXT')
 !      OPEN(22,FILE='../Inputs_01_12/V_FLOW.TXT')
 
 ! ---Open Output files---------------------------------------- 
 
-!      OPEN(77,FILE='../../output/BASICOUT.TXT')
-!      OPEN(78,FILE='../../output/MONTHFLOW.TXT')
-!      OPEN(79,FILE='../../output/ANNUALFLOW.TXT')
-!      OPEN(80,FILE='../../output/HUCFLOW.TXT')
-!      OPEN(99,FILE='../../output/ceshi.TXT')
-!      OPEN(400,FILE='../../output/MONTHCARBON.TXT')
-!      OPEN(500,FILE='../../output/ANNUALCARBON.TXT')
-!      OPEN(600,FILE='../../output/HUCCARBON.TXT')
+      OPEN(77,FILE='../../output/BASICOUT.TXT')
+      OPEN(78,FILE='../../output/MONTHFLOW.TXT')
+      OPEN(79,FILE='../../output/ANNUALFLOW.TXT')
+      OPEN(80,FILE='../../output/HUCFLOW.TXT')
+      OPEN(99,FILE='../../output/ceshi.TXT')
+      OPEN(400,FILE='../../output/MONTHCARBON.TXT')
+      OPEN(500,FILE='../../output/ANNUALCARBON.TXT')
+      OPEN(600,FILE='../../output/HUCCARBON.TXT')
 !      OPEN(700,FILE='../../output/ANNUALBIO.TXT')
 !      OPEN(800,FILE='../../output/HUCBIO.TXT')    
-!      OPEN(900,FILE='../../output/SOILSTORAGE.TXT')
+      OPEN(900,FILE='../../output/SOILSTORAGE.TXT')
 !      OPEN(910,FILE='../../output/RUNOFFBYLANDUSE.TXT')
 !      OPEN(920,FILE='../../output/FLOWVOLBYLANDUSE.TXT')     
 !      OPEN(1000,FILE='../../output/RUNLAND.TXT')
 ! --- Open Output FILES (WARMUP.FOR)
-!        OPEN(2002,FILE='../../output/DATA_V_F.TXT') 
-!       OPEN(2003,FILE='../../output/VALIDATION.TXT')  
+        OPEN(2002,FILE='../../output/DATA_V_F.TXT') 
+       OPEN(2003,FILE='../../output/VALIDATION.TXT')  
 
 !!! This is for Windows
-!--Open Input files------------------ 
-      OPEN(1,FILE='E:\Github\WaSSI\Inputs_01_12\GENERAL.TXT')
-      OPEN(2,FILE='E:\Github\WaSSI\Inputs_01_12\CELLINFO.TXT') 
-!      OPEN(3,FILE='E:\Github\WaSSI\Inputs_01_12\vegINFO.TXT')
-      OPEN(4,FILE='E:\Github\WaSSI\Inputs_01_12\CLIMATE.TXT')
-
-      OPEN(7,FILE='E:\Github\WaSSI\Inputs_01_12\SOILINFO.TXT')
-      OPEN(8,FILE='E:\Github\WaSSI\Inputs_01_12\LANDLAI.TXT')
- ! ---Open Output files---------------------------------------- 
-
-      OPEN(77,FILE='E:\Github\output\BASICOUT.TXT')
-      OPEN(78,FILE='E:\Github\output\MONTHFLOW.TXT')
-      OPEN(79,FILE='E:\Github\output\ANNUALFLOW.TXT')
-      OPEN(80,FILE='E:\Github\output\HUCFLOW.TXT')
-      OPEN(99,FILE='E:\Github\output\ceshi.TXT')
-      OPEN(400,FILE='E:\Github\output\MONTHCARBON.TXT')
-      OPEN(500,FILE='E:\Github\output\ANNUALCARBON.TXT')
-      OPEN(600,FILE='E:\Github\output\HUCCARBON.TXT')
-!      OPEN(700,FILE='E:\Github\output\ANNUALBIO.TXT')
-!      OPEN(800,FILE='E:\Github\output\HUCBIO.TXT')    
-      OPEN(900,FILE='E:\Github\output\SOILSTORAGE.TXT')
-!      OPEN(910,FILE='E:\Github\output\RUNOFFBYLANDUSE.TXT')
-!      OPEN(920,FILE='E:\Github\output\FLOWVOLBYLANDUSE.TXT')     
-!      OPEN(1000,FILE='E:\Github\output\RUNLAND.TXT')
-! --- Open Output FILES (WARMUP.FOR)
-       OPEN(2002,FILE='E:\Github\output\DATA_V_F.TXT')
-	   OPEN(2003,FILE='E:\Github\output\WATERBALANCE.TXT')
+!!--Open Input files------------------ 
+!      OPEN(1,FILE='E:\Github\WaSSI\Inputs_01_12\GENERAL.TXT')
+!      OPEN(2,FILE='E:\Github\WaSSI\Inputs_01_12\CELLINFO.TXT') 
+!!      OPEN(3,FILE='E:\Github\WaSSI\Inputs_01_12\vegINFO.TXT')
+!      OPEN(4,FILE='E:\Github\WaSSI\Inputs_01_12\CLIMATE.TXT')
+!
+!      OPEN(7,FILE='E:\Github\WaSSI\Inputs_01_12\SOILINFO.TXT')
+!      OPEN(8,FILE='E:\Github\WaSSI\Inputs_01_12\LANDLAI.TXT')
+! ! ---Open Output files---------------------------------------- 
+!
+!      OPEN(77,FILE='E:\Github\output\BASICOUT.TXT')
+!      OPEN(78,FILE='E:\Github\output\MONTHFLOW.TXT')
+!      OPEN(79,FILE='E:\Github\output\ANNUALFLOW.TXT')
+!      OPEN(80,FILE='E:\Github\output\HUCFLOW.TXT')
+!      OPEN(99,FILE='E:\Github\output\ceshi.TXT')
+!      OPEN(400,FILE='E:\Github\output\MONTHCARBON.TXT')
+!      OPEN(500,FILE='E:\Github\output\ANNUALCARBON.TXT')
+!      OPEN(600,FILE='E:\Github\output\HUCCARBON.TXT')
+!!      OPEN(700,FILE='E:\Github\output\ANNUALBIO.TXT')
+!!      OPEN(800,FILE='E:\Github\output\HUCBIO.TXT')    
+!      OPEN(900,FILE='E:\Github\output\SOILSTORAGE.TXT')
+!!      OPEN(910,FILE='E:\Github\output\RUNOFFBYLANDUSE.TXT')
+!!      OPEN(920,FILE='E:\Github\output\FLOWVOLBYLANDUSE.TXT')     
+!!      OPEN(1000,FILE='E:\Github\output\RUNLAND.TXT')
+!! --- Open Output FILES (WARMUP.FOR)
+!       OPEN(2002,FILE='E:\Github\output\DATA_V_F.TXT')
+!	   OPEN(2003,FILE='E:\Github\output\WATERBALANCE.TXT')
  
  
 !  --------- Read input data -------------------------------
