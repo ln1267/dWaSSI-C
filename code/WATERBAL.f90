@@ -116,6 +116,8 @@
         
             IAM = IAM +1 
             
+			HUCELE(I) = 1000.
+			
             IF (HUCELE(I) .LE. 500.0) THEN
           
               SNOWW = SNOWPACK
