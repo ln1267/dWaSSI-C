@@ -114,10 +114,9 @@
 
 	   WRITE (2003, 204) 
 !            
-204      FORMAT ('WATERSHEDID Year Month RAIN SP  PET  &
-				AET PAET RUNOFF PRIBF SECBF &
-				INTF AVSMC EMUZTWC  EMUZFWC &
-					EMLZTWC  EMLZFPC  EMLZFSC')      
+204      FORMAT ('WATERSHEDID Year Month RAIN SP  PET &
+			&AET PAET RUNOFF PRIBF SECBF INTF & 
+			&AVSMC EMUZTWC  EMUZFWC EMLZTWC  EMLZFPC  EMLZFSC')      
       RETURN
       END
 !**********************************************************************!

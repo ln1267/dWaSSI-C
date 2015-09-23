@@ -1,7 +1,15 @@
 FC= ftn
 OBJ= GENERAL.o PET.o VALIDATION.o CARBONBAL.o OUTPUT.o SUMMARY.o WARMUP.o WATERBAL.o 
 DEBUG = -g
-OMPFLAG= -fopenmp
+PRGENV= ${PE_ENV}
+
+ifeq ($(PRGENV),INTEL)
+	OMPFLAG=-openmp
+else ifeq ($(PRGENV),GNU)
+	OMPFLAG=-fopenmp
+else ifeq ($(PRGENV),CRAY)
+	OMPFLAG=-homp
+endif 
 FCFLAGS = $(DEBUG)
 FFLAGS = $(DEBUG)
 
