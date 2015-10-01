@@ -90,7 +90,7 @@
       NEEM(MAX_GRIDS,MAX_YEARS,12),GEPA(MAX_GRIDS,MAX_YEARS),NEEA(MAX_GRIDS,MAX_YEARS)
       
 ! BYLAND   
-      REAL,ALLOCATABLE :: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
+!      REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
 !	   COMMON/BYLAND/RUNLAND,ETLAND,GEPLAND
 !      REAL RUNLAND,ETLAND,GEPLAND    
 !      COMMON/BYLAND/ RUNLAND(MAX_GRIDS,MAX_YEARS,12,31), &
@@ -124,6 +124,10 @@
       implicit none 
     
            
+REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
+!OpenMP variables
+	INTEGER TID,NTHDS,OMP_GET_THREAD_NUM,OMP_GET_NUM_THREADS
+
       INTEGER ICELL,ICOUNT,IYEAR,MONTHD(12),MONTHL(12)
       INTEGER YEAR,NDAY,IM,MNDAY,PRESS
 
@@ -282,8 +286,11 @@ PRESS=1
 !          
 !----------------------Modelling for each Cell and year start------------------------------------  
 
-    
-      DO 200 ICELL=1, NGRID
+      ALLOCATE (RUNLAND(NGRID,NYEAR,12,31))
+      ALLOCATE (ETLAND(NGRID,NYEAR,12,31))
+      ALLOCATE (GEPLAND(NGRID,NYEAR,12,31))
+      
+	DO 200 ICELL=1, NGRID
 
        
          ICOUNT=0 
@@ -297,10 +304,8 @@ PRESS=1
             NDAY=366   
              
 110         CONTINUE 
-        
 
             DO 400 IM=1, 12
-               
                IF (NDAY .EQ. 365) THEN
                  MNDAY=MONTHD(IM)
                ELSE
@@ -309,12 +314,10 @@ PRESS=1
                
                                              
                CALL WARMPET(ICELL, IYEAR, IM, MNDAY)  ! Caculate MONTHLY PET AND POTENTIAL AET 
-                
-               CALL WATERBAL(ICELL, IYEAR, IM, MNDAY) ! Caculate MONTHLY GPP and ET
+               CALL WATERBAL(ICELL, IYEAR, IM, MNDAY,RUNLAND,ETLAND,GEPLAND) ! Caculate MONTHLY GPP and ET
                
 
 400         CONTINUE 
- 
 
 !    WRITE MONTHLY WATER BALANCE OUTPUT TO MONTHRUNOFF.TXT            
 !     WRITE MONTHLY SOIL STORAGE OUTPUT TO SOILSTORAGE.TXT             
@@ -335,8 +338,9 @@ PRESS=1
            
 
 200   CONTINUE
-       
 
+
+DEALLOCATE (RUNLAND,ETLAND,GEPLAND)
 	     
                 
             PRINT *, 'WATER BALANCE SECTION SUCCEEDED!'                      
