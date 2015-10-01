@@ -9,7 +9,7 @@
 !     IF MODEL in dynamic land cover then LADUSE(I) -----> VEG(I,J) total:38   C
 !**********************************************************************C
       
-      SUBROUTINE WATERBAL(I,J,M,MNDAY)
+      SUBROUTINE WATERBAL(I,J,M,MNDAY,RUNLAND,ETLAND,GEPLAND)
         Use Common_var
         implicit none       
 ! ----------------------------------------------------------------------------     
@@ -47,15 +47,16 @@
             ! TAREA,TAREA,TAUZTWC,TAUZFWC,TALZTWC,TALZFPC,TALZFSC
            
       INTEGER GEPFLAG
+      
+	REAL :: RUNLAND(NGRID,NYEAR,12,31)
+	REAL :: ETLAND(NGRID,NYEAR,12,31)
+	REAL :: GEPLAND(NGRID,NYEAR,12,31) 
            
 ! *****************************************************************************************************
 
 ! ----   Allocates array RUNLAND,
 
 	  
-      ALLOCATE (RUNLAND(NGRID,NYEAR,12,31))
-      ALLOCATE (ETLAND(NGRID,NYEAR,12,31))
-      ALLOCATE (GEPLAND(NGRID,NYEAR,12,31))
 
 ! --- INITIALIZE VARIABLES FOR START OF SIMULATION
 
@@ -976,7 +977,6 @@
 
 ! Deallocates array RUNLAND,ETLAND,GEPLAND
       
-      DEALLOCATE (RUNLAND,ETLAND,GEPLAND)
 
       RETURN
       END
