@@ -140,6 +140,10 @@ REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
 ! --- Number of days for each month during leap year
       DATA MONTHL/31,29,31,30,31,30,31,31,30,31,30,31/
       
+! --- For reading in the command line arguments 
+      CHARACTER(len=32),ALLOCATABLE:: ARGS(:) 
+      CHARACTER(len=32) ARCH,INPATH,OUTPATH
+      INTEGER (kind=4) iargc,INDX
 ! --- Write introductory information to screen
       
       WRITE(*,10)
@@ -157,46 +161,59 @@ REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
    20 FORMAT(A1)
     
 
-Print*, "Please chose LINUX or PC version model."
-Print*, "Input 1 for LINUX and 2 for PC"
+!Print*, "Please chose LINUX or PC version model."
+!Print*, "Input 1 for LINUX and 2 for PC"
   
-10001  READ(*,*) PRESS
-PRESS=1
+	ALLOCATE (ARGS(iargc()))
+	DO INDX=1,iargc()
+		CALL getarg(INDX, ARGS(INDX))
+	END DO
+	ARCH=ARGS(1)
+	INPATH=ARGS(2)
+	OUTPATH=ARGS(3)
+
+!10001  READ(*,*) PRESS
+!PRESS=1
+IF (ARCH == '1') THEN
+	PRESS=1
+ELSE IF (ARCH == '2') THEN
+	PRESS=2
+END IF
 	 IF (PRESS == 1)  then 
 	 !!!!-----------Open files------------------   
 	!!! This is for Linux  
 	!--Open Input files----------------------------------------------
 	 
-		  OPEN(1,FILE='../Inputs_01_12/GENERAL.TXT')
-		  OPEN(2,FILE='../Inputs_01_12/CELLINFO.TXT') 
-	!      OPEN(3,FILE='../Inputs_01_12/vegINFO.TXT')
-		  OPEN(4,FILE='../Inputs_01_12/CLIMATE.TXT')
+		  OPEN(1,FILE=TRIM(INPATH)//'/GENERAL.TXT')
+		  OPEN(2,FILE=TRIM(INPATH)//'/CELLINFO.TXT') 
+	!      OPEN(3,FILE=TRIM(INPATH)//'/vegINFO.TXT')
+		  OPEN(4,FILE=TRIM(INPATH)//'/CLIMATE.TXT')
 
-		  OPEN(7,FILE='../Inputs_01_12/SOILINFO.TXT')
-		  OPEN(8,FILE='../Inputs_01_12/LANDLAI.TXT')
+		  OPEN(7,FILE=TRIM(INPATH)//'/SOILINFO.TXT')
+		  OPEN(8,FILE=TRIM(INPATH)//'/LANDLAI.TXT')
 
-	!      OPEN(11,FILE='../Inputs_01_12/HUCAREA.TXT')
-	!      OPEN(22,FILE='../Inputs_01_12/V_FLOW.TXT')
+	!      OPEN(11,FILE=TRIM(INPATH)//'/HUCAREA.TXT')
+	!      OPEN(22,FILE=TRIM(INPATH)//'/V_FLOW.TXT')
 
 	! ---Open Output files---------------------------------------- 
 
-		  OPEN(77,FILE='../output/BASICOUT.TXT')
-		  OPEN(78,FILE='../output/MONTHFLOW.TXT')
-		  OPEN(79,FILE='../output/ANNUALFLOW.TXT')
-		  OPEN(80,FILE='../output/HUCFLOW.TXT')
-		  OPEN(99,FILE='../output/ceshi.TXT')
-		  OPEN(400,FILE='../output/MONTHCARBON.TXT')
-		  OPEN(500,FILE='../output/ANNUALCARBON.TXT')
-		  OPEN(600,FILE='../output/HUCCARBON.TXT')
-	!      OPEN(700,FILE='../output/ANNUALBIO.TXT')
-	!      OPEN(800,FILE='../output/HUCBIO.TXT')    
-		  OPEN(900,FILE='../output/SOILSTORAGE.TXT')
-	!      OPEN(910,FILE='../output/RUNOFFBYLANDUSE.TXT')
-	!      OPEN(920,FILE='../output/FLOWVOLBYLANDUSE.TXT')     
-	!      OPEN(1000,FILE='../output/RUNLAND.TXT')
+		  OPEN(77,FILE=TRIM(OUTPATH)//'/BASICOUT.TXT')
+		  OPEN(78,FILE=TRIM(OUTPATH)//'/MONTHFLOW.TXT')
+		  OPEN(79,FILE=TRIM(OUTPATH)//'/ANNUALFLOW.TXT')
+		  OPEN(80,FILE=TRIM(OUTPATH)//'/HUCFLOW.TXT')
+		  OPEN(99,FILE=TRIM(OUTPATH)//'/ceshi.TXT')
+		  OPEN(400,FILE=TRIM(OUTPATH)//'/MONTHCARBON.TXT')
+		  OPEN(500,FILE=TRIM(OUTPATH)//'/ANNUALCARBON.TXT')
+		  OPEN(600,FILE=TRIM(OUTPATH)//'/HUCCARBON.TXT')
+	!      OPEN(700,FILE=TRIM(OUTPATH)//'/ANNUALBIO.TXT')
+	!      OPEN(800,FILE=TRIM(OUTPATH)//'/HUCBIO.TXT')    
+		  OPEN(900,FILE=TRIM(OUTPATH)//'/SOILSTORAGE.TXT')
+	!      OPEN(910,FILE=TRIM(OUTPATH)//'/RUNOFFBYLANDUSE.TXT')
+	!      OPEN(920,FILE=TRIM(OUTPATH)//'/FLOWVOLBYLANDUSE.TXT')     
+	!      OPEN(1000,FILE=TRIM(OUTPATH)//'/RUNLAND.TXT')
 	! --- Open Output FILES (WARMUP.FOR)
-			OPEN(2002,FILE='../output/DATA_V_F.TXT') 
-		   OPEN(2003,FILE='../output/VALIDATION.TXT') 
+			OPEN(2002,FILE=TRIM(OUTPATH)//'/DATA_V_F.TXT') 
+		   OPEN(2003,FILE=TRIM(OUTPATH)//'/VALIDATION.TXT') 
 	 ELSEIF (PRESS == 2) then
 	 
 	 !!! This is for Windows
@@ -230,8 +247,8 @@ PRESS=1
 	 
 	 ELSE
 	   
-	   Print*,"Please input 1 for LINUX or 2 for Windows"
-	   goto 10001
+!	   Print*,"Please input 1 for LINUX or 2 for Windows"
+!	   goto 10001
 	 ENDIF  
  
    WRITE(*,30)
@@ -240,18 +257,21 @@ PRESS=1
 !  --------- Read input data -------------------------------
        
       CALL RPSDF       ! Set up column headings for each output files
-
+write(*,*) 'Step 1'
       CALL RPSINT      ! Read Landuse, elevation and Soil parameters
+write(*,*) 'Step 2'
           
 !      CALL RPSWATERUSE  ! Read HUC area, elevation, and slope
       
       print*,"finish read Land cover  data"
 	  
       CALL RPSLAI     ! Read LAI data
+write(*,*) 'Step 3'
       
       print*,"finish read LAI  data"
 	  
       CALL RPSCLIMATE  ! Read calimate data
+write(*,*) 'Step 4'
 
     !  CALL  RPSVALID   ! Read Runoff validation data
 
