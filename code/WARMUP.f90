@@ -752,13 +752,12 @@
             
       INTEGER I, J, M,Mon
      
-      REAL ANNPPT(MAX_GRIDS,MAX_YEARS)
-      
-      REAL SUMANPPT(MAX_GRIDS)
+      REAL,POINTER :: ANNPPT(:,:),SUMANPPT(:)
       
       CHARACTER*10 TEMPHEAD (10)
 
-
+      ALLOCATE (ANNPPT(MAX_GRIDS,MAX_YEARS))
+      ALLOCATE (SUMANPPT(MAX_GRIDS))
       ANNPPT =0.
       
       SUMANPPT = 0.
@@ -810,7 +809,6 @@
 !         WRITE(77,5004) HUCNO(I), AAPPT(I)
       
 !5004     FORMAT(I10,F10.2)
-
 5000  CONTINUE
 
       RETURN

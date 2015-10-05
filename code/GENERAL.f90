@@ -7,7 +7,7 @@
 
 ! Grid numbers
       INTEGER MAX_GRIDS, MAX_YEARS
-      PARAMETER (MAX_GRIDS=5200,MAX_YEARS=20)
+      PARAMETER (MAX_GRIDS=10108,MAX_YEARS=64)
 
 ! BASIC
       INTEGER NGRID,NYEAR,NLC,BYEAR,IYSTART,IYEND
@@ -126,7 +126,7 @@
            
 REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
 !OpenMP variables
-	INTEGER TID,NTHDS,OMP_GET_THREAD_NUM,OMP_GET_NUM_THREADS
+	INTEGER TID,NTHREADS,OMP_GET_THREAD_NUM,OMP_GET_NUM_THREADS,CHUNK,REM,ST_INDX,END_INDX
 
       INTEGER ICELL,ICOUNT,IYEAR,MONTHD(12),MONTHL(12)
       INTEGER YEAR,NDAY,IM,MNDAY,PRESS
@@ -179,8 +179,12 @@ IF (ARCH == '1') THEN
 ELSE IF (ARCH == '2') THEN
 	PRESS=2
 END IF
+WRITE(*,*) 'ARCH set to ',TRIM(ARCH)
+WRITE(*,*) 'INPUT files will be read from directory ',TRIM(INPATH)
+WRITE(*,*) 'OUTPUT files will be written in directory ',TRIM(OUTPATH)
 	 IF (PRESS == 1)  then 
-	 !!!!-----------Open files------------------   
+	 
+	!!!!-----------Open files------------------   
 	!!! This is for Linux  
 	!--Open Input files----------------------------------------------
 	 
@@ -257,21 +261,18 @@ END IF
 !  --------- Read input data -------------------------------
        
       CALL RPSDF       ! Set up column headings for each output files
-write(*,*) 'Step 1'
+      
       CALL RPSINT      ! Read Landuse, elevation and Soil parameters
-write(*,*) 'Step 2'
           
 !      CALL RPSWATERUSE  ! Read HUC area, elevation, and slope
       
       print*,"finish read Land cover  data"
 	  
       CALL RPSLAI     ! Read LAI data
-write(*,*) 'Step 3'
       
       print*,"finish read LAI  data"
 	  
       CALL RPSCLIMATE  ! Read calimate data
-write(*,*) 'Step 4'
 
     !  CALL  RPSVALID   ! Read Runoff validation data
 
@@ -309,8 +310,26 @@ write(*,*) 'Step 4'
       ALLOCATE (RUNLAND(NGRID,NYEAR,12,31))
       ALLOCATE (ETLAND(NGRID,NYEAR,12,31))
       ALLOCATE (GEPLAND(NGRID,NYEAR,12,31))
-      
-	DO 200 ICELL=1, NGRID
+!!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(ICELL,IYEAR,IM,TID,REM,CHUNK,ST_INDX,END_INDX)
+TID=OMP_GET_THREAD_NUM()
+WRITE(*,*) TID
+!!$OMP SINGLE
+	NTHREADS=OMP_GET_NUM_THREADS()
+!!$OMP END SINGLE
+
+REM=MOD(NGRID,NTHREADS)
+CHUNK=(NGRID-REM)/NTHREADS
+ST_INDX= 1+ (TID * CHUNK)
+END_INDX= (TID+1) * CHUNK
+
+IF (REM .GT. 0) THEN
+	IF (TID .EQ. NTHREADS-1) THEN
+		END_INDX=END_INDX+REM
+	END IF
+END IF
+WRITE(*,*) '[',TID,']','NTHD=',NTHREADS,'REM=',REM,' CHUNK=',CHUNK,' ST=',ST_INDX,' END=',END_INDX
+	      
+	DO 200 ICELL=ST_INDX,END_INDX
 
        
          ICOUNT=0 
@@ -346,19 +365,19 @@ write(*,*) 'Step 4'
 
 !     CALCULATE R FACTOR AND OUTPUT TO ANNUALFLOW.TXT           
 
-            CALL OUTPUT(ICELL,IYEAR)  ! Output Annual water and carbon balances
-            
+!!$OMP FLUSH
+!!$OMP CRITICAL (FILE_IO)
+	CALL OUTPUT(ICELL,IYEAR)  ! Output Annual water and carbon balances
+!!$OMP END CRITICAL (FILE_IO)
 300      CONTINUE
 
 !     CALCULATE AVERAGE WATER BALANCE COMPONENTS FROM IYSTART TO IYEND
 !     WRITE TO SUMMARRUNOFF.TXT   
                                  
-    
        CALL SUMMARY(ICELL)
-           
 
 200   CONTINUE
-
+!!$OMP END PARALLEL
 
 DEALLOCATE (RUNLAND,ETLAND,GEPLAND)
 	     
