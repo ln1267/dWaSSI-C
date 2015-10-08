@@ -355,10 +355,11 @@
 					ANRECO = ANRECO + RECOM(I,J,M) 
 					ANNEE = ANNEE + NEEM(I,J,M)     
 							 
-			  ENDIF   
-           
+			  ENDIF 
+		  			
 100         CONTINUE 
-           
+
+			ENDIF
   
 			IF (ANGEP < -50.0 .or. ANRECO < -50.0 .or. ANRECO < -50.0 ) then
 
