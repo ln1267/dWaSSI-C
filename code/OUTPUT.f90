@@ -75,8 +75,8 @@
 				',',F8.1, ',', F8.2, ',',F8.2,',',F8.2,',', I8, ',', F8.1)
 
 				
-				WRITE (400, 2000) HUCNO(I), IDY, IM, GEPM(I,J, M), &
-                RECOM(I,J,M), NEEM(I,J,M)         
+				WRITE (400, 2000) HUCNO(I), IDY, IM, GEPM(I,J, IM), &
+                RECOM(I,J,IM), NEEM(I,J,IM)         
      
 2000          	FORMAT (I10, ',',I6, ',', I6, ',', F10.2, ',',  &
 				F10.2,',',F10.2)
