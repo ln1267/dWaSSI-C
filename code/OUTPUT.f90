@@ -1,6 +1,6 @@
 !C**********************************************************************C
 !C                                                                      C
-!C     *** SUBROUTINE OUTPUT ***                                        C
+!C     *** SUBROUTINE SUMMARY_MONTH ***                                        C
 !C     WRITE MONTHLY WATER BALANCE OUTPUT TO MONTHRUNOFF.TXT            C
 !C     WRITE MONTHLY SOIL STORAGE OUTPUT TO SOILSTORAGE.TXT             C
 !C     CALCULATE TOTAL ANNUAL RAIN, PET, AET, DISCHARGE, INT, SNOWP     C
