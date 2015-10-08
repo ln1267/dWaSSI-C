@@ -389,7 +389,8 @@ WRITE(*,*) '[',TID,']','NTHD=',NTHREADS,'REM=',REM,' CHUNK=',CHUNK,' ST=',ST_IND
 
 
 ! This is for output result
-!		CALL OUTPUT(ICELL,IYEAR)  ! Output Annual water and carbon balances
+
+		CALL OUTPUT !(ICELL,IYEAR)  ! Output Annual water and carbon balances
 
             PRINT *, 'WATER BALANCE SECTION SUCCEEDED!'                      
 
