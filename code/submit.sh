@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #SBATCH --job-name=WaSSI
-#SBATCH --account=director100
+#SBATCH --account=director1234
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
 #SBATCH --partition=debugq
