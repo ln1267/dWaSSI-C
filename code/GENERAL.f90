@@ -414,7 +414,7 @@ WRITE(*,*) '[',TID,']','NTHD=',NTHREADS,'REM=',REM,' CHUNK=',CHUNK,' ST=',ST_IND
 !     WRITE BIODIVERSITY TO HUCBIO.TXT                                 
 
 
-            CALL CARBONBAL
+!            CALL CARBONBAL
             
             PRINT *, 'CARBON BALANCE AND BIODIVERSITY SIMULATION ENDS'
                        
