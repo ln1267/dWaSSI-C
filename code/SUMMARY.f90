@@ -8,26 +8,22 @@
 !C                                                                      C
 !C**********************************************************************C
      
-      SUBROUTINE SUMMARY(I)
+      SUBROUTINE SUMMARY_YEAR(I)
 	  
 	  USE Common_var
       implicit none 
 
 !-----------------------------------------------------------------------      
-
-      REAL RAINALL, AETALL, PETALL, RUNALL, RUNRATIO,ETRATIO_GRD,TRATIO
+        
+      INTEGER I,J,ISTEP
             
-      INTEGER I,J, M,ISTEP
+      RAINALL(I) =0.
+      AETALL(I) =0.   
+      PETALL(I)=0.
+      RUNALL(I)=0.
+      RALL(I) = 0.
       
-      REAL RALL
-      
-      RAINALL =0.
-      AETALL =0.   
-      PETALL=0.
-      RUNALL=0.
-      RALL = 0.
-      
-      M=0
+      NUM_year(I)=0
       
       ISTEP = IYEND - IYSTART + 1
           
@@ -39,54 +35,54 @@
         < -50.0 .or. ANURUN(I,J+IYSTART-BYEAR) < -50.0 ) then 
       
       ELSE
-            RAINALL = RAINALL + ANURAIN(I,J+IYSTART-BYEAR)    
-            AETALL = AETALL + ANUAET(I,J+IYSTART-BYEAR)  
-            PETALL = PETALL + ANUPET(I,J+IYSTART-BYEAR)
-            RUNALL = RUNALL + ANURUN(I,J+IYSTART-BYEAR)
+            RAINALL(I) = RAINALL(I) + ANURAIN(I,J+IYSTART-BYEAR)    
+            AETALL(I) = AETALL(I) + ANUAET(I,J+IYSTART-BYEAR)  
+            PETALL(I) = PETALL(I) + ANUPET(I,J+IYSTART-BYEAR)
+            RUNALL(I) = RUNALL(I) + ANURUN(I,J+IYSTART-BYEAR)
             
-            RALL = RALL + RFACTOR(I,J+IYSTART-BYEAR)
+            RALL(I) = RALL(I) + RFACTOR(I,J+IYSTART-BYEAR)
                  
-            M = M + 1
+            NUM_year(I) = NUM_year(I) + 1
       ENDIF
 !------ ---------------------------------------------------------------------
 
 
 100   CONTINUE
      
-      RAINALL = RAINALL /M  
-      AETALL = AETALL / M
-      PETALL = PETALL / M
-      RUNALL = RUNALL / M
+      RAINALL(I) = RAINALL(I) /NUM_year(I)  
+      AETALL(I) = AETALL(I) / NUM_year(I)
+      PETALL(I) = PETALL(I) / NUM_year(I)
+      RUNALL(I) = RUNALL(I) / NUM_year(I)
       
-      RALL =RALL /M
+      RALL(I) =RALL(I) /NUM_year(I)
 
 
-      IF (RAINALL .GE. 0.) THEN  
-      RUNRATIO = RUNALL/RAINALL
-      ETRATIO_GRD = AETALL/RAINALL   
+      IF (RAINALL(I) .GE. 0.) THEN  
+      RUNRATIO(I) = RUNALL(I)/RAINALL(I)
+      ETRATIO(I)_GRD(I) = AETALL(I)/RAINALL(I)   
       ELSE
       
-      RUNRATIO = 0.0
-      ETRATIO_GRD = 0.0
+      RUNRATIO(I) = 0.0
+      ETRATIO(I)_GRD(I) = 0.0
       
       
       ENDIF
 
-      TRATIO = RUNRATIO + ETRATIO_GRD
+      TRATIO(I) = RUNRATIO(I) + ETRATIO(I)_GRD(I)
    
 !--WRITE TO FILE SUMMARRUNOFF.TXT
 
-         WRITE (80,250) HUCNO(I), RAINALL, PETALL, AETALL, RUNALL, &
-         RUNRATIO, ETRATIO_GRD, TRATIO, M
+         WRITE (80,250) HUCNO(I), RAINALL(I), PETALL(I), AETALL(I), RUNALL(I), &
+         RUNRATIO(I), ETRATIO(I)_GRD(I), TRATIO(I), NUM_year(I)
 
      
 250      FORMAT (I10, ',', F10.1, ',', F10.1,',',  &
                F10.1, ',', F10.1,',', F8.3, ',', F8.3,',', F8.3,&
           ',', I3)    
     
-         RUNRATIO = RUNRATIO *100.
+         RUNRATIO(I) = RUNRATIO(I) *100.
           
-!         WRITE(*,300) HUCNO(I), RAINALL, RUNALL, RUNRATIO
+!         WRITE(*,300) HUCNO(I), RAINALL(I), RUNALL(I), RUNRATIO(I)
          
     
 300    FORMAT ('GRID=',I5,' PRECIP (MM)=',F6.0, '   RUNOFF(MM)=', F5.0, &

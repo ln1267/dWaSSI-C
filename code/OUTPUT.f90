@@ -8,25 +8,19 @@
 !C                                                                      C
 !C                                                                      C
 !C**********************************************************************C
-      SUBROUTINE OUTPUT (I, J)
+      SUBROUTINE SUMMARY_MONTH (I, J)
       
 	     USE Common_var
          implicit none 
 ! -----------------------------------------------------------------------------     
       INTEGER I,J,IM
       REAL TANURAIN, TANUPET,TANUAET,TANUPAET,TANURUN
-      REAL ISM,TSP,TDM,TRUNOFF
+      REAL ISM,TSP,TDM
 
-!      REAL MWASSI(12),DEMAND(12),SUPPLY(12),
-!     >  ANUDM(MAX_YEARS), ANUSP(MAX_YEARS)
-
-!      REAL TDM, TSP
-      
       REAL TSNOWP
      
       INTEGER IDY, ISNOWP
-      REAL TRUNOFFS
-      
+            
       REAL RAINSQ, F
       
 !-----IDY = THE CALANDER YEAR, BYEAR = YEAR TO SATRT
@@ -56,7 +50,7 @@
 	
 				RUN_HRU(I,J,IM)=RUNOFF(I,J,IM) + PRIBF(I,J,IM) + SECBF(I,J,IM) + INTF(I,J,IM)
 				BASE_HRU(I,J,IM)=PRIBF(I,J,IM) + SECBF(I,J,IM)
-				TRUNOFF = RUNOFF(I,J,IM) + PRIBF(I,J,IM) + SECBF(I,J,IM) + INTF(I,J,IM)
+				TRUNOFF(I,J,IM)= RUNOFF(I,J,IM) + PRIBF(I,J,IM) + SECBF(I,J,IM) + INTF(I,J,IM)
 				BASEFLOW(I,J,IM)=PRIBF(I,J,IM) + SECBF(I,J,IM)
 !------PRINT MONTHLY WATER BALANCE DATA TO MONTHFLOW.TXT
 
@@ -69,7 +63,7 @@
 2325            FORMAT (I10, I6, I4,15F10.1)        
 				   
 			    WRITE(78,2025) I,IDY, IM, RAIN(I,J,IM),TEMP(I,J,IM),&
-				AVSMC(I,J,IM), SP(I,J,IM), PET(I,J,IM), AET(I,J,IM),PAET(I,J,IM), TRUNOFF, &
+				AVSMC(I,J,IM), SP(I,J,IM), PET(I,J,IM), AET(I,J,IM),PAET(I,J,IM), TRUNOFF(I,J,IM), &
 				BASEFLOW(I,J,IM),STRFLOW(I,J,IM)
 
 2025      		FORMAT (I10, ',',I6, ',', I6, ',', F10.1, ',', F10.1,',',&  
