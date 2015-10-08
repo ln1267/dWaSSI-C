@@ -293,5 +293,114 @@
       RETURN
       END
 
-	  
+	
+
+!**********************************************************************C
+!                                                                      C
+!     *** SUBROUTINE Cabon balance ***                                 C
+!     Simulate GEP AND NEE for selected HUC                            C
+!     WRITE GEP AND NEE TO MONTHCARBON.TXT, ANNUALCARBON.TXT, HUCCARBON.TXT        C
+!     SIMULATE BIODIVERSITY FOR SELECTED HUC                           C
+!     WRITE BIODIVERSITY TO HUCBIO.TXT                                 C
+!                                                                      C
+!**********************************************************************C
+!        I=HUC; J= YEAR, M =MONTH, MNDAY= NO OF DAYS IN A MONTH
+
+      SUBROUTINE SUMMARY_CABON(I)
+      
+		USE Common_var
+	    Implicit none 
+! --------------------------------------------------------------
+      INTEGER I,J,M,IDY
+           
+! ---------------------------------------------------------------      
+      
+      REAL ANGEP, ANRECO, ANNEE
+      REAL HUCGEP, HUCNEE, HUCRE
+
+!----------------------------------------------------------------      
+             
+         HUCGEP =0.
+         HUCNEE =0.
+         HUCRE  = 0.
+
+         NUM_YEAR_C(I)=0
+
+                          
+         DO 200 J=1, NYEAR
+   
+            IDY = J + BYEAR - 1 
+                  
+            IF (IDY .GE. IYSTART .AND. IDY .LE. IYEND) THEN        
+         
+            
+            ANGEP = 0.
+            ANRECO = 0.
+            ANNEE = 0.
+                    
+            DO 100 M=1, 12
+                 
+       
+!--- ACCUMULATE ANNUAL GEP FORM MONTHLY VALUES (g C/m2/mon)
+			  IF (RAIN(I,J,M) < -50.0 .or. TEMP(I,J,M) < -50.0) then
+
+					ANGEP = -999.0
+					ANRECO = -999.0
+					ANNEE = -999.0
+				   
+
+			  ELSE
+
+					ANGEP = ANGEP + GEPM(I,J,M)  
+					ANRECO = ANRECO + RECOM(I,J,M) 
+					ANNEE = ANNEE + NEEM(I,J,M)     
+							 
+			  ENDIF   
+           
+100         CONTINUE 
+           
+  
+			IF (ANGEP < -50.0 .or. ANRECO < -50.0 .or. ANRECO < -50.0 ) then
+
+			 
+			ELSE
+            HUCGEP = HUCGEP + ANGEP
+              
+            HUCRE = HUCRE + ANRECO
+              
+            HUCNEE = HUCNEE + ANNEE
+            
+            NUM_YEAR_C(I) = NUM_YEAR_C(I) + 1
+			ENDIF
+
+         
+200      CONTINUE
+
+         AHUCGEP(I) = HUCGEP/NUM_YEAR_C(I)
+         
+         AHUCRE(I) = HUCRE/NUM_YEAR_C(I)
+         
+         AHUCNEE(I) = HUCNEE/NUM_YEAR_C(I)
+            
+      
+
+            ! WRITE (600, 4000) HUCNO(I),NUM_YEAR_C(I), AHUCGEP(I), AHUCRE(I), AHUCNEE(I)
+                                              
+! 4000        FORMAT (I12, ',', I12, ',',F14.2, ',', F14.2, ',', F14.2)       
+
+
+
+!            WRITE (*, 4100) HUCNO(I),AHUCGEP(I),AHUCRE(I), AHUCNEE(I)
+                                              
+4100        FORMAT ('CELL=',I12, '  GEP(gC/m2/yr.)=', F10.0, &
+            '  Reco=', F10.0,' NEE(gC/m2/yr.)=', F10.0)       
+
+ 
+
+
+
+      RETURN
+      END
+
+	
 	  

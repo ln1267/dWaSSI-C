@@ -74,7 +74,14 @@
 2100        	FORMAT(I10, ',', I10, ',',F10.1, ',', F8.1, ',', F8.1,',' F8.1, &
 				',',F8.1, ',', F8.2, ',',F8.2,',',F8.2,',', I8, ',', F8.1)
 
-			
+				
+				WRITE (400, 2000) HUCNO(I), IDY, IM, GEPM(I,J, M), &
+                RECOM(I,J,M), NEEM(I,J,M)         
+     
+2000          	FORMAT (I10, ',',I6, ',', I6, ',', F10.2, ',',  &
+				F10.2,',',F10.2)
+				
+							
 			END DO ! END LOOP MONTH
 			
 		ENDIF 
@@ -87,6 +94,11 @@
 250 FORMAT (I10, ',', F10.1, ',', F10.1,',',  &
     F10.1, ',', F10.1,',', F8.3, ',', F8.3,',', F8.3,&
     ',', I3)    	 
+	
+	WRITE (600, 4000) HUCNO(I),NUM_YEAR_C(I), AHUCGEP(I), AHUCRE(I), AHUCNEE(I)
+                                              
+4000        FORMAT (I12, ',', I12, ',',F14.2, ',', F14.2, ',', F14.2)       
+                                         
 	
 	END DO  ! END LOOP GRID	 
 	  

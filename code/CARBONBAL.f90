@@ -29,28 +29,28 @@
 !----------------------------------------------------------------      
 
 
-        WRITE (400, 500) 
-500    FORMAT ('CELL,YEAR,MONTH,GEP(gC/m2/Month),Reco,NEE')
+        ! WRITE (400, 500) 
+! 500    FORMAT ('CELL,YEAR,MONTH,GEP(gC/m2/Month),Reco,NEE')
 
 
-        WRITE (500, 600) 
-600    FORMAT ('CELL,YEAR,GEP(gC/m2/yr),Reco,NEE(gC/m2/yr),',& 
-              'AET(MM),PET(MM)')
+        ! WRITE (500, 600) 
+! 600    FORMAT ('CELL,YEAR,GEP(gC/m2/yr),Reco,NEE(gC/m2/yr),',& 
+              ! 'AET(MM),PET(MM)')
 
 
-        WRITE (600, 650) 
-650    FORMAT ('CELL,NO_YR,GEP(gC/m2/yr),Reco,NEE')
+        ! WRITE (600, 650) 
+! 650    FORMAT ('CELL,NO_YR,GEP(gC/m2/yr),Reco,NEE')
 
 
-        WRITE (700, 700)
+        ! WRITE (700, 700)
        
-700     FORMAT ('CELL,YEAR,TREE,MAMMALS,BIRD, ', &
-       'AMPHIB, REPTILES, VERTEB, AET, PET')
+! 700     FORMAT ('CELL,YEAR,TREE,MAMMALS,BIRD, ', &
+       ! 'AMPHIB, REPTILES, VERTEB, AET, PET')
 
-            WRITE (800,800) 
+            ! WRITE (800,800) 
             
-800      FORMAT ('CELL,NO_YR, TREE, MAMMALS, BIRD,',&
-        'AMPHIB, REPTILES, AHUCVERTEB') 
+! 800      FORMAT ('CELL,NO_YR, TREE, MAMMALS, BIRD,',&
+        ! 'AMPHIB, REPTILES, AHUCVERTEB') 
             
      
            
