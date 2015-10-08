@@ -59,21 +59,21 @@
 
       IF (RAINALL(I) .GE. 0.) THEN  
       RUNRATIO(I) = RUNALL(I)/RAINALL(I)
-      ETRATIO(I)_GRD(I) = AETALL(I)/RAINALL(I)   
+      ETRATIO_GRD(I) = AETALL(I)/RAINALL(I)   
       ELSE
       
       RUNRATIO(I) = 0.0
-      ETRATIO(I)_GRD(I) = 0.0
+      ETRATIO_GRD(I) = 0.0
       
       
       ENDIF
 
-      TRATIO(I) = RUNRATIO(I) + ETRATIO(I)_GRD(I)
+      TRATIO(I) = RUNRATIO(I) + ETRATIO_GRD(I)
    
 !--WRITE TO FILE SUMMARRUNOFF.TXT
 
          WRITE (80,250) HUCNO(I), RAINALL(I), PETALL(I), AETALL(I), RUNALL(I), &
-         RUNRATIO(I), ETRATIO(I)_GRD(I), TRATIO(I), NUM_year(I)
+         RUNRATIO(I), ETRATIO_GRD(I), TRATIO(I), NUM_year(I)
 
      
 250      FORMAT (I10, ',', F10.1, ',', F10.1,',',  &
