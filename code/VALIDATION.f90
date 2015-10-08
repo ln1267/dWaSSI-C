@@ -35,8 +35,8 @@
 ! ---------------------------------------------------------------      
                      
      
-      REAL ANGEP, ANRECO, ANNEE,  AHUCGEP, AHUCNEE,AHUCRE
-      REAL HUCGEP, HUCNEE, HUCRE
+      
+     
 
       REAL FLOW_L,RUNOFF_L,BASEFLOW_L, UNIONAREA
 
