@@ -7,7 +7,7 @@
 
 ! Grid numbers
       INTEGER MAX_GRIDS, MAX_YEARS
-      PARAMETER (MAX_GRIDS=5200,MAX_YEARS=20)
+      PARAMETER (MAX_GRIDS=5169,MAX_YEARS=20)
 
 ! BASIC
       INTEGER NGRID,NYEAR,NLC,BYEAR,IYSTART,IYEND
@@ -126,7 +126,7 @@
            
 REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
 !OpenMP variables
-	INTEGER TID,NTHDS,OMP_GET_THREAD_NUM,OMP_GET_NUM_THREADS
+	INTEGER TID,NTHREADS,OMP_GET_THREAD_NUM,OMP_GET_NUM_THREADS,CHUNK,REM,ST_INDX,END_INDX
 
       INTEGER ICELL,ICOUNT,IYEAR,MONTHD(12),MONTHL(12)
       INTEGER YEAR,NDAY,IM,MNDAY,PRESS
@@ -140,6 +140,10 @@ REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
 ! --- Number of days for each month during leap year
       DATA MONTHL/31,29,31,30,31,30,31,31,30,31,30,31/
       
+! --- For reading in the command line arguments 
+      CHARACTER(len=32),ALLOCATABLE:: ARGS(:) 
+      CHARACTER(len=32) ARCH,INPATH,OUTPATH
+      INTEGER (kind=4) iargc,INDX
 ! --- Write introductory information to screen
       
       WRITE(*,10)
@@ -157,46 +161,63 @@ REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
    20 FORMAT(A1)
     
 
-Print*, "Please chose LINUX or PC version model."
-Print*, "Input 1 for LINUX and 2 for PC"
+!Print*, "Please chose LINUX or PC version model."
+!Print*, "Input 1 for LINUX and 2 for PC"
   
-10001  READ(*,*) PRESS
-PRESS=1
+	ALLOCATE (ARGS(iargc()))
+	DO INDX=1,iargc()
+		CALL getarg(INDX, ARGS(INDX))
+	END DO
+	ARCH=ARGS(1)
+	INPATH=ARGS(2)
+	OUTPATH=ARGS(3)
+
+!10001  READ(*,*) PRESS
+!PRESS=1
+IF (ARCH == '1') THEN
+	PRESS=1
+ELSE IF (ARCH == '2') THEN
+	PRESS=2
+END IF
+WRITE(*,*) 'ARCH set to ',TRIM(ARCH)
+WRITE(*,*) 'INPUT files will be read from directory ',TRIM(INPATH)
+WRITE(*,*) 'OUTPUT files will be written in directory ',TRIM(OUTPATH)
 	 IF (PRESS == 1)  then 
-	 !!!!-----------Open files------------------   
+	 
+	!!!!-----------Open files------------------   
 	!!! This is for Linux  
 	!--Open Input files----------------------------------------------
 	 
-		  OPEN(1,FILE='../Inputs_01_12/GENERAL.TXT')
-		  OPEN(2,FILE='../Inputs_01_12/CELLINFO.TXT') 
-	!      OPEN(3,FILE='../Inputs_01_12/vegINFO.TXT')
-		  OPEN(4,FILE='../Inputs_01_12/CLIMATE.TXT')
+		  OPEN(1,FILE=TRIM(INPATH)//'/GENERAL.TXT')
+		  OPEN(2,FILE=TRIM(INPATH)//'/CELLINFO.TXT') 
+	!      OPEN(3,FILE=TRIM(INPATH)//'/vegINFO.TXT')
+		  OPEN(4,FILE=TRIM(INPATH)//'/CLIMATE.TXT')
 
-		  OPEN(7,FILE='../Inputs_01_12/SOILINFO.TXT')
-		  OPEN(8,FILE='../Inputs_01_12/LANDLAI.TXT')
+		  OPEN(7,FILE=TRIM(INPATH)//'/SOILINFO.TXT')
+		  OPEN(8,FILE=TRIM(INPATH)//'/LANDLAI.TXT')
 
-	!      OPEN(11,FILE='../Inputs_01_12/HUCAREA.TXT')
-	!      OPEN(22,FILE='../Inputs_01_12/V_FLOW.TXT')
+	!      OPEN(11,FILE=TRIM(INPATH)//'/HUCAREA.TXT')
+	!      OPEN(22,FILE=TRIM(INPATH)//'/V_FLOW.TXT')
 
 	! ---Open Output files---------------------------------------- 
 
-		  OPEN(77,FILE='../output/BASICOUT.TXT')
-		  OPEN(78,FILE='../output/MONTHFLOW.TXT')
-		  OPEN(79,FILE='../output/ANNUALFLOW.TXT')
-		  OPEN(80,FILE='../output/HUCFLOW.TXT')
-		  OPEN(99,FILE='../output/ceshi.TXT')
-		  OPEN(400,FILE='../output/MONTHCARBON.TXT')
-		  OPEN(500,FILE='../output/ANNUALCARBON.TXT')
-		  OPEN(600,FILE='../output/HUCCARBON.TXT')
-	!      OPEN(700,FILE='../output/ANNUALBIO.TXT')
-	!      OPEN(800,FILE='../output/HUCBIO.TXT')    
-		  OPEN(900,FILE='../output/SOILSTORAGE.TXT')
-	!      OPEN(910,FILE='../output/RUNOFFBYLANDUSE.TXT')
-	!      OPEN(920,FILE='../output/FLOWVOLBYLANDUSE.TXT')     
-	!      OPEN(1000,FILE='../output/RUNLAND.TXT')
+		  OPEN(77,FILE=TRIM(OUTPATH)//'/BASICOUT.TXT')
+		  OPEN(78,FILE=TRIM(OUTPATH)//'/MONTHFLOW.TXT')
+		  OPEN(79,FILE=TRIM(OUTPATH)//'/ANNUALFLOW.TXT')
+		  OPEN(80,FILE=TRIM(OUTPATH)//'/HUCFLOW.TXT')
+		  OPEN(99,FILE=TRIM(OUTPATH)//'/ceshi.TXT')
+		  OPEN(400,FILE=TRIM(OUTPATH)//'/MONTHCARBON.TXT')
+		  OPEN(500,FILE=TRIM(OUTPATH)//'/ANNUALCARBON.TXT')
+		  OPEN(600,FILE=TRIM(OUTPATH)//'/HUCCARBON.TXT')
+	!      OPEN(700,FILE=TRIM(OUTPATH)//'/ANNUALBIO.TXT')
+	!      OPEN(800,FILE=TRIM(OUTPATH)//'/HUCBIO.TXT')    
+		  OPEN(900,FILE=TRIM(OUTPATH)//'/SOILSTORAGE.TXT')
+	!      OPEN(910,FILE=TRIM(OUTPATH)//'/RUNOFFBYLANDUSE.TXT')
+	!      OPEN(920,FILE=TRIM(OUTPATH)//'/FLOWVOLBYLANDUSE.TXT')     
+	!      OPEN(1000,FILE=TRIM(OUTPATH)//'/RUNLAND.TXT')
 	! --- Open Output FILES (WARMUP.FOR)
-			OPEN(2002,FILE='../output/DATA_V_F.TXT') 
-		   OPEN(2003,FILE='../output/VALIDATION.TXT') 
+			OPEN(2002,FILE=TRIM(OUTPATH)//'/DATA_V_F.TXT') 
+		   OPEN(2003,FILE=TRIM(OUTPATH)//'/VALIDATION.TXT') 
 	 ELSEIF (PRESS == 2) then
 	 
 	 !!! This is for Windows
@@ -230,8 +251,8 @@ PRESS=1
 	 
 	 ELSE
 	   
-	   Print*,"Please input 1 for LINUX or 2 for Windows"
-	   goto 10001
+!	   Print*,"Please input 1 for LINUX or 2 for Windows"
+!	   goto 10001
 	 ENDIF  
  
    WRITE(*,30)
@@ -240,7 +261,7 @@ PRESS=1
 !  --------- Read input data -------------------------------
        
       CALL RPSDF       ! Set up column headings for each output files
-
+      
       CALL RPSINT      ! Read Landuse, elevation and Soil parameters
           
 !      CALL RPSWATERUSE  ! Read HUC area, elevation, and slope
@@ -289,8 +310,27 @@ PRESS=1
       ALLOCATE (RUNLAND(NGRID,NYEAR,12,31))
       ALLOCATE (ETLAND(NGRID,NYEAR,12,31))
       ALLOCATE (GEPLAND(NGRID,NYEAR,12,31))
-      
-	DO 200 ICELL=1, NGRID
+!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(ICELL,IYEAR,IM,TID,REM,CHUNK,ST_INDX,END_INDX)
+TID=OMP_GET_THREAD_NUM()
+!$OMP MASTER
+	NTHREADS=OMP_GET_NUM_THREADS()
+!$OMP END MASTER
+!$OMP BARRIER
+
+WRITE(*,*) TID,' NGRID',NGRID, 'NYEAR ',NYEAR
+REM=MOD(NGRID,NTHREADS)
+CHUNK=(NGRID-REM)/NTHREADS
+ST_INDX= 1+ (TID * CHUNK)
+END_INDX= (TID+1) * CHUNK
+
+IF (REM .GT. 0) THEN
+	IF (TID .EQ. NTHREADS-1) THEN
+		END_INDX=END_INDX+REM
+	END IF
+END IF
+WRITE(*,*) '[',TID,']','NTHD=',NTHREADS,'REM=',REM,' CHUNK=',CHUNK,' ST=',ST_INDX,' END=',END_INDX
+	      
+	DO 200 ICELL=ST_INDX,END_INDX
 
        
          ICOUNT=0 
@@ -326,19 +366,22 @@ PRESS=1
 
 !     CALCULATE R FACTOR AND OUTPUT TO ANNUALFLOW.TXT           
 
-            CALL OUTPUT(ICELL,IYEAR)  ! Output Annual water and carbon balances
-            
+!$OMP FLUSH
+!$OMP CRITICAL (FILE_IO)
+	CALL OUTPUT(ICELL,IYEAR)  ! Output Annual water and carbon balances
+!$OMP END CRITICAL (FILE_IO)
 300      CONTINUE
 
 !     CALCULATE AVERAGE WATER BALANCE COMPONENTS FROM IYSTART TO IYEND
 !     WRITE TO SUMMARRUNOFF.TXT   
                                  
-    
+!$OMP FLUSH
+!$OMP CRITICAL (FILE_IO)
        CALL SUMMARY(ICELL)
-           
+!$OMP END CRITICAL (FILE_IO)
 
 200   CONTINUE
-
+!$OMP END PARALLEL
 
 DEALLOCATE (RUNLAND,ETLAND,GEPLAND)
 	     
