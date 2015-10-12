@@ -1,0 +1,208 @@
+CrayPat/X:  Version 6.2.0 Revision 12825 (xf 12504)  05/29/14 13:44:54
+
+Number of PEs (MPI ranks):    1
+                           
+Numbers of PEs per Node:      1
+                           
+Numbers of Threads per PE:   16
+                           
+Number of Cores per Socket:  12
+
+Execution start time:  Mon Oct 12 12:25:01 2015
+
+System name and speed:  mom2 2601 MHz
+
+Current path to data file:
+  /group/director100/mshaikh/WaSSI/code/a.out+pat+36058-584t.ap2  (RTS)
+
+
+Notes for table 1:
+
+  Table option:
+    -O profile_th_pe
+  Options implied by table option:
+    -d ti%@0.95,ti,imb_ti,imb_ti%,tr -b gr,fu,th=HIDE
+
+  Options for related tables:
+    -O profile_pe.th           -O profile_pe_th       
+    -O profile+src             -O load_balance        
+    -O callers                 -O callers+src         
+    -O calltree                -O calltree+src        
+
+  The Total value for Time, Calls is the sum for the Group values.
+  The Group value for Time, Calls is the sum for the Function values.
+  The Function value for Time, Calls is the select0 for the Thread values.
+    (To specify different aggregations, see: pat_help report options s1)
+  This table shows only lines with Time% > 0.95.
+    (To set thresholds to zero, specify:  -T)
+
+  Imbalance percentages are relative to a set of threads or PEs.
+  Other percentages at each level are of the Total for the program.
+    (For percentages relative to next level up, specify:
+      -s percent=r[elative])
+  
+  The following groups were pruned due to thresholding:
+    OMP
+
+Table 1:  Profile by Function Group and Function
+
+  Time% |      Time |     Imb. |  Imb. |      Calls |Group
+        |           |     Time | Time% |            | Function
+        |           |          |       |            |  Thread=HIDE
+       
+ 100.0% | 35.095660 |       -- |    -- | 24904692.0 |Total
+|--------------------------------------------------------------------------
+|  98.8% | 34.689990 |       -- |    -- |   726177.0 |USER
+||-------------------------------------------------------------------------
+||  78.9% | 27.700940 |       -- |    -- |        1.0 |output_
+||   8.9% |  3.138867 |       -- |    -- |        1.0 |rpsclimate_
+||   5.8% |  2.024431 | 0.499520 | 24.4% |   235104.0 |waterbal_
+||   3.0% |  1.051420 |       -- |    -- |        1.0 |rpslai_
+||   1.2% |  0.415704 | 0.881534 | 57.8% |        1.0 |wassicbzb_.LOOP@li.320
+||=========================================================================
+|   1.2% |  0.405588 |       -- |    -- | 24178514.0 |ETC
+|==========================================================================
+
+Notes for table 2:
+
+  Options for this table:
+    -d ti%@0.95,ti,imb_ti,imb_ti%,tr -b gr,fu,pe.th=SHOW
+
+  The Total value for Time, Calls is the sum for the Group values.
+  The Group value for Time, Calls is the sum for the Function values.
+  The Function value for Time, Calls is the avg for the PE.Thread values.
+    (To specify different aggregations, see: pat_help report options s1)
+  This table shows only lines with Time% > 0.95.
+    (To set thresholds to zero, specify:  -T)
+
+  Imbalance percentages are relative to a set of threads or PEs.
+  Other percentages at each level are of the Total for the program.
+    (For percentages relative to next level up, specify:
+      -s percent=r[elative])
+  
+  The following groups were pruned due to thresholding:
+    OMP
+
+Table 2:  
+
+  Time% |      Time |     Imb. |  Imb. |      Calls |Group
+        |           |     Time | Time% |            | Function
+        |           |          |       |            |  PE.Thread=SHOW
+       
+ 100.0% | 35.078130 |       -- |    -- | 24904411.8 |Total
+|--------------------------------------------------------------------------
+|  98.8% | 34.663856 |       -- |    -- |   725889.8 |USER
+||-------------------------------------------------------------------------
+||  79.0% | 27.700940 |       -- |    -- |        1.0 |output_
+3|        |           |          |       |            | thread.0
+||   8.9% |  3.138867 |       -- |    -- |        1.0 |rpsclimate_
+3|        |           |          |       |            | thread.0
+||   4.8% |  1.682865 | 0.499520 | 24.4% |   235011.0 |waterbal_
+|||------------------------------------------------------------------------
+3||   6.2% |  2.182385 |       -- |    -- |   235104.0 |thread.11
+3||   5.8% |  2.024431 |       -- |    -- |   235104.0 |thread.0
+3||   5.7% |  2.009777 |       -- |    -- |   235104.0 |thread.10
+3||   5.6% |  1.965878 |       -- |    -- |   235104.0 |thread.8
+3||   5.6% |  1.962100 |       -- |    -- |   235104.0 |thread.9
+3||   5.6% |  1.953093 |       -- |    -- |   235104.0 |thread.2
+3||   5.6% |  1.950478 |       -- |    -- |   235104.0 |thread.3
+3||   5.5% |  1.946446 |       -- |    -- |   235104.0 |thread.1
+3||   5.5% |  1.924726 |       -- |    -- |   235104.0 |thread.7
+3||   5.5% |  1.916702 |       -- |    -- |   235104.0 |thread.5
+3||   5.4% |  1.911094 |       -- |    -- |   235104.0 |thread.6
+3||   5.4% |  1.898267 |       -- |    -- |   235104.0 |thread.4
+3||   2.4% |  0.826433 |       -- |    -- |   233616.0 |thread.15
+3||   2.3% |  0.821771 |       -- |    -- |   235104.0 |thread.12
+3||   2.3% |  0.818466 |       -- |    -- |   235104.0 |thread.13
+3||   2.3% |  0.813793 |       -- |    -- |   235104.0 |thread.14
+|||========================================================================
+||   3.0% |  1.051420 |       -- |    -- |        1.0 |rpslai_
+3|        |           |          |       |            | thread.0
+||   2.1% |  0.746218 | 0.881534 | 57.8% |        1.0 |wassicbzb_.LOOP@li.320
+|||------------------------------------------------------------------------
+3||   4.6% |  1.627752 |       -- |    -- |        1.0 |thread.14
+3||   4.6% |  1.623835 |       -- |    -- |        1.0 |thread.13
+3||   4.6% |  1.619930 |       -- |    -- |        1.0 |thread.12
+3||   4.6% |  1.617850 |       -- |    -- |        1.0 |thread.15
+3||   1.5% |  0.527173 |       -- |    -- |        1.0 |thread.4
+3||   1.5% |  0.514782 |       -- |    -- |        1.0 |thread.6
+3||   1.4% |  0.508614 |       -- |    -- |        1.0 |thread.5
+3||   1.4% |  0.501607 |       -- |    -- |        1.0 |thread.7
+3||   1.3% |  0.473371 |       -- |    -- |        1.0 |thread.1
+3||   1.3% |  0.471979 |       -- |    -- |        1.0 |thread.3
+3||   1.3% |  0.468716 |       -- |    -- |        1.0 |thread.2
+3||   1.3% |  0.461064 |       -- |    -- |        1.0 |thread.9
+3||   1.3% |  0.456164 |       -- |    -- |        1.0 |thread.8
+3||   1.2% |  0.415704 |       -- |    -- |        1.0 |thread.0
+3||   1.2% |  0.412374 |       -- |    -- |        1.0 |thread.10
+3||   0.7% |  0.238572 |       -- |    -- |        1.0 |thread.11
+||=========================================================================
+|   1.2% |  0.414192 |       -- |    -- | 24178521.0 |ETC
+|==========================================================================
+
+========================  Additional details  ========================
+
+Experiment:  trace
+
+Original path to data file:
+  /group/director100/mshaikh/WaSSI/code/a.out+pat+36058-584t.xf  (RTS)
+
+Original program:  /group/director100/mshaikh/WaSSI/code/a.out
+
+Instrumented with:  pat_build -g omp -u a.out 
+
+Instrumented program:  ./a.out+pat
+
+Program invocation:  ./a.out+pat 1 ../Inputs_50KM ../rthd_16 
+
+Exit Status:  0 for 1 PE
+
+Intel haswell CPU  Family:  6  Model: 63  Stepping:  2
+
+Memory pagesize:  4 KiB
+
+Memory hugepagesize:  0 B
+
+Programming environment:  CRAY
+
+Runtime environment variables:
+  ATP_HOME=/opt/cray/atp/1.7.3
+  ATP_MRNET_COMM_PATH=/opt/cray/atp/1.7.3/bin/atp_mrnet_commnode_wrapper
+  ATP_POST_LINK_OPTS=-Wl,-L/opt/cray/atp/1.7.3/lib/ 
+  CRAYOS_VERSION=5.2.25
+  CRAYPE_VERSION=2.1.2
+  CRAY_BINUTILS_VERSION=/opt/cray/cce/8.3.0
+  CRAY_CC_VERSION=8.3.0
+  CRAY_CUDATOOLKIT_VERSION=5.5.22-1.0502.7944.3.1
+  CRAY_FTN_VERSION=8.3.0
+  CRAY_LIBSCI_VERSION=13.0.0
+  DVS_VERSION=0.9.0
+  LIBSCI_VERSION=13.0.0
+  MODULE_VERSION=3.2.6.7
+  MODULE_VERSION_STACK=3.2.6.7
+  MPICH_ABORT_ON_ERROR=1
+  MPICH_DIR=/opt/cray/mpt/7.0.0/gni/mpich2-cray/83
+  MPIRUN_SYSTEM_OPTIONS=-e MPI_FLAGS=y0,%MPI_FLAGS -e MPI_NO_MALLOCLIB=yes -e MPI_USE_MALLOPT_SBRK_PROTECTION=yes -e MPI_USE_MALLOPT_AVOID_MMAP=yes
+  OMP_NUM_THREADS=16
+  PATH=/ivec/cle52/magnus/tools/ibs/1.6.1/bin:/opt/cray/ddt/4.2.1.4_37994/bin:/opt/slurm/munge/bin:/opt/slurm/14.11.8-pawsey-3/bin:/opt/cray/atp/1.7.3/bin:/opt/cray/rca/1.0.0-2.0502.53711.3.127.ari/bin:/opt/cray/pmi/5.0.4-1.0000.10161.132.4.ari/bin:/opt/cray/cce/8.3.0/cray-binutils/x86_64-unknown-linux-gnu/bin:/opt/cray/cce/8.3.0/craylibs/x86-64/bin:/opt/cray/cce/8.3.0/cftn/bin:/opt/cray/cce/8.3.0/CC/bin:/opt/cray/craype/2.1.2/bin:/opt/cray/dvs/2.5_0.9.0-1.0502.2047.1.231.ari/bin:/opt/cray/iscsitarget/1.4.20-1.0502.1777.3.5.ari/sbin:/opt/cray/swap/1.0-1.0502.54589.5.1.ari/sbin:/opt/cray/keystone-cle-config/1.0-1.0502.102.2.1.ari/bin:/opt/cray/micmcad/1.0-1.0502.53301.1.21.ari/sbin:/opt/cray/intel-KNC-host-mpss/3.2.3-1.0502.55514.1.3.ari/bin:/opt/cray/mpss-coi/3.2.3-1.0502.55513.1.3.ari/bin:/opt/cray/libscif/3.2.3-1.0502.55512.1.3.ari/bin:/opt/cray/ccm/default/sbin:/opt/cray/ccm/default/bin:@sbindir@:@bindir@:/opt/cray/apptermd/1.0-1.0502.8805.1.145.ari/sbin:/opt/cray/aeld/1.0-1.0502.8809.1.243.ari/sbin:/opt/cray/ncmd/1.0-1.0502.8803.1.17.ari/sbin:/opt/cray/ncmd/1.0-1.0502.8803.1.17.ari/bin:/opt/cray/nodehealth-xeon-phi/1.0-1.0502.53388.1.30.ari/bin:/opt/cray/wlm_detect/1.0-1.0502.53341.1.1.ari/sbin:/opt/cray/wlm_detect/1.0-1.0502.53341.1.1.ari/bin:/opt/cray/wlm_trans/1.0-1.0502.55978.2.29.ari/sbin:/opt/cray/wlm_trans/1.0-1.0502.55978.2.29.ari/bin:/opt/cray/rur/1.0-1.0502.56504.10.1.ari/bin:/opt/nvidia/cudatoolkit/5.5.22-1.0502.7944.3.1/bin:/opt/nvidia/cudatoolkit/5.5.22-1.0502.7944.3.1/libnvvp:/opt/cray/batchlimit/1.0-1.0502.54065.2.92.ari/bin:/opt/cray/ibverbs/1.1.2-1.0502.9273.1.144.ari/bin:/opt/cray/dumpd/1.1-1.0502.56123.2.27.ari/bin:/opt/cray/msgsupport/1.0-1.0502.53319.1.15.ari/sbin:/opt/cray/msgsupport/1.0-1.0502.53319.1.15.ari/bin:/opt/cray/lustre-utils/2.3-1.0502.16851.5.107.ari/bin:/opt/cray/rsipd/0.9.5.12-1.0502.56140.1.19.ari/sbin:/opt/cray/rsipd/0.9.5.12-1.0502.56140.1.19.ari/bin:/opt/cray/lbcd/2.1-1.0502.53290.1.15.ari/bin:/opt/cray/init-service/1.0-1.0502.53353.1.140.ari/bin:/opt/cray/boot/1.0-1.0502.54775.3.71.ari/bin:/opt/cray/pdsh/2.26-1.0502.53339.1.1.ari/bin:/opt/cray/switch/1.0-1.0502.54233.2.96.ari/bin:/opt/cray/hosts/1.0-1.0502.53297.1.142.ari/bin:/opt/cray/configuration/1.0-1.0502.53348.1.16.ari/bin:/opt/cray/nodehealth/5.1-1.0502.56494.9.2.ari/bin:/opt/cray/shared-root/1.0-1.0502.53337.1.119.ari/bin:/opt/cray/fcheck/2.2-1.0502.53347.1.1.ari/bin:/opt/cray/csa/3.0.0-1_2.0502.53324.1.143.ari/sbin:/opt/cray/csa/3.0.0-1_2.0502.53324.1.143.ari/bin:/opt/cray/account/1.0.0-2.0502.53283.1.115.ari/bin:/opt/cray/projdb/1.0.0-1.0502.53351.1.105.ari/bin:/opt/cray/sysadm/1.0-1.0502.56491.3.2.ari/bin:/opt/cray/job/1.5.5-0.1_2.0502.54585.3.66.ari/bin:/opt/cray/flexlm/11.6.1-1.0502.8775.10.1.ari/bin:/opt/cray/llm/default/bin:/opt/cray/llm/default/etc:/opt/cray/xpmem/0.1-2.0502.55507.3.2.ari/bin:/opt/cray/dmapp/7.0.1-1.0502.9501.5.219.ari/bin:/opt/cray/ugni/5.0-1.0502.9685.4.24.ari/bin:/opt/cray/udreg/2.3.2-1.0502.9275.1.12.ari/bin:/opt/cray/lustre-cray_ari_s/2.5_3.0.101_0.31.1_1.0502.8394.10.1-1.0502.17198.8.51/sbin:/opt/cray/lustre-cray_ari_s/2.5_3.0.101_0.31.1_1.0502.8394.10.1-1.0502.17198.8.51/bin:/opt/cray/alps/5.2.1-2.0502.9072.13.1.ari/sbin:/opt/cray/alps/5.2.1-2.0502.9072.13.1.ari/bin:/opt/cray/sdb/1.0-1.0502.55976.5.27.ari/bin:/opt/cray/nodestat/2.2-1.0502.53712.3.109.ari/bin:/opt/modules/3.2.6.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/X11R6/bin:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin:.:/usr/lib/qt3/bin:/opt/cray/bin
+  XTOS_VERSION=5.2.25
+
+Report time environment variables:
+    CRAYPAT_ROOT=/opt/cray/perftools/6.2.0
+    PAT_REPORT_PRUNE_NAME=_cray$mt_start_,__cray_hwpc_,f_cray_hwpc_,cstart,__pat_,pat_region_,PAT_,OMP.slave_loop,slave_entry,_new_slave_entry,__libc_start_main,_start,__start,start_thread,__wrap_,UPC_ADIO_,_upc_,upc_,__caf_,__pgas_,syscall
+
+Report command line options:
+  -O profile_th_pe -d ti%@0.95,ti,imb_ti,imb_ti%,tr -b gr,fu,pe.th=SHOW
+
+Operating system:
+  Linux 3.0.101-0.31.1_1.0502.8394-cray_ari_c #1 SMP Wed Sep 10 04:09:26 UTC 2014
+
+Estimated minimum overhead per call of a traced function,
+  which was subtracted from the data shown in this report
+  (for raw data, use the option:  -s overhead=include):
+    Time  0.107  microsecs
+
+Number of traced functions:  37
+
+  (To see the list, specify:  -s traced_functions=show)
+
