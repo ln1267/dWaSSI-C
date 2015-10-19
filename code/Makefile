@@ -5,13 +5,13 @@ PRGENV= ${PE_ENV}
 
 ifeq ($(PRGENV),INTEL)
 	OMPFLAG=-openmp
-	DEBUG=-g
+	DEBUG=-g -dynamic -mcmodel=medium
 else ifeq ($(PRGENV),GNU)
 	OMPFLAG=-fopenmp
-	DEBUG=-g
+	DEBUG=-g -dynamic -mcmodel=medium 
 else ifeq ($(PRGENV),CRAY)
-	OMPFLAG=-homp
-	DEBUG=-G2
+	OMPFLAG=
+	DEBUG=-G2 -dynamic -hpic
 #	CRAY_REVEAL="-h profile_generate"
 	
 endif 
