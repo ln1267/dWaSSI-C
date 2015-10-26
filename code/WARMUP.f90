@@ -179,7 +179,7 @@
              
       DO 10 I=1, NGRID
 
-      READ(2,*) ID, HUCNO(I), LATUDE(I), LONGI(I),LADUSE(I)!,HUCELE(I)
+      READ(2,*) ID, HUCNO(I), LATUDE(I), LONGI(I),LADUSE(I),HUCELE(I)
       
              
 !      WRITE(77,1100) ID, HUCNO(I),LATUDE(I), LONGI(I), 
