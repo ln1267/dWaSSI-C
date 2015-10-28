@@ -6,7 +6,7 @@
       
       SUBROUTINE ARRAY_DEALLO
 	  
-		Module common_var
+		USE common_var
 		IMPLICIT NONE
 	  
 ! VALID This is used for model valiadation

@@ -6,7 +6,7 @@
       
       SUBROUTINE ARRAY_ALLO
 	  
-		Module common_var
+		USE common_var
 		IMPLICIT NONE
 	  
 ! VALID This is used for model valiadation
