@@ -629,7 +629,7 @@
       
       INTEGER I, J, M,Mon
 
-      INTEGER Y_2001 ,Y_LAI_END ,Y_2012,Y_LAI_START     
+      INTEGER Y_2000 ,Y_LAI_END ,Y_2014,Y_LAI_START     
      
       CHARACTER*100 TEMPHEAD3 (11)
             
@@ -638,19 +638,19 @@
 !   Set default LAI for the year without LAI input-----
 
 
-      IF (BYEAR .LT. 2001 ) then
-           Y_LAI_START=2001-BYEAR+1
+      IF (BYEAR .LT. 2000 ) then
+           Y_LAI_START=2000-BYEAR+1
         ELSE
          Y_LAI_START=1
        ENDIF
-      If (IYEND .GT. 2012) then 
-        Y_LAI_END=2012-BYEAR+1
+      If (IYEND .GT. 2014) then 
+        Y_LAI_END=2014-BYEAR+1
        Else
         Y_LAI_END=IYEND-BYEAR+1
       Endif
 
-      Y_2001=2001-BYEAR+1
-      Y_2012=2012-BYEAR+1
+      Y_2000=2000-BYEAR+1
+      Y_2014=2014-BYEAR+1
 
 ! --- READ IN LAI DATA FROM LANDLAI.TXT
 
@@ -685,16 +685,16 @@
 
 201   CONTINUE
 
-! --- ASSIGN YEAR 2001 LAI DATA TO YEARS BEFORE 2001
-! -----将2001年的数据赋给以前的年份
-        IF  ( BYEAR .LT. 2001)  then
+! --- ASSIGN YEAR 2000 LAI DATA TO YEARS BEFORE 2000
+! -----将2000年的数据赋给以前的年份
+        IF  ( BYEAR .LT. 2000)  then
           DO 202 I=1, NGRID
                 
-             DO 302 J=1, Y_2001-1
+             DO 302 J=1, Y_2000-1
 
                 DO 402 M=1, 12
 
-                LAI(I,J,M) = LAI(I,Y_2001,M)
+                LAI(I,J,M) = LAI(I,Y_2000,M)
                       
      
 402             CONTINUE 
@@ -705,16 +705,16 @@
 !
         ENDIF
 !          
-!C--- ASSIGN YEAR 2012 LAI DATA TO YEARS AFTER 2012
-!C--- 将2012年的数据赋给以后的年份
-      IF (IYEND .GT. 2012) then
+!C--- ASSIGN YEAR 2014 LAI DATA TO YEARS AFTER 2014
+!C--- 将2014年的数据赋给以后的年份
+      IF (IYEND .GT. 2014) then
           DO 203 I=1, NGRID
                 
-             DO 303 J=Y_2012+1, NYEAR
+             DO 303 J=Y_2014+1, NYEAR
 
                 DO 403 M=1, 12
 
-                LAI(I,J,M) = LAI(I,Y_2012,M)
+                LAI(I,J,M) = LAI(I,Y_2014,M)
        
 
 403             CONTINUE 
@@ -749,7 +749,7 @@
            
  !     DO 105 I=1, NGRID   ! start and end year of land cover data
         
-!        DO 106 J=Y_2001,Y_2012
+!        DO 106 J=Y_2000,Y_2014
 
 !      READ(3,*) HUCNO(I),YEAR,veg(I,J)  
              
@@ -815,7 +815,8 @@
                
               
                READ(4,*) HUCNO(I), YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
-            
+		RAIN(I,J,M)=RAIN(I,J,M)*10
+		TEMP(I,J,M)=TEMP(I,J,M)*10 
                 
 !1015        FORMAT(3I10, 2F10.2) 
                        
