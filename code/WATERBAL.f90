@@ -9,7 +9,7 @@
 !     IF MODEL in dynamic land cover then LADUSE(I) -----> VEG(I,J) total:38   C
 !**********************************************************************C
       
-      SUBROUTINE WATERBAL(I,J,M,MNDAY,RUNLAND,ETLAND,GEPLAND)
+      SUBROUTINE WATERBAL(I,J,M,MNDAY)!,RUNLAND,ETLAND,GEPLAND)
         Use Common_var
         implicit none       
 ! ----------------------------------------------------------------------------     
@@ -48,9 +48,9 @@
            
       INTEGER GEPFLAG
       
-	REAL :: RUNLAND(NGRID,NYEAR,12,31)
-	REAL :: ETLAND(NGRID,NYEAR,12,31)
-	REAL :: GEPLAND(NGRID,NYEAR,12,31) 
+!	REAL :: RUNLAND(NGRID,NYEAR,12,31)
+!	REAL :: ETLAND(NGRID,NYEAR,12,31)
+!	REAL :: GEPLAND(NGRID,NYEAR,12,31) 
            
 ! *****************************************************************************************************
 
