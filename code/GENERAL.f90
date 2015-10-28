@@ -115,7 +115,8 @@
       COMMON/R/ RFACTOR(MAX_GRIDS,MAX_YEARS),ETRATIO(MAX_GRIDS,MAX_YEARS),&
 	  ARUNRT(MAX_GRIDS,MAX_YEARS), AETRT(MAX_GRIDS,MAX_YEARS)
 	  
-	 	  
+	  REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
+	  
       end
 
 
@@ -127,9 +128,8 @@
        use common_var
 
       implicit none 
-    
-           
-REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
+          
+
 !OpenMP variables
 	INTEGER TID,NTHREADS,OMP_GET_THREAD_NUM,OMP_GET_NUM_THREADS,CHUNK,REM,ST_INDX,END_INDX
 
@@ -147,7 +147,7 @@ REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
       
 ! --- For reading in the command line arguments 
       CHARACTER(len=32),ALLOCATABLE:: ARGS(:) 
-      CHARACTER(len=32) ARCH,INPATH,OUTPATH
+      CHARACTER(len=52) ARCH,INPATH,OUTPATH
       INTEGER (kind=4) iargc,INDX
 ! --- Write introductory information to screen
       
@@ -177,16 +177,18 @@ REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
 	INPATH=ARGS(2)
 	OUTPATH=ARGS(3)
 
-!10001  READ(*,*) PRESS
-!PRESS=1
-IF (ARCH == '1') THEN
-	PRESS=1
-ELSE IF (ARCH == '2') THEN
-	PRESS=2
-END IF
-WRITE(*,*) 'ARCH set to ',TRIM(ARCH)
-WRITE(*,*) 'INPUT files will be read from directory ',TRIM(INPATH)
-WRITE(*,*) 'OUTPUT files will be written in directory ',TRIM(OUTPATH)
+	!10001  READ(*,*) PRESS
+	!PRESS=1
+	IF (ARCH == '1') THEN
+		PRESS=1
+	ELSE IF (ARCH == '2') THEN
+		PRESS=2
+	END IF
+	
+	WRITE(*,*) 'ARCH set to ',TRIM(ARCH)
+	WRITE(*,*) 'INPUT files will be read from directory ',TRIM(INPATH)
+	WRITE(*,*) 'OUTPUT files will be written in directory ',TRIM(OUTPATH)
+	
 	 IF (PRESS == 1)  then 
 	 
 	!!!!-----------Open files------------------   
