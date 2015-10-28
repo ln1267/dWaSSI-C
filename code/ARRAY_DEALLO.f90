@@ -1,0 +1,73 @@
+!**********************************************************************C
+!                                                                      C
+!     *** SUBROUTINE ARRAY_DEALLOCATION ***                                      C
+
+!**********************************************************************C
+      
+      SUBROUTINE ARRAY_DEALLO
+	  
+		Module common_var
+		IMPLICIT NONE
+	  
+! VALID This is used for model valiadation
+		DEALLOCATE (GEP_V, ET_V,GPP_V,NPP_V,RUNOFF_V,RUN_OFF )
+      
+
+! CELLINFO
+		DEALLOCATE (HUCNO )
+		DEALLOCATE (LADUSE,LATUDE,LONGI,HUCELE )
+
+! VEGINFO
+		DEALLOCATE (VEG )
+
+! OUTPUT1
+		DEALLOCATE (PET,PAET,AET,RUNOFF ,BASEFLOW, PRIBF ,SECBF , TRUNOFF,&
+		INTF, RUN_HRU,BASE_HRU )  
+
+
+! Monthly RUNOFF
+		DEALLOCATE (RUNOFF_MON,BASEFLOW_MON )
+      
+! CLIMATE
+		DEALLOCATE (RAIN, TEMP, AAPPT )
+      
+! LAI    
+		DEALLOCATE (LAI )
+
+! SNOWPACK
+		DEALLOCATE (NSPM )
+		DEALLOCATE (SP )
+
+! SUMMARY1
+		DEALLOCATE (NUM_Year )
+		DEALLOCATE (ANURAIN,ANURUN,ANUPET,ANUAET,ANUPAET,&
+		RAINALL, AETALL, PETALL, RUNALL, RUNRATIO,&
+		ETRATIO_GRD,TRATIO,RALL )
+
+! SOIL parameters input
+		DEALLOCATE (LZTWM, LZFPM, LZFSM, LZSK,LZPK, UZTWM, & 
+		UZFWM,UZK, ZPERC,REXP, PFREE)
+
+! Soil Mositure (AV-average,EM-end of month)
+		DEALLOCATE (AVSMC,AVUZTWC, AVUZFWC, &
+		AVLZTWC, AVLZFPC,AVLZFSC, &
+		EMSMC,EMUZTWC,EMUZFWC,&
+		EMLZTWC, EMLZFPC,EMLZFSC )
+	   
+! FLOW      
+		DEALLOCATE (STRFLOW,STRET,STRGEP )
+
+! CARBON
+		DEALLOCATE (NUM_YEAR_C )
+		DEALLOCATE (GEPM,RECOM,NEEM,GEPA,NEEA,AHUCGEP, AHUCNEE,AHUCRE )
+      
+! HUCPETAET
+		DEALLOCATE (HUCAET, HUCPET,HUCPAET )
+  
+! R	  
+		DEALLOCATE (RFACTOR,ETRATIO,ARUNRT, AETRT )
+!RUNLAND 
+		DEALLOCATE (RUNLAND,ETLAND,GEPLAND)
+		
+      RETURN
+      END
