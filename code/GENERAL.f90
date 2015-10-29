@@ -22,8 +22,8 @@ Module common_var
       COMMON/VAL/VAL_1(100), VAL_2(100), VAL_3,VAL_4,VAL_5,VAL_6
 
 ! VALID This is used for model valiadation	  
-	  REAL BASEFLOW_V,FLOW_V,FLOW
-		 COMMON/VALID2/BASEFLOW_V(MAX_YEARS,12), FLOW_V(MAX_YEARS,12),FLOW(MAX_YEARS,12)
+	!  REAL BASEFLOW_V,FLOW_V,FLOW
+		 REAL,POINTER:: BASEFLOW_V(:,:), FLOW_V(:,:),FLOW(:,:)
 		 
 		 
 ! VALID This is used for model valiadation
@@ -149,7 +149,7 @@ Module common_var
       DATA MONTHL/31,29,31,30,31,30,31,31,30,31,30,31/
       
 ! --- For reading in the command line arguments 
-      CHARACTER(len=32),ALLOCATABLE:: ARGS(:) 
+      CHARACTER(len=52),ALLOCATABLE:: ARGS(:) 
       CHARACTER(len=52) ARCH,INPATH,OUTPATH
       INTEGER (kind=4) iargc,INDX
 ! --- Write introductory information to screen
@@ -269,14 +269,16 @@ Module common_var
    30 FORMAT('       *** PROGRAM IS RUNNING, PLEASE WAIT ***')
 ! ---------Array define
 
-	CALL ARRAY_ALLO  ! allocate all the global pointer arraies 
+ 
 
 
 !  --------- Read input data -------------------------------
        
       CALL RPSDF       ! Set up column headings for each output files
+	  
+	CALL ARRAY_ALLO  ! allocate all the global pointer arraies      
       
-      CALL RPSINT      ! Read Landuse, elevation and Soil parameters
+	  CALL RPSINT      ! Read Landuse, elevation and Soil parameters
           
 !      CALL RPSWATERUSE  ! Read HUC area, elevation, and slope
       
@@ -350,7 +352,7 @@ Module common_var
                
                                              
                CALL WARMPET(ICELL, IYEAR, IM, MNDAY)  ! Caculate MONTHLY PET AND POTENTIAL AET 
-               CALL WATERBAL(ICELL, IYEAR, IM, MNDAY,RUNLAND,ETLAND,GEPLAND) ! Caculate MONTHLY GPP and ET
+               CALL WATERBAL(ICELL, IYEAR, IM, MNDAY) !,RUNLAND,ETLAND,GEPLAND) ! Caculate MONTHLY GPP and ET
                
 
 400         CONTINUE ! END LOOP MONTH
