@@ -500,7 +500,9 @@
       
 5004     FORMAT(I10,F10.2)
 
-				
+!	Print *,"I=",I
+!	WRITE(*,*) HUCNO(I), AAPPT(I)
+
 5000  CONTINUE
 		
 	DEALLOCATE (ANNPPT, SUMANPPT)

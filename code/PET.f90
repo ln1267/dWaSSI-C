@@ -93,7 +93,7 @@
 
 !       WRITE(*, 5050) HUCNO(I),J,M, PET(I,J,M), PAET(I,J,M) 
 !      
-!5050  FORMAT (3I10, 2F10.5)
+5050  FORMAT (3I10, 2F10.5)
 
                               
 ! --- Return
@@ -108,9 +108,9 @@
 !     equation                                                         C
 !                                                                      C
 !**********************************************************************C
-      SUBROUTINE HAMON(TEMP,MONTH,J,DEGLAT,PE)
+      SUBROUTINE HAMON(DTEMP,MONTH,J,DEGLAT,PE)
        
-      REAL PE, TEMP, DEGLAT
+      REAL PE, DTEMP, DEGLAT
       
       REAL SOLDEC, SSANG, DAY
       
@@ -120,11 +120,11 @@
       
       PI = 3.14159265
 
-! --- ESAT = saturated vapor pressure at TEMP
-! --- RHOSAT = saturated vapor density at TEMP
+! --- ESAT = saturated vapor pressure at DTEMP
+! --- RHOSAT = saturated vapor density at DTEMP
       
-      ESAT = 6.108*EXP(17.2693882*TEMP/(TEMP+237.3))
-      RHOSAT = 216.7*ESAT/(TEMP+273.3)
+      ESAT = 6.108*EXP(17.2693882*DTEMP/(DTEMP+237.3))
+      RHOSAT = 216.7*ESAT/(DTEMP+273.3)
       
 ! --- CALCULATE MEAN MONTHLY DAY LENGTH (DAY) BASED ON LATITUDE AND MID-MONTH JULIAN DATE
 ! --- SHUTTLEWORTH, W.J. 1993. Evaporation, in Handbook of Hydrology, 
@@ -147,7 +147,7 @@
      
       PE = 0.1651*DAY*RHOSAT*1.2
       
-!      print *, 'PET', MONTH, J, TEMP, PE, K
+!      print *, 'PET', MONTH, J, DTEMP, PE, K
           
       RETURN
 

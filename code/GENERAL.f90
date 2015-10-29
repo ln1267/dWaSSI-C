@@ -292,7 +292,8 @@ Module common_var
     !  CALL  RPSVALID   ! Read Runoff validation data
 
       print*,"finish read Climate data"
-	  
+	 
+	Print *,"Size RUNLAND=",size(RUNLAND,1),size(RUNLAND,2),size(RUNLAND,3) 
 !----------------------Calibration part------------------------------------      
 
 ! --- START SIMULATION LOOPS
@@ -319,7 +320,6 @@ Module common_var
 !550   FORMAT (30A8)
 !  
 !      WRITE (77,550) DUMY
-!          
 !----------------------Modelling for each Cell and year start------------------------------------  
 
 !      ALLOCATE (RUNLAND(NGRID,NYEAR,12,31))
@@ -405,6 +405,7 @@ Module common_var
                        
             CALL VALIDATION    
            
+	Print *, "Here is ok!" 
          WRITE(*,75)
 75         FORMAT('  CALCULATING FLOW BY LANDCOVER'/)
 
