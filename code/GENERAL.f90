@@ -280,8 +280,7 @@ Module common_var
       
 	  CALL RPSINT      ! Read Landuse, elevation and Soil parameters
           
-!      CALL RPSWATERUSE  ! Read HUC area, elevation, and slope
-      
+     
       print*,"finish read Land cover  data"
 	  
       CALL RPSLAI     ! Read LAI data
