@@ -8,7 +8,7 @@
 	  
 		USE common_var
 		IMPLICIT NONE
-	  
+		DEALLOCATE(BASEFLOW_V,FLOW_V,FLOW)	  
 ! VALID This is used for model valiadation
 		DEALLOCATE (GEP_V, ET_V,GPP_V,NPP_V,RUNOFF_V,RUN_OFF )
       
