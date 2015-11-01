@@ -64,8 +64,7 @@
 				WRITE (400, 2000) HUCNO(I), IDY, IM, GEPM(I,J, IM), &
                 RECOM(I,J,IM), NEEM(I,J,IM)         
      
-2000          	FORMAT (I10, ',',I6, ',', I6, ',', F10.2, ',',  &
-				F10.2,',',F10.2)
+2000          	FORMAT (I10, ',',I6, ',', I6, ',', F10.2, ',',  F10.2,',',F10.2)
 				
 							
 			END DO ! END LOOP MONTH
@@ -82,7 +81,7 @@
 			 AETRT(I,J),ETRATIO(I,J), NSPM(I,J), RFACTOR (I,J)
 
 2100        	FORMAT(I10, ',', I10, ',',F10.1, ',', F8.1, ',', F8.1,',' F8.1, &
-				',',F8.1, ',', F8.2, ',',F8.2,',',F8.2,',', I8, ',', F8.1)			
+		& ',',F8.1, ',', F8.2, ',',F8.2,',',F8.2,',', I8, ',', F8.1)			
 		
 		ENDIF 
 				
@@ -94,8 +93,7 @@
          RUNRATIO(I), ETRATIO_GRD(I), TRATIO(I), NUM_year(I)
 		
 250 	FORMAT (I10, ',', F10.1, ',', F10.1,',',  &
-		F10.1, ',', F10.1,',', F8.3, ',', F8.3,',', F8.3,&
-		',', I3)    	 
+		& F10.1, ',', F10.1,',', F8.3, ',', F8.3,',', F8.3,',', I3)    	 
 	!HUCCARBON.TXT
 		WRITE (600, 4000) HUCNO(I),NUM_YEAR_C(I), AHUCGEP(I), AHUCRE(I), AHUCNEE(I)
                                               
