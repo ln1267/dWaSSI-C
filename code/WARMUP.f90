@@ -159,7 +159,8 @@
 
       REAL CROP
 
-      INteger year, I , J,ID
+      INteger(kind=2) year,J
+	INTEGER(kind=4) I , ID
 
 
       CHARACTER*1000 DUMY(30)
@@ -167,20 +168,20 @@
 ! --- Read and print land use data for each active cell IN THE BASIC.OUT FILE
       WRITE(77,2000)
 2000  FORMAT(/'LANDUSE INFO FOR EACH SIMULATION CELL'/)
-      READ (2,500) DUMY
+!      READ (2,500) DUMY
 500   FORMAT (1000A30)
       
 
 ! ----LANC = raw Landcover types    
       
-      WRITE (77,500) DUMY
+!      WRITE (77,500) DUMY
              
       DO 10 I=1, NGRID
 
-      READ(2,*) ID, HUCNO(I), LATUDE(I), LONGI(I),LADUSE(I)!,HUCELE(I)
+      READ(2,REC=I) ID, HUCNO(I), LATUDE(I), LONGI(I),LADUSE(I),HUCELE(I)
       
              
-!      WRITE(77,1100) ID, HUCNO(I),LATUDE(I), LONGI(I), 
+!      WRITE(*,1100) ID, HUCNO(I),LATUDE(I), LONGI(I) 
 !     > (LADUSE(I,K),K=1, NLC)
 
 1100  FORMAT(2I10, 2F10.4, I4)    
@@ -192,15 +193,15 @@
 !
       WRITE(77,2051)
 2051  FORMAT(/'SOIL PARAMETERS FOR EACH SIMULATION CELL'/)
-      READ (7,550) DUMY
+!      READ (7,550) DUMY
 550   FORMAT (30A8)
       
       
-      WRITE (77,550) DUMY
+!      WRITE (77,550) DUMY
           
       DO 15 I=1, NGRID
 
-      READ(7,*) ID, HUCNO(I), UZTWM(I), UZFWM(I), UZK(I), ZPERC(I),&
+      READ(7,REC=I) ID, HUCNO(I), UZTWM(I), UZFWM(I), UZK(I), ZPERC(I),&
      REXP(I), LZTWM(I), LZFSM(I), LZFPM(I), LZSK(I),&
      LZPK(I), PFREE(I)
             
@@ -287,12 +288,11 @@
       
       USE Common_var
       implicit none             
-      INTEGER YEAR
-      
-      
-      INTEGER I, J, M,Mon
+      INTEGER(kind=4) I       
+ 	INTEGER(kind=8) NUM_DATA     
+      INTEGER(kind=2) YEAR, J, M,Mon
 
-      INTEGER Y_2001 ,Y_LAI_END ,Y_2012,Y_LAI_START     
+      INTEGER Y_2000 ,Y_LAI_END ,Y_2014,Y_LAI_START     
      
       CHARACTER*100 TEMPHEAD3 (11)
             
@@ -301,19 +301,19 @@
 !   Set default LAI for the year without LAI input-----
 
 
-      IF (BYEAR .LT. 2001 ) then
-           Y_LAI_START=2001-BYEAR+1
+      IF (BYEAR .LT. 2000 ) then
+           Y_LAI_START=2000-BYEAR+1
         ELSE
          Y_LAI_START=1
        ENDIF
-      If (IYEND .GT. 2012) then 
-        Y_LAI_END=2012-BYEAR+1
+      If (IYEND .GT. 2014) then 
+        Y_LAI_END=2014-BYEAR+1
        Else
         Y_LAI_END=IYEND-BYEAR+1
       Endif
 
-      Y_2001=2001-BYEAR+1
-      Y_2012=2012-BYEAR+1
+      Y_2000=2000-BYEAR+1
+      Y_2014=2014-BYEAR+1
 
 ! --- READ IN LAI DATA FROM LANDLAI.TXT
 
@@ -326,7 +326,7 @@
 
             IF (I .EQ. 1 .AND. J .EQ. Y_LAI_START .AND. M .EQ. 1) THEN 
 
-               READ (8, 902) TEMPHEAD3
+!               READ (8, 902) TEMPHEAD3
  
  902           FORMAT (100A11)
  
@@ -334,10 +334,10 @@
                       
  
 ! --- LAI_* IS THE LAI FOR LANDUSE * (8 TOTAL IN LANDLAI.TXT)
-
-         READ(8,*) HUCNO(I),YEAR,Mon,LAI(I,J,M)  
+	NUM_DATA=(I-1)*(Y_LAI_END-Y_LAI_START+1)*12+(J-Y_LAI_START)*12+M
+         READ(8,REC=NUM_DATA) HUCNO(I),YEAR,Mon,LAI(I,J,M)  
             
- !        WRITE(*,*),HUCNO(I),YEAR,Mon,LAI(I,J,M)
+!         WRITE(*,*),I,HUCNO(I),YEAR,Mon,LAI(I,J,M)
     
 !1011        FORMAT(3I10, 8F10.2)               
 
@@ -348,16 +348,16 @@
 
 201   CONTINUE
 
-! --- ASSIGN YEAR 2001 LAI DATA TO YEARS BEFORE 2001
-! -----将2001年的数据赋给以前的年份
-        IF  ( BYEAR .LT. 2001)  then
+! --- ASSIGN YEAR 2000 LAI DATA TO YEARS BEFORE 2000
+! -----将2000年的数据赋给以前的年份
+        IF  ( BYEAR .LT. 2000)  then
           DO 202 I=1, NGRID
                 
-             DO 302 J=1, Y_2001-1
+             DO 302 J=1, Y_2000-1
 
                 DO 402 M=1, 12
 
-                LAI(I,J,M) = LAI(I,Y_2001,M)
+                LAI(I,J,M) = LAI(I,Y_2000,M)
                       
      
 402             CONTINUE 
@@ -368,16 +368,16 @@
 !
         ENDIF
 !          
-!C--- ASSIGN YEAR 2012 LAI DATA TO YEARS AFTER 2012
-!C--- 将2012年的数据赋给以后的年份
-      IF (IYEND .GT. 2012) then
+!C--- ASSIGN YEAR 2014 LAI DATA TO YEARS AFTER 2014
+!C--- 将2014年的数据赋给以后的年份
+      IF (IYEND .GT. 2014) then
           DO 203 I=1, NGRID
                 
-             DO 303 J=Y_2012+1, NYEAR
+             DO 303 J=Y_2014+1, NYEAR
 
                 DO 403 M=1, 12
 
-                LAI(I,J,M) = LAI(I,Y_2012,M)
+                LAI(I,J,M) = LAI(I,Y_2014,M)
        
 
 403             CONTINUE 
@@ -412,7 +412,7 @@
            
  !     DO 105 I=1, NGRID   ! start and end year of land cover data
         
-!        DO 106 J=Y_2001,Y_2012
+!        DO 106 J=Y_2000,Y_2014
 
 !      READ(3,*) HUCNO(I),YEAR,veg(I,J)  
              
@@ -437,10 +437,9 @@
       
       USE Common_var
 	  implicit none
-	  
-      INTEGER YEAR
-            
-      INTEGER I, J, M,Mon
+	INTEGER(kind=8) NUM_DATA 
+      INTEGER(kind=4) I              
+      INTEGER(kind=2) YEAR, J, M,Mon
      
       REAL,POINTER :: ANNPPT(:,:),SUMANPPT(:)
       
@@ -463,9 +462,9 @@
             
                IF (I .EQ. 1 .AND. J .EQ. 1 .AND. M .EQ. 1) THEN 
        
-                  READ (4, 900) TEMPHEAD
+!                  READ (4, 900) TEMPHEAD
 
-                 WRITE (77, 900) TEMPHEAD
+!                 WRITE (77, 900) TEMPHEAD
       
 !                 WRITE (77, 905)
 !905              FORMAT ('end of input data' )
@@ -476,9 +475,11 @@
 900            FORMAT (10A10)
 !910            FORMAT  (/'CLIMATE DATA', 10A10)
                
+        	NUM_DATA=(I-1)*(NYEAR)*12+(J-1)*12+M
               
-               READ(4,*) HUCNO(I), YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
-            
+               READ(4,REC=NUM_DATA) HUCNO(I), YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
+		WRITE(*,*) I,HUCNO(I),  YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
+           
                 
 !1015        FORMAT(3I10, 2F10.2) 
                        
