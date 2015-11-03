@@ -399,7 +399,7 @@
 801    FORMAT (/'LAI DATA for each Cell'/)
 
  
-      WRITE (77, 902) TEMPHEAD3
+!      WRITE (77, 902) TEMPHEAD3
       
 
 	  !************* -----------Read annual land cover data------------ ***************
@@ -478,7 +478,7 @@
         	NUM_DATA=(I-1)*(NYEAR)*12+(J-1)*12+M
               
                READ(4,REC=NUM_DATA) HUCNO(I), YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
-		WRITE(*,*) I,HUCNO(I),  YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
+!		WRITE(*,*) I,HUCNO(I),  YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
            
                 
 !1015        FORMAT(3I10, 2F10.2) 

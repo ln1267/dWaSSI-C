@@ -76,9 +76,9 @@
 				AETRT(I,J),ETRATIO(I,J), NSPM(I,J), RFACTOR (I,J)
 
 ! TEST OUTPUT
-            WRITE (*,2100) HUCNO(I), IDY, ANURAIN(I,J),&
-			 ANUPET(I,J), ANUAET(I,J),ANUPAET(I,J), ANURUN(I,J), ARUNRT(I,J),  &
-			 AETRT(I,J),ETRATIO(I,J), NSPM(I,J), RFACTOR (I,J)
+!            WRITE (*,2100) HUCNO(I), IDY, ANURAIN(I,J),&
+!			 ANUPET(I,J), ANUAET(I,J),ANUPAET(I,J), ANURUN(I,J), ARUNRT(I,J),  &
+!			 AETRT(I,J),ETRATIO(I,J), NSPM(I,J), RFACTOR (I,J)
 
 2100        	FORMAT(I10, ',', I10, ',',F10.1, ',', F8.1, ',', F8.1,',' F8.1, &
 		& ',',F8.1, ',', F8.2, ',',F8.2,',',F8.2,',', I8, ',', F8.1)			
