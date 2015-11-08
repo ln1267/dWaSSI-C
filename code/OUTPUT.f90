@@ -83,6 +83,11 @@
 2100        	FORMAT(I10, ',', I10, ',',F10.1, ',', F8.1, ',', F8.1,',' F8.1, &
 		& ',',F8.1, ',', F8.2, ',',F8.2,',',F8.2,',', I8, ',', F8.1)			
 		
+	!ANNUALCARBON.TXT
+				WRITE (500, 3000) HUCNO(I), IDY, GEPA(I,J),REOA(I,J),NEEA(I,J)
+                                              
+3000          FORMAT (I12, ',', I12, ',',F16.2, ',', F16.2, ',', F16.2)
+		
 		ENDIF 
 				
 		END DO ! END LOOP YEAR

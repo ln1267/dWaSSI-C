@@ -358,6 +358,10 @@
 		  			
 100         CONTINUE 
 
+			GEPA(I,J)=ANGEP
+			REOA(I,J)=ANRECO
+			NEEA(I,J)=ANNEE
+
 			ENDIF
   
 			IF (ANGEP < -50.0 .or. ANRECO < -50.0 .or. ANRECO < -50.0 ) then

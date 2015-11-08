@@ -105,7 +105,7 @@ Module common_var
 		! INTEGER NUM_YEAR_C
 		INTEGER,POINTER:: NUM_YEAR_C(:)
 		REAL,POINTER:: GEPM(:,:,:),RECOM(:,:,:), &
-		NEEM(:,:,:),GEPA(:,:),NEEA(:,:),&
+		NEEM(:,:,:),REOA(:,:),GEPA(:,:),NEEA(:,:),&
 		AHUCGEP(:), AHUCNEE(:),AHUCRE(:)
       
 ! HUCPETAET

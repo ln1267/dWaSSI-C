@@ -123,8 +123,7 @@
 
 
         WRITE (500, 600) 
-600    FORMAT ('CELL,YEAR,GEP(gC/m2/yr),Reco,NEE(gC/m2/yr),',& 
-              'AET(MM),PET(MM)')
+600    FORMAT ('CELL,YEAR,GEP(gC/m2/yr),Reco,NEE(gC/m2/yr)')
 
 
         WRITE (600, 650) 
