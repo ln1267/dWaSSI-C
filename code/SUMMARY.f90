@@ -195,7 +195,6 @@
 
 
         ENDIF 
-        
               
       RETURN
       END
@@ -358,6 +357,10 @@
 			  ENDIF 
 		  			
 100         CONTINUE 
+
+			GEPA(I,J)=ANGEP
+			REOA(I,J)=ANRECO
+			NEEA(I,J)=ANNEE
 
 			ENDIF
   

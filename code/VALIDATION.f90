@@ -108,6 +108,6 @@
     
 !C     print*,"输入回车进入下一步操作"
 !C     READ(*,*) 
-     
+Print *, "HERE is OK VALIDATION"     
       RETURN
       END

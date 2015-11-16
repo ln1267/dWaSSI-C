@@ -9,7 +9,7 @@
 !     IF MODEL in dynamic land cover then LADUSE(I) -----> VEG(I,J) total:38   C
 !**********************************************************************C
       
-      SUBROUTINE WATERBAL(I,J,M,MNDAY,RUNLAND,ETLAND,GEPLAND)
+      SUBROUTINE WATERBAL(I,J,M,MNDAY)!,RUNLAND,ETLAND,GEPLAND)
         Use Common_var
         implicit none       
 ! ----------------------------------------------------------------------------     
@@ -20,16 +20,16 @@
             RECOTEMP, NEETEMP
       REAL UZTWC, UZFWC, LZTWC, LZFSC, LZFPC ! soil moisture content parameters    
          
-      REAL ETUZTW(MAX_YEARS,12), RESIDET(MAX_YEARS,12), ETUZFW(MAX_YEARS,12)
+      REAL ETUZTW(NYEAR,12), RESIDET(NYEAR,12), ETUZFW(NYEAR,12)
       
-      REAL ETLZTW(MAX_YEARS,12), RATLZT, RATLZ
+      REAL ETLZTW(NYEAR,12), RATLZT, RATLZ
       
       REAL SNOW,SNOWPACK, SNOWW
       
       REAL LTASM, TAREA
       
-      REAL ET(MAX_YEARS,12), SURFRO, GEP(MAX_YEARS,12), INFIL,&
-        RECO(MAX_YEARS,12), NEE(MAX_YEARS,12) 
+      REAL ET(NYEAR,12), SURFRO, GEP(NYEAR,12), INFIL,&
+        RECO(NYEAR,12), NEE(NYEAR,12) 
       
       REAL DPAET
       
@@ -48,9 +48,9 @@
            
       INTEGER GEPFLAG
       
-	REAL :: RUNLAND(NGRID,NYEAR,12,31)
-	REAL :: ETLAND(NGRID,NYEAR,12,31)
-	REAL :: GEPLAND(NGRID,NYEAR,12,31) 
+!	REAL :: RUNLAND(NGRID,NYEAR,12,31)
+!	REAL :: ETLAND(NGRID,NYEAR,12,31)
+!	REAL :: GEPLAND(NGRID,NYEAR,12,31) 
            
 ! *****************************************************************************************************
 
