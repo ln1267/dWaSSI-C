@@ -85,7 +85,7 @@
 ! Latest model By Yuan Fang Sep 10,2015
 !          R2=0.68, p<0.0001,RMSE=18.1 mm
 
-            PAET(I,J,M) = -4.79 + 0.75*PET(I,J,M) + 3.92*LAI(I,J,M)
+            PAET(I,J,M) = -4.79 + 0.75*PET(I,J,M) + 3.92*LAI(I,J,M) + 0.04*RAIN(I,J,M)
    
 
 ! ------TEST OUTPUT

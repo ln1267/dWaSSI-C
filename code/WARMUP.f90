@@ -218,11 +218,11 @@
    !    UZK(I)=UZK(I)*1 
  !      ZPERC(I)=ZPERC(I)*1
      !  REXP(I)=REXP(I)*1
-      LZTWM(I)=LZTWM(I)*1.3 !*(1+VAL_1(TUN1)) 
+!      LZTWM(I)=LZTWM(I)*1.3 !*(1+VAL_1(TUN1)) 
     !  LZFSM(I)=LZFSM(I) !*
-       LZFPM(I)=LZFPM(I)*2.4
-       LZSK(I)= LZSK(I)*0.9 !*(1+VAL_2(TUN2)) 
-       LZPK(I)=LZPK(I)*1.2
+!       LZFPM(I)=LZFPM(I)*2.4
+!       LZSK(I)= LZSK(I)*0.9 !*(1+VAL_2(TUN2)) 
+!       LZPK(I)=LZPK(I)*1.2
 !      PFREE(I)=PFREE(I) !
 
 
@@ -815,8 +815,8 @@
                
               
                READ(4,*) HUCNO(I), YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
-		RAIN(I,J,M)=RAIN(I,J,M)*10
-		TEMP(I,J,M)=TEMP(I,J,M)*10 
+!		RAIN(I,J,M)=RAIN(I,J,M)*10
+!		TEMP(I,J,M)=TEMP(I,J,M)*10 
                 
 !1015        FORMAT(3I10, 2F10.2) 
                        
