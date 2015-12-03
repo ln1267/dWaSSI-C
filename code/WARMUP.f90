@@ -53,6 +53,10 @@
       WRITE(77,2050) IYSTART, IYEND
 2050  FORMAT('FOR SIMULATION SUMMARY, YEAR TO START',I10, ' , END ',I10)
 
+      READ (1,*) IYSTART, IYEND
+
+      WRITE(77,20511) LAI_S_Y,LAI_E_Y
+20511  FORMAT('FOR SIMULATION SUMMARY,LAI input data YEAR TO START',I10, ' , END ',I10)
 
       READ (1,*) FPERD
 
@@ -274,6 +278,55 @@
 
       RETURN
       END
+!**********************************************************************!
+!     *** SUBROUTINE RPSINT TXT***                                        !
+!**********************************************************************!
+      SUBROUTINE RPSINT_TXT 
+
+	  Use Common_var
+       implicit none
+
+      REAL CROP
+
+      INteger(kind=2) year,J
+	INTEGER(kind=4) I , ID
+
+
+      CHARACTER*1000 DUMY(30)
+      
+! --- Read and print land use data for each active cell IN THE BASIC.OUT FILE
+      WRITE(77,2000)
+2000  FORMAT(/'LANDUSE INFO FOR EACH SIMULATION CELL'/)
+      READ (2,500) DUMY
+      WRITE (77,500) DUMY
+      READ (7,500) DUMY
+      WRITE (77,500) DUMY
+	  500   FORMAT (1000A30)
+! ----LANC = raw Landcover types    
+    
+            
+      DO 10 I=1, NGRID
+
+      READ(2,*) ID, HUCNO(I), LATUDE(I), LONGI(I),LADUSE(I),HUCELE(I)
+	  
+      READ(7,*) ID, HUCNO(I), UZTWM(I), UZFWM(I), UZK(I), ZPERC(I),&
+     REXP(I), LZTWM(I), LZFSM(I), LZFPM(I), LZSK(I),&
+     LZPK(I), PFREE(I)   
+             
+!      WRITE(*,1100) ID, HUCNO(I),LATUDE(I), LONGI(I) 
+           
+!      WRITE(*,1150) HUCNO(I), UZTWM(I), UZFWM(I), UZK(I), ZPERC(I),&
+!     REXP(I), LZTWM(I), LZFSM(I), LZFPM(I), LZSK(I),&
+!     LZPK(I), PFREE(I)
+
+
+1100  FORMAT(2I10, 2F10.4, I4)   
+1150  FORMAT(I12, 11F10.4)   
+ 
+10    CONTINUE
+
+      RETURN
+      END
 
   
       
@@ -425,7 +478,117 @@
 	  
       RETURN
       END
+!C**********************************************************************C
+!C                                                                      C
+!C     *** SUBROUTINE RPSLAI TXT ***                                        C
+!C**********************************************************************C
+      SUBROUTINE RPSLAI_TXT
+      
+      USE Common_var
+      implicit none             
+      INTEGER(kind=4) I       
+ 	INTEGER(kind=8) NUM_DATA     
+      INTEGER(kind=2) YEAR, J, M,Mon
 
+      INTEGER Y_LAI_END,Y_LAI_START     
+     
+      CHARACTER*100 TEMPHEAD3 (11)
+ 
+ 
+!   Set default LAI for the year without LAI input-----
+
+      IF (BYEAR .LT. LAI_S_Y ) then
+           Y_LAI_START=LAI_S_Y-BYEAR+1
+        ELSE
+         Y_LAI_START=1
+       ENDIF
+      If (IYEND .GT. LAI_E_Y) then 
+        Y_LAI_END=LAI_E_Y-BYEAR+1
+       Else
+        Y_LAI_END=IYEND-BYEAR+1
+      Endif
+
+! --- READ IN LAI DATA FROM LANDLAI.TXT
+
+
+      DO 201 I=1, NGRID
+                
+         DO 301 J= Y_LAI_START,Y_LAI_END 
+         
+            DO 401 M=1, 12
+
+            IF (I .EQ. 1 .AND. J .EQ. Y_LAI_START .AND. M .EQ. 1) THEN 
+
+               READ (8, 902) TEMPHEAD3
+ 
+ 902           FORMAT (100A11)
+ 
+            ENDIF
+                      
+ 
+! --- LAI_* IS THE LAI FOR LANDUSE * (8 TOTAL IN LANDLAI.TXT)
+	NUM_DATA=(I-1)*(Y_LAI_END-Y_LAI_START+1)*12+(J-Y_LAI_START)*12+M
+         
+		 READ(8,*) HUCNO(I),YEAR,Mon,LAI(I,J,M)  
+            
+!         WRITE(*,*),I,HUCNO(I),YEAR,Mon,LAI(I,J,M)
+    
+401         CONTINUE 
+
+301      CONTINUE
+
+201   CONTINUE
+
+! --- ASSIGN YEAR 2000 LAI DATA TO YEARS BEFORE 2000
+! -----将2000年的数据赋给以前的年份
+        IF  ( BYEAR .LT. LAI_S_Y)  then
+          DO 202 I=1, NGRID
+                
+             DO 302 J=1, Y_LAI_START-1
+
+                DO 402 M=1, 12
+
+                LAI(I,J,M) = LAI(I,Y_LAI_START,M)
+                      
+     
+402             CONTINUE 
+
+302          CONTINUE
+
+202        CONTINUE
+!
+        ENDIF
+!          
+!C--- ASSIGN YEAR 2014 LAI DATA TO YEARS AFTER 2014
+!C--- 将2014年的数据赋给以后的年份
+      IF (IYEND .GT. LAI_E_Y) then
+          DO 203 I=1, NGRID
+                
+             DO 303 J=LAI_E_Y+1, NYEAR
+
+                DO 403 M=1, 12
+
+                LAI(I,J,M) = LAI(I,LAI_E_Y,M)
+       
+
+403             CONTINUE 
+
+303          CONTINUE
+
+203        CONTINUE
+!
+      ENDIF
+	  
+ 
+        WRITE (77, 801)
+       
+801    FORMAT (/'LAI DATA for each Cell'/)
+ 
+      RETURN
+      END
+	  
+	  
+	  
 !C**********************************************************************C
 !C                                                                      C
 !C     *** SUBROUTINE RPSCLIMATE ***                                    C
@@ -477,6 +640,84 @@
         	NUM_DATA=(I-1)*(NYEAR)*12+(J-1)*12+M
               
                READ(4,REC=NUM_DATA) HUCNO(I), YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
+!		WRITE(*,*) I,HUCNO(I),  YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
+           
+                
+!1015        FORMAT(3I10, 2F10.2) 
+                       
+            
+               ANNPPT(I, J) = ANNPPT(I, J) + RAIN(I,J,M)
+               
+
+5002        CONTINUE
+
+            SUMANPPT(I) = SUMANPPT(I) + ANNPPT(I, J)
+
+5001     CONTINUE
+
+
+         AAPPT(I) = SUMANPPT(I)/NYEAR
+                
+         
+         WRITE(77,5004) HUCNO(I), AAPPT(I)
+      
+5004     FORMAT(I10,F10.2)
+
+!	Print *,"I=",I
+!	WRITE(*,*) HUCNO(I), AAPPT(I)
+
+5000  CONTINUE
+		
+	DEALLOCATE (ANNPPT, SUMANPPT)
+	
+      RETURN
+      END
+	  
+!C**********************************************************************C
+!C                                                                      C
+!C     *** SUBROUTINE RPSCLIMATE TXT***                                    C
+!C**********************************************************************C	 
+	  
+      SUBROUTINE RPSCLIMATE_TXT
+      
+      USE Common_var
+	  implicit none
+	INTEGER(kind=8) NUM_DATA 
+      INTEGER(kind=4) I              
+      INTEGER(kind=2) YEAR, J, M,Mon
+     
+      REAL,POINTER :: ANNPPT(:,:),SUMANPPT(:)
+      
+      CHARACTER*10 TEMPHEAD (10)
+
+      ALLOCATE ( ANNPPT(NGRID,NYEAR), SUMANPPT(NGRID))
+      
+      ANNPPT =0.
+      
+      SUMANPPT = 0.
+
+      WHERE(AAPPT /= 0.) AAPPT=0.0
+      
+
+      DO 5000 I=1,NGRID
+      
+         DO 5001 J=1,NYEAR
+         
+            DO 5002 M=1,12
+            
+               IF (I .EQ. 1 .AND. J .EQ. 1 .AND. M .EQ. 1) THEN 
+       
+                  READ (4, 900) TEMPHEAD
+
+                 WRITE (77, 900) TEMPHEAD
+                       
+               ENDIF
+        
+900            FORMAT (10A10)
+
+        	NUM_DATA=(I-1)*(NYEAR)*12+(J-1)*12+M
+              
+               READ(4,*) HUCNO(I), YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
 !		WRITE(*,*) I,HUCNO(I),  YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
            
                 
