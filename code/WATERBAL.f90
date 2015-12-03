@@ -567,8 +567,9 @@
 !WRITE(99,*) I,J,M,Day,' ET=', ET(J,M),'TEMP=',TEMP (I,J, M),'UZTWC=',UZTWC,'PBF=',PBF,'SBF=',SBF,'LZFPC=',LZFPC ,&
 !'LZFSC=',LZFSC,'UZFWC=', UZFWC,'SURFRO=', SURFRO,'INF=', INF
 
-
-        GEPFLAG = 2
+! GEPFLAG ==2 means the old MODIS land cover;;;;;
+! GEPFLAG==3 means the new merged MODIS and forest land cover
+        GEPFLAG =3 
             
         IF (GEPFLAG .EQ. 1) THEN 
 
@@ -629,118 +630,110 @@
                ENDIF
 			   
         ElSEIF (GEPFLAG .eq. 3) then
-! IF GEPFLAG= 3
-! CALCULATING DAILY GEP G C/M2/DAY
+!! CALCULATING DAILY GEP G C/M2/DAY
 ! NOTE  the following is based on New Analysis by Asko (Aug 24, 2010)
 !----根据不同的植被类型重编写下面的代码
 
 ! -- CROP
 
-               IF (LADUSE(I).EQ.1) THEN 
+               IF (LADUSE(I).EQ.8) THEN 
 
-               GEP(J,M) = 4.5 * ET(J,M)
+               GEP(J,M) = 3.13 * ET(J,M)
 !---------论文中的公式
-               RECO(J,M)= 40.6 + 0.43 * GEP(J,M)*MNDAY
+              RECO(J,M)= 40.6 + 1.346 * ET(J,M)*MNDAY
 !---------原始计算公式 		
-!               RECO(J,M)= VAL_1(TUN1) + VAL_2(TUN2) * GEP(J,M)*MNDAY      !11.14 1.85
+!               RECO(J,M)= 11.4 + 1.85 * GEP(J,M)*MNDAY      !11.14 1.85
 			  
 			   
 ! -- Close SHRUBLANDS                   
                
-               ELSEIF (LADUSE(I) .EQ. 4) THEN                
+               ELSEIF (LADUSE(I) .EQ. 6) THEN                
 
-               GEP(J,M) = 1.4 * ET(J,M)  
+               GEP(J,M) = 1.37 * ET(J,M)  
                 
-               RECO(J,M)= 11.4 + 0.69 * GEP(J,M)*MNDAY
+               RECO(J,M)= 11.4 + 0.945 * ET(J,M)*MNDAY
                 
-! -- DECIDUOUS Broadleaf FOREST
+!-- DECIDUOUS Broadleaf FOREST
  
-               ELSEIF (LADUSE(I) .EQ. 3) THEN 
+               ELSEIF (LADUSE(I) .EQ. 4) THEN 
 
-               GEP(J,M) = 2.4* ET(J,M) 
+               GEP(J,M) = 3.2* ET(J,M) 
 !-------论文公式				   
-               RECO(J,M)= 30.8 + 0.45 * GEP(J,M)*MNDAY	
+               RECO(J,M)= 30.8 + 1.44 * ET(J,M)*MNDAY	
 !-------原始计算公式
 !			   RECO(J,M)= 24.12 + 1.49 * ET(J,M)*MNDAY	
 
 
 ! -- Evergreen Broadleaf FOREST
  
-               ELSEIF (LADUSE(I) .EQ. 0) THEN 
+               ELSEIF (LADUSE(I) .EQ. 2) THEN 
 
                GEP(J,M) = 2.6* ET(J,M)              
-               RECO(J,M)= 19.6 + 0.61 * GEP(J,M)*MNDAY			   
+               RECO(J,M)= 19.6 + 1.58 * ET(J,M)*MNDAY			   
 
 !---- Evergreen Needleleaf Forest
-               ELSEIF (LADUSE(I) .EQ. 5) THEN                
+               ELSEIF (LADUSE(I) .EQ. 1 .or. LADUSE(I) .EQ. 3) THEN                
 
-               GEP(J,M) = 2.14* ET(J,M)
-               RECO(J,M)= 9.9 + 0.68 * GEP(J,M)*MNDAY			   
+               GEP(J,M) = 2.46* ET(J,M)
+               RECO(J,M)= 9.9 + 1.67 * ET(J,M)*MNDAY			   
                
 ! -- GRASSLANDS               
-                ELSEIF (LADUSE(I) .EQ. 6) THEN                
+                ELSEIF (LADUSE(I) .EQ. 7 ) THEN    
                
-               GEP(J,M) = 2.25 * ET(J,M)
+               GEP(J,M) = 2.12 * ET(J,M)
 !------ 论文公式
-              RECO(J,M)= 18.9 + 0.64*GEP(J,M)*MNDAY
+               RECO(J,M)= 18.9 + 1.36* ET(J,M)*MNDAY
 !-------原始计算公式	
 !			   RECO(J,M)= 14.2 + 1.42 * ET(J,M)*MNDAY	
                
 !---- MIXED FOREST
                
-               ELSEIF (LADUSE(I) .EQ. 7) THEN 
+               ELSEIF (LADUSE(I) .EQ. 5) THEN 
                
-               GEP(J,M) =2.5 * ET(J,M)
-               IF (TEMP(I,J,M) .LE. -1.0) THEN 
-                
-                GEP(J,M) = 0.0
-                
-               ENDIF 
-                           
-               RECO(J,M)= 24.44 + 0.62 * GEP(J,M)*MNDAY
+               GEP(J,M) =2.74 * ET(J,M)                         
+               RECO(J,M)= 24.44 + 1.70 * GEP(J,M)*MNDAY
 
 ! -- Open Shrublands                   
                
-		      ELSEIF (LADUSE(I) .EQ. 8) THEN                
-
-               GEP(J,M) =  1.42* ET(J,M)
-               RECO(J,M)= 9.7 + 0.56 * GEP(J,M)*MNDAY
+!			   ELSEIF (LADUSE(I) .EQ. 7) THEN                
+!
+!               GEP(J,M) =  1.42* ET(J,M)
+!               RECO(J,M)= 9.7 + 0.74 * ET(J,M)*MNDAY
                                            
 ! -- SAVANNAS                   
                
-	          ELSEIF (LADUSE(I).EQ.  9) THEN                
+!			   ELSEIF (LADUSE(I).EQ. 20  ) THEN                
 
-               GEP(J,M) = 1.26* ET(J,M) !
-               RECO(J,M)= 25.2 + 0.53 * GEP(J,M)*MNDAY
-       
+!               GEP(J,M) = 1.26* ET(J,M) !
+!               RECO(J,M)= 25.2 + 0.67 * ET(J,M)*MNDAY
          
 ! -- Wetlands                     
                
-	           ELSEIF (LADUSE(I) .EQ. 10) THEN                
+!			   ELSEIF (LADUSE(I) .EQ. 11) THEN                
 
-               GEP(J,M) = 1.66* ET(J,M)
-               RECO(J,M)= 7.8 + 0.56 * GEP(J,M)*MNDAY     
+!               GEP(J,M) = 1.66* ET(J,M)
+!               RECO(J,M)= 7.8 + 0.93 * ET(J,M)*MNDAY     
 ! -- Wet Savanna                     
                
-	           ELSEIF (LADUSE(I) .EQ. 11) THEN                
+!			   ELSEIF (LADUSE(I) .EQ. 20 ) THEN                
 
-               GEP(J,M) = 1.49* ET(J,M)
-               RECO(J,M)= 14.7 + 0.63 * GEP(J,M)*MNDAY
+!               GEP(J,M) = 1.49* ET(J,M)
+!               RECO(J,M)= 14.7 + 0.94 * ET(J,M)*MNDAY
  			   
 ! -- URBAN/BARRENS/WATRE BODY (SAME AS OPEN SHRUB)                  
                
-               ELSE
+			   ELSE
                
                GEP(J,M) = 0.
                RECO(J,M) =0.
               
               
-               ENDIF
+			   ENDIF
 
                IF (GEP(J,M) .LE. 0.) THEN
                       GEP(J,M) = 0.                  
                ENDIF
-                                     
+                                    
         ELSE
 !*****************************************************************************************************
 ! *****************************************************************************************************
