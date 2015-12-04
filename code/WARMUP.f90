@@ -298,29 +298,30 @@
       WRITE(77,2000)
 2000  FORMAT(/'LANDUSE INFO FOR EACH SIMULATION CELL'/)
       READ (2,500) DUMY
-      WRITE (77,500) DUMY
+  WRITE (77,500) DUMY
       READ (7,500) DUMY
       WRITE (77,500) DUMY
 	  500   FORMAT (1000A30)
 ! ----LANC = raw Landcover types    
+     print*,NGRID 
     
             
       DO 10 I=1, NGRID
 
-      READ(2,*) ID, HUCNO(I), LATUDE(I), LONGI(I),LADUSE(I),HUCELE(I)
+      READ(2,*) HUCNO(I),  LATUDE(I), LONGI(I),LADUSE(I),HUCELE(I)
 	  
-      READ(7,*) ID, HUCNO(I), UZTWM(I), UZFWM(I), UZK(I), ZPERC(I),&
+      READ(7,*) HUCNO(I),  UZTWM(I), UZFWM(I), UZK(I), ZPERC(I),&
      REXP(I), LZTWM(I), LZFSM(I), LZFPM(I), LZSK(I),&
      LZPK(I), PFREE(I)   
              
-!      WRITE(*,1100) ID, HUCNO(I),LATUDE(I), LONGI(I) 
+ !     WRITE(*,1100) ID, HUCNO(I),LATUDE(I), LONGI(I) 
            
-!      WRITE(*,1150) HUCNO(I), UZTWM(I), UZFWM(I), UZK(I), ZPERC(I),&
-!     REXP(I), LZTWM(I), LZFSM(I), LZFPM(I), LZSK(I),&
-!     LZPK(I), PFREE(I)
+ !     WRITE(*,1150) HUCNO(I), UZTWM(I), UZFWM(I), UZK(I), ZPERC(I),&
+ !    REXP(I), LZTWM(I), LZFSM(I), LZFPM(I), LZSK(I),&
+ !    LZPK(I), PFREE(I)
 
 
-1100  FORMAT(2I10, 2F10.4, I4)   
+1100  FORMAT(2I10, 2F10.4, 2I4)   
 1150  FORMAT(I12, 11F10.4)   
  
 10    CONTINUE
