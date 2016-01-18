@@ -62,3 +62,29 @@ make clean
 and it should delete all except the source files. 
 
 
+
+###########################################
+# Using MPI and OpenMP to run simulations #
+###########################################
+
+COMPILATION: 
+You can compile in all Programming enviroments on Magnus; Cray , Intel or GNU.
+To run the makefile to compile with MPI support, do the following:
+FPPFLAGS='-DMPI' make VERBOSE=1
+
+This should produce an executable a.out which you can now run.
+
+To run simply do the following either in a slurm sbatch script or in an interactive or salloc session:
+
+aprun -n NUMBER_OF_PARALLEL_TASKS ./a.out 1 PATH_TO_INPUT_DIRECTORY PATH_TO_OUTPUT_DIRECTORY
+
+The input files must be in binary format without delimters or separators and must be of uniform datatype of real 4. 
+
+Two convenience applications have also been developed to convert input or output files in ASCII to the binary format acceptable by the MPI program. They are located in Format_converter_programs
+ascii2bin 
+bin2ascii
+
+To show the syntax or call arguments for each of the two, just type the name of executable and press return and it will show the list of the prototype or the possible arguments.
+
+
+
