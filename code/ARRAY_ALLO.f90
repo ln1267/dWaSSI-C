@@ -8,9 +8,9 @@
 	  
 		USE common_var
 		IMPLICIT NONE
+
 	ALLOCATE(BASEFLOW_V(NYEAR,12), FLOW_V(NYEAR,12),FLOW(NYEAR,12))
 		 
-  
 ! VALID This is used for model valiadation
 		ALLOCATE (GEP_V(NGRID,NYEAR,12), ET_V(NGRID,NYEAR,12)&
 		,GPP_V(NGRID,NYEAR),NPP_V(NGRID,NYEAR)&
