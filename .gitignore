@@ -1,2 +1,4 @@
 *.exe
 *.mod
+code/*.out
+code/*.o

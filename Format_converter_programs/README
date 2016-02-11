@@ -1,1 +1,5 @@
 Two helper C codes to convert the Input files from ASCII to Binary or Binary to ASCII
+Method:
+	./ascii2bin -i inputfile -o outfile -m lines -n cols 
+sacii file can be separated by any mark like "space, ",", "tab", etc.
+ 
