@@ -55,9 +55,9 @@ subroutine open_io
 
     ! Composition information of the input files
 
-    cellinfo_columns=6
+    cellinfo_columns=5
     climate_columns=5
-    soilinfo_columns=13
+    soilinfo_columns=12
     landlai_columns=4
 
    ! Composition information of the input files

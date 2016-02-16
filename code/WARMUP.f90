@@ -144,11 +144,11 @@ endif
     indx=1
         do I=1,nelement,cellinfo_columns
              ID            =   int(buffer(I))
-             HUCNO(indx)   =   int(buffer(I+1),4)
-             LATUDE(indx)  =   buffer(I+2)
-             LONGI(indx)   =   buffer(I+3)
-             LADUSE(indx)  =   buffer(I+4)
-             HUCELE(indx)  =   buffer(I+5)
+             HUCNO(indx)   =   int(buffer(I))
+             LATUDE(indx)  =   buffer(I+1)
+             LONGI(indx)   =   buffer(I+2)
+             LADUSE(indx)  =   buffer(I+3)
+             HUCELE(indx)  =   buffer(I+4)
              indx=indx+1
         enddo
 
@@ -162,18 +162,18 @@ endif
     indx=1
     do I=1,nelement,soilinfo_columns
         ID             =    int(buffer(I))
-        HUCNO(indx)    =    int(buffer(I+1))
-        UZTWM(indx)    =    buffer(I+2)
-        UZFWM(indx)    =    buffer(I+3)
-        UZK(indx)      =    buffer(I+4)
-        ZPERC(indx)    =    buffer(I+5)
-        REXP(indx)     =    buffer(I+6)
-        LZTWM(indx)    =    buffer(I+7)
-        LZFSM(indx)    =    buffer(I+8)
-        LZFPM(indx)    =    buffer(I+9)
-        LZSK(indx)     =    buffer(I+10)
-        LZPK(indx)     =    buffer(I+11)
-        PFREE(indx)    =    buffer(I+12)
+        HUCNO(indx)    =    int(buffer(I))
+        UZTWM(indx)    =    buffer(I+1)
+        UZFWM(indx)    =    buffer(I+2)
+        UZK(indx)      =    buffer(I+3)
+        ZPERC(indx)    =    buffer(I+4)
+        REXP(indx)     =    buffer(I+5)
+        LZTWM(indx)    =    buffer(I+6)
+        LZFSM(indx)    =    buffer(I+7)
+        LZFPM(indx)    =    buffer(I+8)
+        LZSK(indx)     =    buffer(I+9)
+        LZPK(indx)     =    buffer(I+10)
+        PFREE(indx)    =    buffer(I+11)
         indx=indx+1
     enddo
 
