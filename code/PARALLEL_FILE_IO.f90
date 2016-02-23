@@ -41,10 +41,10 @@ subroutine open_io
     filename=TRIM(OUTPATH)//'/MONTHCARBON.DAT'
     call mpi_file_open(MPI_COMM_WORLD, filename, MPI_MODE_WRONLY + MPI_MODE_CREATE, MPI_INFO_NULL, monthcarbon_fh, ierr)
 
-    filename=TRIM(OUTPATH)//'/AUNNALFLOW.DAT'
+    filename=TRIM(OUTPATH)//'/ANNUALFLOW.DAT'
     call mpi_file_open(MPI_COMM_WORLD, filename, MPI_MODE_WRONLY + MPI_MODE_CREATE, MPI_INFO_NULL, annualflow_fh, ierr)
 
-    filename=TRIM(OUTPATH)//'/AUNNALCARBON.DAT'
+    filename=TRIM(OUTPATH)//'/ANNUALCARBON.DAT'
     call mpi_file_open(MPI_COMM_WORLD, filename, MPI_MODE_WRONLY + MPI_MODE_CREATE, MPI_INFO_NULL, annualcarbon_fh, ierr)
 
      filename=TRIM(OUTPATH)//'/HUCFLOW.DAT'

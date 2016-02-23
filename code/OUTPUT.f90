@@ -150,13 +150,15 @@ SUBROUTINE OUTPUT
     enddo
     call writeData(monthcarbon_fh,nelement,buffer)
 
-!ANNUALFLOW.TXT
-    nelement = NGRID * NYEAR * 12 * annualflow_columns
+!ANNUALFLOW.DAT
+    nelement = NGRID * NYEAR * annualflow_columns
     if (allocated(buffer) .eqv. .true.) deallocate(buffer)
     allocate(buffer(nelement))
     indx=1
     do I = 1,NGRID
         do J = 1,NYEAR
+            !-----IDY = THE CALANDER YEAR, BYEAR = YEAR TO SATRT
+                IDY = J + BYEAR - 1
                 buffer(indx)    =   real(HUCNO(I))
                 buffer(indx+1)  =   real(IDY)
                 buffer(indx+2)  =   ANURAIN(I,J)
@@ -167,21 +169,24 @@ SUBROUTINE OUTPUT
                 buffer(indx+7)  =   ARUNRT(I,J)
                 buffer(indx+8)  =   AETRT(I,J)
                 buffer(indx+9)  =   ETRATIO(I,J)
-                buffer(indx+10) =   NSPM(I,J)
+                buffer(indx+10) =   real(NSPM(I,J))
                 buffer(indx+11) =   RFACTOR (I,J)
                 indx=indx+annualflow_columns
         enddo
     enddo
+    call print_buffer_files(nelement,buffer,annualflow_columns)
     call writeData(annualflow_fh,nelement,buffer)
 
 !ANNUALCARBON.TXT
-!                WRITE (500, 3000) HUCNO(I), IDY, GEPA(I,J),REOA(I,J),NEEA(I,J)
-   nelement = NGRID * NYEAR * 12 * annualcarbon_columns
+
+   nelement = NGRID * NYEAR * annualcarbon_columns
     if (allocated(buffer) .eqv. .true.) deallocate(buffer)
     allocate(buffer(nelement))
     indx=1
     do I = 1,NGRID
         do J = 1,NYEAR
+        !-----IDY = THE CALANDER YEAR, BYEAR = YEAR TO SATRT
+                IDY = J + BYEAR - 1
                 buffer(indx)    =   real(HUCNO(I))
                 buffer(indx+1)  =   real(IDY)
                 buffer(indx+2)  =   GEPA(I,J)
@@ -193,7 +198,7 @@ SUBROUTINE OUTPUT
     call writeData(annualcarbon_fh,nelement,buffer)
 
    !HUCFLOW.TXT
-   nelement = NGRID * NYEAR * 12 * hucflow_columns
+   nelement = NGRID * hucflow_columns
     if (allocated(buffer) .eqv. .true.) deallocate(buffer)
     allocate(buffer(nelement))
     indx=1
@@ -212,7 +217,7 @@ SUBROUTINE OUTPUT
     call writeData(hucflow_fh,nelement,buffer)
 
     !HUCCARBON.TXT
-    nelement = NGRID * NYEAR * 12 * huccarbon_columns
+    nelement = NGRID * huccarbon_columns
     if (allocated(buffer) .eqv. .true.) deallocate(buffer)
     allocate(buffer(nelement))
     indx=1
