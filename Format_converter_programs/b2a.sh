@@ -1,14 +1,16 @@
 #!/bin/bash
-LINE_YEARS=15
 #directory="/group/y98/nliu/WaSSI_AU/OUTPUTS"
+directory="/scratch/y98/nliu/WaSSI/OUTPUTS"
+#directory="$MYGROUP/WaSSI/output"
 
-directory="$MYGROUP/WaSSI/output"
-LINE_CELLS=47320
+LINE_YEARS=14
+LINE_CELLS=564400
+#LINE_CELLS=47320
+#LINE_YEARS=15
 let LINE_ANNUAL=$LINE_YEARS*$LINE_CELLS
 let LINE_MONTH=$LINE_YEARS*$LINE_CELLS*12
 echo $directory $LINE_YEARS $LINE_CELLS $LINE_ANNUAL $LINE_MONTH
 
-#./bin2ascii -i $directory/VEGINFO.DAT -o $directory/VEGINFO_1.TXT -m 6772800 -n 3
 ./bin2ascii -i "$directory/HUCFLOW.DAT" -o "$directory/HUCFLOW.TXT" -m $LINE_CELLS -n 9
 ./bin2ascii -i "$directory/HUCCARBON.DAT" -o "$directory/HUCCARBON.TXT" -m $LINE_CELLS -n 5
 ./bin2ascii -i "$directory/ANNUALFLOW.DAT" -o "$directory/ANNUALFLOW.TXT" -m $LINE_ANNUAL -n 12
