@@ -2,3 +2,4 @@
 *.mod
 code/*.out
 code/*.o
+code/file*
