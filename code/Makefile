@@ -26,4 +26,4 @@ all: $(OBJ)
 	$(FC) $(FCFLAGS) $(PREPROCESS) -c $(OMPFLAGS) $<
 
 clean:
-	rm *.o *.mod a.out fort.*
+	rm *.o *.mod a.out fort.* file*
