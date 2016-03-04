@@ -20,6 +20,7 @@ subroutine decompose_ngrid
         mygrid          =       rem + mygrid
         my_grid_end     =       my_grid_end + rem
     endif
+	TGRID=NGRID
     NGRID=mygrid
 
 end

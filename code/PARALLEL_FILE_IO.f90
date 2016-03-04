@@ -12,7 +12,7 @@ subroutine open_io
     if (rank .eq. 0) then
         open(general_fh,FILE=TRIM(INPATH)//'/GENERAL.TXT')
         open(basicout_fh,FILE=TRIM(OUTPATH)//'/BASICOUT.TXT')
-        open(annualflow_fh,FILE=TRIM(OUTPATH)//'/ANNUALFLOW.TXT')
+!        open(annualflow_fh,FILE=TRIM(OUTPATH)//'/ANNUALFLOW.TXT')
     endif
 
 ! Open parallel files to read in the data
@@ -117,12 +117,19 @@ subroutine writeData(fname,nelement,buf)
     implicit none
 
     integer, intent(in) :: nelement,fname
-    integer :: i
+    integer :: i,rem,meangrid
     integer(kind=MPI_OFFSET_KIND) offset
     real*4 tmp_real
     real*4 , intent(inout):: buf(nelement)
-
-    offset=rank * nelement *sizeof(tmp_real)
+	if (rank .eq. nprocs-1) then
+		rem=mod(TGRID,nprocs)
+		! If NGIRD cannot be chunked evenly
+		meangrid=(TGRID-rem)/(nprocs)
+		offset=rank *(nelement/NGRID)*meangrid*sizeof(tmp_real)
+	else
+		offset=rank * nelement *sizeof(tmp_real)
+	endif
+	write(*,*)fname, TGRID,rank,NGRID,offset
     call mpi_file_write_at(fname,offset,buf,nelement,MPI_REAL,MPI_STATUS_IGNORE,ierr)
 
 

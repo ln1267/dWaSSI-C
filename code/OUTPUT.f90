@@ -27,35 +27,36 @@ SUBROUTINE OUTPUT
 
 !VALIDATION.TXT
     nelement = NGRID * NYEAR * 12 * validation_columns
-    allocate(buffer(nelement))
+    if (allocated(buffer) .eqv. .true.) deallocate(buffer)
+	allocate(buffer(nelement))
     indx=1
     do I = 1,NGRID
         do J = 1,NYEAR
             !-----IDY = THE CALANDER YEAR, BYEAR = YEAR TO SATRT
-        IDY = J + BYEAR - 1
-        if (IDY .ge. IYSTART .and. IDY .le. IYEND) then
-            do IM = 1,12
-                buffer(indx)    =   real((my_grid_start - 1) + I)
-                buffer(indx+1)  =   real(IDY)
-                buffer(indx+2)  =   real(IM)
-                buffer(indx+3)  =   RAIN(I,J,IM)
-                buffer(indx+4)  =   SP(I,J,IM)
-                buffer(indx+5)  =   PET(I,J,IM)
-                buffer(indx+6)  =   AET(I,J,IM)
-                buffer(indx+7)  =   PAET(I,J,IM)
-                buffer(indx+8)  =   RUNOFF(I,J,IM)
-                buffer(indx+9)  =   PRIBF(I,J,IM)
-                buffer(indx+10) =   SECBF(I,J,IM)
-                buffer(indx+11) =   INTF(I,J,IM)
-                buffer(indx+12) =   AVSMC(I,J,IM)
-                buffer(indx+13) =   EMUZTWC(I,J,IM)
-                buffer(indx+14) =   EMUZFWC(I,J,IM)
-                buffer(indx+15) =   EMLZTWC(I,J,IM)
-                buffer(indx+16) =   EMLZFPC(I,J,IM)
-                buffer(indx+17) =   EMLZFSC(I,J,IM)
-                indx=indx+validation_columns
-            enddo
-        endif
+				IDY = J + BYEAR - 1
+				if (IDY .ge. IYSTART .and. IDY .le. IYEND) then
+					do IM = 1,12
+						buffer(indx)    =   real((my_grid_start - 1) + I)
+						buffer(indx+1)  =   real(IDY)
+						buffer(indx+2)  =   real(IM)
+						buffer(indx+3)  =   RAIN(I,J,IM)
+						buffer(indx+4)  =   SP(I,J,IM)
+						buffer(indx+5)  =   PET(I,J,IM)
+						buffer(indx+6)  =   AET(I,J,IM)
+						buffer(indx+7)  =   PAET(I,J,IM)
+						buffer(indx+8)  =   RUNOFF(I,J,IM)
+						buffer(indx+9)  =   PRIBF(I,J,IM)
+						buffer(indx+10) =   SECBF(I,J,IM)
+						buffer(indx+11) =   INTF(I,J,IM)
+						buffer(indx+12) =   AVSMC(I,J,IM)
+						buffer(indx+13) =   EMUZTWC(I,J,IM)
+						buffer(indx+14) =   EMUZFWC(I,J,IM)
+						buffer(indx+15) =   EMLZTWC(I,J,IM)
+						buffer(indx+16) =   EMLZFPC(I,J,IM)
+						buffer(indx+17) =   EMLZFSC(I,J,IM)
+						indx=indx+validation_columns
+					enddo
+				endif
         enddo
     enddo
     call writeData(validation_fh,nelement,buffer)
@@ -71,25 +72,25 @@ SUBROUTINE OUTPUT
     do I = 1,NGRID
         do J = 1,NYEAR
             !-----IDY = THE CALANDER YEAR, BYEAR = YEAR TO SATRT
-        IDY = J + BYEAR - 1
-        if (IDY .ge. IYSTART .and. IDY .le. IYEND) then
-            do IM = 1,12
-                buffer(indx)    =   real(I)
-                buffer(indx+1)  =   real(IDY)
-                buffer(indx+2)  =   real(IM)
-                buffer(indx+3)  =   RAIN(I,J,IM)
-                buffer(indx+4)  =   TEMP(I,J,IM)
-                buffer(indx+5)  =   AVSMC(I,J,IM)
-                buffer(indx+6)  =   SP(I,J,IM)
-                buffer(indx+7)  =   PET(I,J,IM)
-                buffer(indx+8)  =   AET(I,J,IM)
-                buffer(indx+9)  =   PAET(I,J,IM)
-                buffer(indx+10) =   TRUNOFF(I,J,IM)
-                buffer(indx+11) =   BASEFLOW(I,J,IM)
-                buffer(indx+12) =   STRFLOW(I,J,IM)
-                indx=indx+monthflow_columns
-            enddo
-        endif
+			IDY = J + BYEAR - 1
+			if (IDY .ge. IYSTART .and. IDY .le. IYEND) then
+				do IM = 1,12
+					buffer(indx)    =   real((my_grid_start - 1) + I)
+					buffer(indx+1)  =   real(IDY)
+					buffer(indx+2)  =   real(IM)
+					buffer(indx+3)  =   RAIN(I,J,IM)
+					buffer(indx+4)  =   TEMP(I,J,IM)
+					buffer(indx+5)  =   AVSMC(I,J,IM)
+					buffer(indx+6)  =   SP(I,J,IM)
+					buffer(indx+7)  =   PET(I,J,IM)
+					buffer(indx+8)  =   AET(I,J,IM)
+					buffer(indx+9)  =   PAET(I,J,IM)
+					buffer(indx+10) =   TRUNOFF(I,J,IM)
+					buffer(indx+11) =   BASEFLOW(I,J,IM)
+					buffer(indx+12) =   STRFLOW(I,J,IM)
+					indx=indx+monthflow_columns
+				enddo
+			endif
         enddo
     enddo
     call writeData(monthflow_fh,nelement,buffer)
@@ -105,20 +106,20 @@ SUBROUTINE OUTPUT
     do I = 1,NGRID
         do J = 1,NYEAR
             !-----IDY = THE CALANDER YEAR, BYEAR = YEAR TO SATRT
-        IDY = J + BYEAR - 1
-        if (IDY .ge. IYSTART .and. IDY .le. IYEND) then
-            do IM = 1,12
-                buffer(indx)    =   real(HUCNO(I))
-                buffer(indx+1)  =   real(IDY)
-                buffer(indx+2)  =   real(IM)
-                buffer(indx+3)  =   AVUZTWC(I,J,IM)
-                buffer(indx+4)  =   AVUZFWC(I,J,IM)
-                buffer(indx+5)  =   AVLZTWC(I,J,IM)
-                buffer(indx+6)  =   AVLZFPC(I,J,IM)
-                buffer(indx+7)  =   AVLZFSC(I,J,IM)
-                indx=indx+soilstorage_columns
-            enddo
-        endif
+			IDY = J + BYEAR - 1
+			if (IDY .ge. IYSTART .and. IDY .le. IYEND) then
+				do IM = 1,12
+					buffer(indx)    =   real((my_grid_start - 1) + I)
+					buffer(indx+1)  =   real(IDY)
+					buffer(indx+2)  =   real(IM)
+					buffer(indx+3)  =   AVUZTWC(I,J,IM)
+					buffer(indx+4)  =   AVUZFWC(I,J,IM)
+					buffer(indx+5)  =   AVLZTWC(I,J,IM)
+					buffer(indx+6)  =   AVLZFPC(I,J,IM)
+					buffer(indx+7)  =   AVLZFSC(I,J,IM)
+					indx=indx+soilstorage_columns
+				enddo
+			endif
         enddo
     enddo
     call writeData(soilstorage_fh,nelement,buffer)
@@ -134,18 +135,18 @@ SUBROUTINE OUTPUT
     do I = 1,NGRID
         do J = 1,NYEAR
             !-----IDY = THE CALANDER YEAR, BYEAR = YEAR TO SATRT
-        IDY = J + BYEAR - 1
-        if (IDY .ge. IYSTART .and. IDY .le. IYEND) then
-            do IM = 1,12
-                buffer(indx)    =   real(HUCNO(I))
-                buffer(indx+1)  =   real(IDY)
-                buffer(indx+2)  =   real(IM)
-                buffer(indx+3)  =   GEPM(I,J, IM)
-                buffer(indx+4)  =   RECOM(I,J,IM)
-                buffer(indx+5)  =   NEEM(I,J,IM)
-                indx=indx+monthcarbon_columns
-            enddo
-        endif
+			IDY = J + BYEAR - 1
+			if (IDY .ge. IYSTART .and. IDY .le. IYEND) then
+				do IM = 1,12
+					buffer(indx)    =   real((my_grid_start - 1) + I)
+					buffer(indx+1)  =   real(IDY)
+					buffer(indx+2)  =   real(IM)
+					buffer(indx+3)  =   GEPM(I,J, IM)
+					buffer(indx+4)  =   RECOM(I,J,IM)
+					buffer(indx+5)  =   NEEM(I,J,IM)
+					indx=indx+monthcarbon_columns
+				enddo
+			endif
         enddo
     enddo
     call writeData(monthcarbon_fh,nelement,buffer)
@@ -158,8 +159,9 @@ SUBROUTINE OUTPUT
     do I = 1,NGRID
         do J = 1,NYEAR
             !-----IDY = THE CALANDER YEAR, BYEAR = YEAR TO SATRT
-                IDY = J + BYEAR - 1
-                buffer(indx)    =   real(HUCNO(I))
+            IDY = J + BYEAR - 1
+			if (IDY .ge. IYSTART .and. IDY .le. IYEND) then
+                buffer(indx)    =   real((my_grid_start - 1) + I)
                 buffer(indx+1)  =   real(IDY)
                 buffer(indx+2)  =   ANURAIN(I,J)
                 buffer(indx+3)  =   ANUPET(I,J)
@@ -172,6 +174,7 @@ SUBROUTINE OUTPUT
                 buffer(indx+10) =   real(NSPM(I,J))
                 buffer(indx+11) =   RFACTOR (I,J)
                 indx=indx+annualflow_columns
+			endif
         enddo
     enddo
     call print_buffer_files(nelement,buffer,annualflow_columns)
@@ -186,13 +189,16 @@ SUBROUTINE OUTPUT
     do I = 1,NGRID
         do J = 1,NYEAR
         !-----IDY = THE CALANDER YEAR, BYEAR = YEAR TO SATRT
-                IDY = J + BYEAR - 1
-                buffer(indx)    =   real(HUCNO(I))
+            IDY = J + BYEAR - 1
+			if (IDY .ge. IYSTART .and. IDY .le. IYEND) then   
+				IDY = J + BYEAR - 1
+                buffer(indx)    =   real((my_grid_start - 1) + I)
                 buffer(indx+1)  =   real(IDY)
                 buffer(indx+2)  =   GEPA(I,J)
                 buffer(indx+3)  =   REOA(I,J)
                 buffer(indx+4)  =   NEEA(I,J)
                 indx=indx+annualcarbon_columns
+			endif
         enddo
     enddo
     call writeData(annualcarbon_fh,nelement,buffer)
@@ -203,7 +209,7 @@ SUBROUTINE OUTPUT
     allocate(buffer(nelement))
     indx=1
     do I = 1,NGRID
-                buffer(indx)    =   real(HUCNO(I))
+                buffer(indx)    =   real((my_grid_start - 1) + I)
                 buffer(indx+1)  =   RAINALL(I)
                 buffer(indx+2)  =   PETALL(I)
                 buffer(indx+3)  =   AETALL(I)
@@ -222,7 +228,7 @@ SUBROUTINE OUTPUT
     allocate(buffer(nelement))
     indx=1
     do I = 1,NGRID
-                buffer(indx)    =   real(HUCNO(I))
+                buffer(indx)    =   real((my_grid_start - 1) + I)
                 buffer(indx+1)  =   real(NUM_YEAR_C(I))
                 buffer(indx+2)  =   AHUCGEP(I)
                 buffer(indx+3)  =   AHUCRE(I)
