@@ -23,7 +23,7 @@ FFLAGS = $(DEBUG)
 all: $(OBJ)
 	$(FC) $(FFLAGS) $(PREPROCESS) $+ $(OMPFLAG) 
 %.o: %.f90 
-	$(FC) $(FCFLAGS) $(PREPROCESS) -c $(OMPFLAGS) $<
+	$(FC) $(FCFLAGS) $(PREPROCESS) -c $(OMPFLAG) $<
 
 clean:
 	rm *.o *.mod a.out fort.* file*
