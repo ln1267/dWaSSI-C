@@ -10,7 +10,7 @@ else ifeq ($(PRGENV),GNU)
 	OMPFLAG=-fopenmp
 	DEBUG=-g -dynamic -mcmodel=medium 
 else ifeq ($(PRGENV),CRAY)
-	OMPFLAG=
+	OMPFLAG=-homp
 	DEBUG=-G2 -dynamic -hpic
 #	CRAY_REVEAL="-h profile_generate"
 	
@@ -21,7 +21,7 @@ FFLAGS = $(DEBUG)
 all: $(OBJ)
 	$(FC) $(FFLAGS)  $+ $(OMPFLAG) 
 %.o: %.f90 
-	$(FC) $(FCFLAGS) -c $(OMPFLAGS) $<
+	$(FC) $(FCFLAGS) -c $(OMPFLAG) $<
 
 clean:
 	rm *.o *.mod a.out fort.*
