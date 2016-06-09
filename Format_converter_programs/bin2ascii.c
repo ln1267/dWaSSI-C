@@ -2,11 +2,12 @@
 #include <stdlib.h>
 
 int main(int argc, char* argv[]){
-	int i,j;
+	long int i,j;
 	char filename[256],bin_file[256];
 	FILE *fr,*fw;
-	int m,n;
-	int nelement=0;
+	long int m,n;
+	long int nelement=0;
+	char *ptrn,*ptrm;
 	if (argc > 1){
 		for ( i=0; i<argc; i++){
 			if (argv[i][0] == '-'){
@@ -15,14 +16,14 @@ int main(int argc, char* argv[]){
 				}else if (argv[i][1] == 'i'){
 					sprintf(bin_file,"%s",argv[i+1]);
 				}else if (argv[i][1] == 'm'){
-					m = atoi(argv[i+1]);
+					m = strtol(argv[i+1],&ptrm,10);
 				}else if (argv[i][1] == 'n'){
-					n = atoi(argv[i+1]);
+					n = strtol(argv[i+1],&ptrn,10);
 				}
 			}
 		}
 		fprintf (stdout,"Processing %s to convert in ASCII file %s.\n",bin_file,filename);
-		fprintf (stdout,"m = %d, n =%d\n",m,n);
+		fprintf (stdout,"m = %ld, n =%ld\n",m,n);
 	}else{
 		fprintf (stderr,"Invalid arguments:\n");
 		fprintf (stderr,"Options:\n"
@@ -47,7 +48,7 @@ int main(int argc, char* argv[]){
 	for (i=0; i<m; i++){
 		for (j=0; j<n; j++){
 			fprintf(fw,"%5.5f  ",buffer[i*n + j]);
-			//printf("%5.5f  ",buffer[i*n + j]);
+			//prlong longf("%5.5f  ",buffer[i*n + j]);
 		}
 		fprintf(fw,"\n");
 	}

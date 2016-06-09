@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(int argc, char* argv[]){
+long long main(int argc, char* argv[]){
 	long int i,j;
 	float **a;
 	char filename[256],bin_file[256];
