@@ -24,9 +24,6 @@ subroutine open_io
     call mpi_file_open(MPI_COMM_WORLD, filename, MPI_MODE_RDONLY, MPI_INFO_NULL, soilinfo_fh, ierr)
     filename=TRIM(INPATH)//'/LANDLAI.DAT'
     call mpi_file_open(MPI_COMM_WORLD, filename, MPI_MODE_RDONLY, MPI_INFO_NULL, landlai_fh, ierr)
-    filename=TRIM(INPATH)//'/LANDLAI.DAT'
-    call mpi_file_open(MPI_COMM_WORLD, filename, MPI_MODE_RDONLY, MPI_INFO_NULL, landlai_fh, ierr)
-
 
 ! Open parallel files to write in the data
     filename=TRIM(OUTPATH)//'/VALIDATION.DAT'

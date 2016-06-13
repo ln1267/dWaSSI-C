@@ -196,40 +196,44 @@ endif
       INTEGER(kind=8) NUM_DATA
       INTEGER(kind=2) YEAR, J, M,Mon
 
-      INTEGER Y_2000 ,Y_LAI_END ,Y_2014,Y_LAI_START
+      INTEGER(kind=2) LAI_S_Y,Y_LAI_END,LAI_E_Y,Y_LAI_START
 
       CHARACTER*100 TEMPHEAD3 (11)
 
       !MPI specific varaibles
       real*4, allocatable:: buffer(:)
       integer nelement,indx
-
-
+      
+! Define the start and end year of LAI data	
+	
+	Print*, "Please input the start and End year of LAI data (Eg: 2000,2012)"
+!	Read(*,*) LAI_S_Y,LAI_E_Y
+	LAI_S_Y=1982
+  	LAI_E_Y=2013
+    Print*, "Start Year=",LAI_S_Y,"END Year=",LAI_E_Y
 !   Set default LAI for the year without LAI input-----
-
-
-      IF (BYEAR .LT. 2000 ) then
-           Y_LAI_START=2000-BYEAR+1
+      IF (BYEAR .LT. LAI_S_Y ) then
+           Y_LAI_START=LAI_S_Y-BYEAR+1
         ELSE
          Y_LAI_START=1
        ENDIF
-      If (IYEND .GT. 2014) then
-        Y_LAI_END=2014-BYEAR+1
+      If (IYEND .GT. LAI_E_Y) then 
+        Y_LAI_END=LAI_E_Y-BYEAR+1
        Else
         Y_LAI_END=IYEND-BYEAR+1
       Endif
-
-      Y_2000=2000-BYEAR+1
-      Y_2014=2014-BYEAR+1
-
+    print*,"reading LAI"
 ! --- Read and print LAI Data from file in parallel
     !Here total elements for each MPI-task to read are
     !   local_NGRID * NUMBER OF YEARS * NUMBER OF MONTHS * NUMBER OF COLUMNS
     nelement= NGRID * (Y_LAI_END - Y_LAI_START + 1)* 12 * landlai_columns
     if (allocated(buffer) .eqv. .true.) deallocate(buffer)
     allocate(buffer(nelement))
+    print*,"infomation for reading LAI",nelement,Y_LAI_END,Y_LAI_START,landlai_columns
     call readData(landlai_fh,nelement,buffer)
-
+    
+    
+    print*,"finish reading LAI"
     ! Updating the buffered data into relevant arrays.
     indx=1
     do I= 1,NGRID
@@ -240,20 +244,21 @@ endif
                 Mon         =   int(buffer(indx+2))
                 LAI(I,J,M)  =   buffer(indx+3)
                 indx=indx+landlai_columns
+                !write(*,*) HUCNO(I),YEAR,Mon,LAI(I,J,M)
             enddo
         enddo
     enddo
 
 
-! --- ASSIGN YEAR 2000 LAI DATA TO YEARS BEFORE 2000
-        IF  ( BYEAR .LT. 2000)  then
+! --- ASSIGN YEAR LAI_S_Y LAI DATA TO YEARS BEFORE LAI_S_Y
+        IF  ( BYEAR .LT. LAI_S_Y)  then
           DO 202 I=1, NGRID
 
-             DO 302 J=1, Y_2000-1
+             DO 302 J=1, LAI_S_Y-1
 
                 DO 402 M=1, 12
 
-                LAI(I,J,M) = LAI(I,Y_2000,M)
+                LAI(I,J,M) = LAI(I,LAI_S_Y,M)
 
 
 402             CONTINUE
@@ -264,15 +269,15 @@ endif
 !
         ENDIF
 !
-!C--- ASSIGN YEAR 2014 LAI DATA TO YEARS AFTER 2014
-      IF (IYEND .GT. 2014) then
+!C--- ASSIGN YEAR Y_LAI_END LAI DATA TO YEARS AFTER Y_LAI_END
+      IF (IYEND .GT. Y_LAI_END) then
           DO 203 I=1, NGRID
 
-             DO 303 J=Y_2014+1, NYEAR
+             DO 303 J=Y_LAI_END+1, NYEAR
 
                 DO 403 M=1, 12
 
-                LAI(I,J,M) = LAI(I,Y_2014,M)
+                LAI(I,J,M) = LAI(I,Y_LAI_END,M)
 
 
 403             CONTINUE
@@ -777,6 +782,7 @@ END
 	  
       RETURN
       END
+
 
 !C**********************************************************************C
 !C                                                                      C
