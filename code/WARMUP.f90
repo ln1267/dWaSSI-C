@@ -18,7 +18,7 @@
       INTEGER ISCENARIOS
       REAL SNOWPACK
       real,allocatable :: inputDATA(:)
-      allocate(inputDATA(10))
+      allocate(inputDATA(12))
 
 !!!--------------------------------------------------------------------
 ! --- Read in data from GENERAL.TXT and write to BASICOUT.TXT
@@ -55,6 +55,10 @@ write (*,*) "[",rank,"] --- Calling MPI routine"
       WRITE(basicout_fh,2050) IYSTART, IYEND
 2050  FORMAT('FOR SIMULATION SUMMARY, YEAR TO START',I10, ' , END ',I10)
 
+      READ (general_fh,*) LAI_S_Y,LAI_E_Y
+
+      WRITE(basicout_fh,2051) LAI_S_Y,LAI_E_Y
+2051  FORMAT('FOR LAI input data, the first year',I10, ' , END ',I10)
 
       READ (general_fh,*) FPERD
 
@@ -78,10 +82,12 @@ write (*,*) "[",rank,"] --- Calling MPI routine"
        inputDATA(7)=FPERD
        inputDATA(8)=FPERDLAI
        inputDATA(9)=SNOWPACK
+       inputDATA(10)=LAI_S_Y
+       inputDATA(11)=LAI_E_Y
 endif
 
 ! Broadcasting the data to all participating processors
-call mpi_bcast(inputDATA, 9, MPI_REAL, 0, MPI_COMM_WORLD, ierr)
+call mpi_bcast(inputDATA, 11, MPI_REAL, 0, MPI_COMM_WORLD, ierr)
 ! Now that we have broadcasted the data, lets copy the received array content to the corresponding local variables
 
        NGRID    =   inputDATA(1)
@@ -93,6 +99,8 @@ call mpi_bcast(inputDATA, 9, MPI_REAL, 0, MPI_COMM_WORLD, ierr)
        FPERD    =   inputDATA(7)
        FPERDLAI =   inputDATA(8)
        SNOWPACK =   inputDATA(9)
+       LAI_S_Y  =   inputDATA(10) 
+       LAI_E_Y  =   inputDATA(11)
       RETURN
 END
 
@@ -196,7 +204,7 @@ endif
       INTEGER(kind=8) NUM_DATA
       INTEGER(kind=2) YEAR, J, M,Mon
 
-      INTEGER(kind=2) LAI_S_Y,Y_LAI_END,LAI_E_Y,Y_LAI_START
+      INTEGER(kind=2) Y_LAI_END,Y_LAI_START !,LAI_S_Y,LAI_E_Y
 
       CHARACTER*100 TEMPHEAD3 (11)
 
@@ -206,10 +214,10 @@ endif
       
 ! Define the start and end year of LAI data	
 	
-	Print*, "Please input the start and End year of LAI data (Eg: 2000,2012)"
+	!Print*, "Please input the start and End year of LAI data (Eg: 2000,2012)"
 !	Read(*,*) LAI_S_Y,LAI_E_Y
-	LAI_S_Y=1982
-  	LAI_E_Y=2013
+	!LAI_S_Y=1982
+  	!LAI_E_Y=2013
     Print*, "Start Year=",LAI_S_Y,"END Year=",LAI_E_Y
 !   Set default LAI for the year without LAI input-----
       IF (BYEAR .LT. LAI_S_Y ) then
