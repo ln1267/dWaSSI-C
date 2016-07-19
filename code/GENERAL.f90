@@ -68,7 +68,7 @@ Module common_var
     ! LAI
           ! REAL LAI
     REAL,POINTER:: LAI(:,:,:)
-    INTEGER(kind=2) LAI_S_Y,LAI_E_Y
+!    INTEGER(kind=2) LAI_S_Y,LAI_E_Y
 
     ! SNOWPACK
           ! REAL SP
