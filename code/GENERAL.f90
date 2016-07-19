@@ -6,7 +6,7 @@ Module common_var
 
     ! Grid numbers
     INTEGER MAX_GRIDS, MAX_YEARS
-!    PARAMETER (MAX_GRIDS=10108,MAX_YEARS=32)
+    !PARAMETER (MAX_GRIDS=10108,MAX_YEARS=32)
 
     ! BASIC
     INTEGER NGRID,TGRID,NYEAR,NLC,BYEAR,IYSTART,IYEND
@@ -68,6 +68,7 @@ Module common_var
     ! LAI
           ! REAL LAI
     REAL,POINTER:: LAI(:,:,:)
+    INTEGER(kind=2) LAI_S_Y,LAI_E_Y
 
     ! SNOWPACK
           ! REAL SP
@@ -174,7 +175,7 @@ PROGRAM WaSSICBZB
     DATA MONTHL/31,29,31,30,31,30,31,31,30,31,30,31/
       
     ! --- For reading in the command line arguments
-    CHARACTER(len=52),ALLOCATABLE:: ARGS(:)
+    CHARACTER(len=256),ALLOCATABLE:: ARGS(:)
     INTEGER (kind=4) iargc,INDX
 
     !     Initialize I/O unit identifiers
@@ -207,7 +208,7 @@ PROGRAM WaSSICBZB
     DO INDX=1,iargc()
         CALL getarg(INDX, ARGS(INDX))
     END DO
-    ARCH=ARGS(1)
+    ARCH='1'
     INPATH=ARGS(2)
     OUTPATH=ARGS(3)
 
@@ -233,7 +234,7 @@ PROGRAM WaSSICBZB
     !  --------- Read input data -------------------------------
 
 #ifdef MPI
-    call open_io
+        call open_io
 #else
     IF (PRESS == 1)  then
 
@@ -284,10 +285,9 @@ PROGRAM WaSSICBZB
     !!----------------------Modelling for each Cell and year start------------------------------------
     !
 
-    !$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(ICELL,IYEAR,IM,MNDAY)
+!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(ICELL,IYEAR,IM,MNDAY)
+   
     DO 200 ICELL=1,NGRID
-
-
         ICOUNT=0
 
         DO 300 IYEAR=1, NYEAR
@@ -332,20 +332,20 @@ PROGRAM WaSSICBZB
     CALL SUMMARY_CABON(ICELL)
 !
 200 CONTINUE  ! END LOOP GRID
-    !$OMP END PARALLEL DO
+!$OMP END PARALLEL DO
     !
     !
     !! This is for output result
     !
     CALL OUTPUT !(ICELL,IYEAR)  ! Output Annual water and carbon balances
 
-    CALL ARRAY_DEALLO ! Deallocated all global arries
+   ! CALL ARRAY_DEALLO ! Deallocated all global arries
 
 #ifdef MPI
     call close_io
 #endif
   
-    PRINT *, '-------------PROGRAM RUN ENDS----------------!'
+    PRINT *, '-------------PROGRAM RUN ENDS on RANK ',rank,'----------------!'
 #ifdef MPI
     call MPI_FINALIZE(ierr)
 #endif

@@ -177,7 +177,7 @@ SUBROUTINE OUTPUT
 			endif
         enddo
     enddo
-    call print_buffer_files(nelement,buffer,annualflow_columns)
+    !call print_buffer_files(nelement,buffer,annualflow_columns)
     call writeData(annualflow_fh,nelement,buffer)
 
 !ANNUALCARBON.TXT

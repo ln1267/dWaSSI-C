@@ -314,7 +314,7 @@ END
       INTEGER(kind=4) I
       INTEGER(kind=2) YEAR, J, M,Mon
 
-      REAL,POINTER :: ANNPPT(:,:),SUMANPPT(:)
+      REAL,ALLOCATABLE :: ANNPPT(:,:),SUMANPPT(:)
 
       CHARACTER*10 TEMPHEAD (10)
 
