@@ -16,7 +16,7 @@ else ifeq ($(PRGENV),CRAY)
 	PREPROCESS="-F" 
 #	CRAY_REVEAL="-h profile_generate"
 endif 
-ifeq ($(EXE),"")
+ifeq "$(EXE)" ""
 	EXE=WaSSI
 endif
 FCFLAGS = $(DEBUG) $(CRAY_REVEAL) $(FPPFLAGS)
