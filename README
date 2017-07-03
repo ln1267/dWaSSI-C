@@ -1,90 +1,60 @@
-Message for Ning Liu
-Please update this file with relevant information about how to run this code.
+# dWaSSI-C model
 
+This is the revised version of WaSSI-C model. The main revises include: 1 gridded simulation; 2 parallelized with OpenMP and MPI methods
 
-!----------- Ning Liu 10.43 AM 18/09/2015
-1. In order to test the pro., The WaSSI.exe was built in the code foder.
+## The Struction of dWaSSI-C model
 
-2. OpenMP funtions have been deleted in "GENERAL.f90" in order to correctly run in Gfortran.
+1. GENERAL.f90   
 
-3. Besides, output foder in "GENERAL.f90" was changed to "../../output", so that output files will not be stored in the github.
-
-!--------------Ning Liu 10.13 PM 17/09/2015
-The Struction of WaSSI model
-
-Main program:
-
-general.f90 
-	This is the main file for the whole program. It contants the main 3 nested do loops for grids, year and month. Besides, the year and month loops should be run orderedly, and they are relevant to previous loop. 
-	It reads input data from 5 TXT files where colums are separated by ",".
+    This is the main script for the whole program. 
 	
-Subroutines:
+2. Subroutines:  
 	
-warmup.f90
+    2.1 WARMUP.f90  
 	This subroutine is mainly used for reading data from input files and write some basic runnning information to ouput file.
 
-PET.f90 
+    2.2 PET.f90   
 	It is used for simulating PAET(year,month) for the following simulation.(As PAET did not include grid information, We may be need to change it in the future.)
-	There is no relevant in this matrix
-	
-Waterbal.f90 
+	There is no relevant in this matrix  
+    2.3 WATERBAL.f90   
 	This is the main file for data processing.
-	It contants a day loop for the following simulation. The struction details can be found in the "Waterbal.png".( There is a bit differece between this framwork and the code, but the main calculation part is the same. The code does not have the K loop)" 
-
-Output.f90 
+	It contants a day loop for the following simulation. The struction details can be found in the "Waterbal.png".( There is a bit differece between this framwork and the code, but the main calculation part is the same. The code does not have the K loop)"   
+    2.4 OUTPUT.f90   
 	This is used for summary the main results and write them to outputs files.
 	It has two nested loops. (Year and month loop)
 	
-Summary.f90
+    2.5 SUMMARY.f90
 	This is similar to output file, but it only have year loop.
 
-Carbonbal.f90	
+    2.6 CARBONBAL.f90  	
 	This is also for output.
 	
-Validation.f90 
-	Write data to output file.
 
-
-
-
-#########################################
-# 	  How to use Makefile 		#
-#########################################
-
-To compile first make sure that the Makefile is updated for the machine that you are compiling on.
-The default setting is for Magnus. To compile, type:
-make
-
-This should produce some objects with extensions *.o and a.out which is your executable.
-
-To clean the project just type:
-make clean 
-and it should delete all except the source files. 
-
-
-
-###########################################
 # Using MPI and OpenMP to run simulations #
-###########################################
 
-COMPILATION: 
-You can compile in all Programming enviroments on Magnus; Cray , Intel or GNU.
-To run the makefile to compile with MPI support, do the following:
-FPPFLAGS='-DMPI' make VERBOSE=1
+The dWaSSI-C model is currently running on Magnus in Pawsey (https://pawsey.org.au/).
+
+## Compile 
+It can be compiled in all Programming enviroments on Magnus; Cray, Intel or GNU.
+To run the makefile to compile with MPI support, using the following code:  
+```
+FPPFLAGS='-DMPI' make VERBOSE=1  
+```
 
 This should produce an executable a.out which you can now run.
 
-To run simply do the following either in a slurm sbatch script or in an interactive or salloc session:
-
+## Run on Magnus
+To run simply do the following either in a slurm sbatch script or in an interactive on a salloc session:
+```
 aprun -n NUMBER_OF_PARALLEL_TASKS ./a.out 1 PATH_TO_INPUT_DIRECTORY PATH_TO_OUTPUT_DIRECTORY
+```
 
+## Input preparation
 The input files must be in binary format without delimters or separators and must be of uniform datatype of real 4. 
 
-Two convenience applications have also been developed to convert input or output files in ASCII to the binary format acceptable by the MPI program. They are located in Format_converter_programs
+Two convenience applications have also been developed to convert input or output files in ASCII to the binary format acceptable by the MPI program. They are located in folder "Format_converter_programs/"  
+```
 ascii2bin 
 bin2ascii
-
+```
 To show the syntax or call arguments for each of the two, just type the name of executable and press return and it will show the list of the prototype or the possible arguments.
-
-
-
