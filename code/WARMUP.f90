@@ -10,9 +10,9 @@
 	  USE Common_var
       implicit none 
  
-      CHARACTER*4 HEADNG(20)
+      CHARACTER(LEN=100) HEADNG(100)
       INTEGER ISCENARIOS
-	  REAL SNOWPACK
+        REAL SNOWPACK
   
 !      COMMON/LAND/ SPRING,SUMMER,FALL,WINTER,SI(366)
 
@@ -26,7 +26,7 @@
 
            
       READ(1,1000) HEADNG
- 1000 FORMAT(20A4)
+ 1000 FORMAT(100A100)
       WRITE(77,2010) HEADNG
  2010 FORMAT(' ',20A4/)
 
@@ -152,7 +152,6 @@
 !     Read in landuse data from CELLINFO.TXT, calcuate change in       !
 !     landuse based on percent forest decrease (if desired), write     !
 !     to BASICOUT.TXT                                                  !
-!     基于设定的采伐值重计算土地利用情况。                             !
 !**********************************************************************!
       SUBROUTINE RPSINT 
 
@@ -668,7 +667,7 @@
  902           FORMAT (100A11)
  
             ENDIF
-                      
+        print*,"finished reading LAI"               
  
 ! --- LAI_* IS THE LAI FOR LANDUSE * (8 TOTAL IN LANDLAI.TXT)
 
@@ -686,7 +685,6 @@
 201   CONTINUE
 
 ! --- ASSIGN YEAR 2001 LAI DATA TO YEARS BEFORE 2001
-! -----将2001年的数据赋给以前的年份
         IF  ( BYEAR .LT. 2001)  then
           DO 202 I=1, NGRID
                 
@@ -706,7 +704,6 @@
         ENDIF
 !          
 !C--- ASSIGN YEAR 2012 LAI DATA TO YEARS AFTER 2012
-!C--- 将2012年的数据赋给以后的年份
       IF (IYEND .GT. 2012) then
           DO 203 I=1, NGRID
                 
