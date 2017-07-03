@@ -14,7 +14,7 @@
       USE mpi
       implicit none
 
-      CHARACTER*4 HEADNG(20)
+      CHARACTER(LEN=100) HEADNG(100)
       INTEGER ISCENARIOS
       REAL SNOWPACK
       real,allocatable :: inputDATA(:)
@@ -27,7 +27,7 @@
 if (rank==0) then
 write (*,*) "[",rank,"] --- Calling MPI routine"
       READ(general_fh,1000) HEADNG
- 1000 FORMAT(20A4)
+ 1000 FORMAT(100A100)
       WRITE(basicout_fh,2010) HEADNG
  2010 FORMAT(' ',20A4/)
 
@@ -67,7 +67,7 @@ write (*,*) "[",rank,"] --- Calling MPI routine"
 
       WRITE(basicout_fh,2058) FPERD, FPERDLAI
 2058  FORMAT('DEFOREST RATE%',F10.2, /'LAI REDUCTION%=', F10.2)
-
+      SNOWPACK=0.0
       READ (general_fh,*) SNOWPACK
       WRITE(basicout_fh,1047) SNOWPACK
 1047  FORMAT('INTIAL SNOWPACK (MM) = :', F10.2)
@@ -241,7 +241,6 @@ endif
     call readData(landlai_fh,nelement,buffer)
     
     
-    print*,"finish reading LAI"
     ! Updating the buffered data into relevant arrays.
     indx=1
     do I= 1,NGRID
@@ -257,6 +256,7 @@ endif
         enddo
     enddo
 
+    print*,"finished reading LAI"
 
 ! --- ASSIGN YEAR LAI_S_Y LAI DATA TO YEARS BEFORE LAI_S_Y
         IF  ( BYEAR .LT. LAI_S_Y)  then

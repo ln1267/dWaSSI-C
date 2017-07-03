@@ -285,8 +285,9 @@ PROGRAM WaSSICBZB
     !!----------------------Modelling for each Cell and year start------------------------------------
     !
 
+    print*,"Entering Loops"
 !$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(ICELL,IYEAR,IM,MNDAY)
-   
+     
     DO 200 ICELL=1,NGRID
         ICOUNT=0
 
