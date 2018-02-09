@@ -1,0 +1,64 @@
+Message for Ning Liu
+Please update this file with relevant information about how to run this code.
+
+
+!----------- Ning Liu 10.43 AM 18/09/2015
+1. In order to test the pro., The WaSSI.exe was built in the code foder.
+
+2. OpenMP funtions have been deleted in "GENERAL.f90" in order to correctly run in Gfortran.
+
+3. Besides, output foder in "GENERAL.f90" was changed to "../../output", so that output files will not be stored in the github.
+
+!--------------Ning Liu 10.13 PM 17/09/2015
+The Struction of WaSSI model
+
+Main program:
+
+general.f90 
+	This is the main file for the whole program. It contants the main 3 nested do loops for grids, year and month. Besides, the year and month loops should be run orderedly, and they are relevant to previous loop. 
+	It reads input data from 5 TXT files where colums are separated by ",".
+	
+Subroutines:
+	
+warmup.f90
+	This subroutine is mainly used for reading data from input files and write some basic runnning information to ouput file.
+
+PET.f90 
+	It is used for simulating PAET(year,month) for the following simulation.(As PAET did not include grid information, We may be need to change it in the future.)
+	There is no relevant in this matrix
+	
+Waterbal.f90 
+	This is the main file for data processing.
+	It contants a day loop for the following simulation. The struction details can be found in the "Waterbal.png".( There is a bit differece between this framwork and the code, but the main calculation part is the same. The code does not have the K loop)" 
+
+Output.f90 
+	This is used for summary the main results and write them to outputs files.
+	It has two nested loops. (Year and month loop)
+	
+Summary.f90
+	This is similar to output file, but it only have year loop.
+
+Carbonbal.f90	
+	This is also for output.
+	
+Validation.f90 
+	Write data to output file.
+
+
+
+
+#########################################
+# 	  How to use Makefile 		#
+#########################################
+
+To compile first make sure that the Makefile is updated for the machine that you are compiling on.
+The default setting is for Magnus. To compile, type:
+make
+
+This should produce some objects with extensions *.o and a.out which is your executable.
+
+To clean the project just type:
+make clean 
+and it should delete all except the source files. 
+
+
