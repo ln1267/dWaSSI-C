@@ -146,8 +146,8 @@ REAL,POINTER:: RUNLAND(:,:,:,:),ETLAND(:,:,:,:),GEPLAND(:,:,:,:)
       DATA MONTHL/31,29,31,30,31,30,31,31,30,31,30,31/
       
 ! --- For reading in the command line arguments 
-      CHARACTER(len=32),ALLOCATABLE:: ARGS(:) 
-      CHARACTER(len=32) ARCH,INPATH,OUTPATH
+      CHARACTER(len=256),ALLOCATABLE:: ARGS(:) 
+      CHARACTER(256) ARCH,INPATH,OUTPATH
       INTEGER (kind=4) iargc,INDX
 ! --- Write introductory information to screen
       
