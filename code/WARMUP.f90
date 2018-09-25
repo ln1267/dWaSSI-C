@@ -14,17 +14,9 @@
       INTEGER ISCENARIOS
 	  REAL SNOWPACK
   
-!      COMMON/LAND/ SPRING,SUMMER,FALL,WINTER,SI(366)
-
-!      COMMON/GROUNDWATER/ GROUNDWATER(4000,9), ALAFA
-      
-!      COMMON/NODE/NONODE
-
-!      REAL ALAFA
 
 ! --- Read in data from GENERAL.TXT and write to BASICOUT.TXT
-
-           
+   
       READ(1,1000) HEADNG
  1000 FORMAT(20A4)
       WRITE(77,2010) HEADNG
@@ -35,7 +27,16 @@
       WRITE(77,*) ISCENARIOS
 2015  FORMAT('Scenario#', I10)
 
-
+      READ(1,*) modelscale
+      
+		IF (modelscale ==0) THEN
+			WRITE(77,*) "Model is set as catchment scale simulation using HUC"
+			WRITE(*,*) "Model is set as catchment scale simulation using HUC"
+		ELSE 
+			WRITE(77,*) "Model is set as grid scale simulation using cell information"
+			WRITE(*,*) "Model is set as grid scale simulation using cell information"
+		ENDIF
+		
       READ(1,*) NGRID, NYEAR, BYEAR, NLC
 
       WRITE(77,2020) NGRID
@@ -47,15 +48,19 @@
       
       WRITE(77,2040) NLC
       
- 2040 FORMAT('NUMBER OF LAND COVER CATEGORIES: ',I10)      
+ 2040 FORMAT('NUMBER OF LAND COVER CATEGORIES: ',I10) 
+ 
+      READ (1,*) LAI_S_Y,LAI_E_Y
+
+      WRITE(77,2051) LAI_S_Y,LAI_E_Y
+2051  FORMAT('FOR LAI input data, the first year',I10, ' , END ',I10)
            
       READ (1,*) IYSTART, IYEND
 
       WRITE(77,2050) IYSTART, IYEND
 2050  FORMAT('FOR SIMULATION SUMMARY, YEAR TO START',I10, ' , END ',I10)
-
-
-      READ (1,*) FPERD
+   
+	  READ (1,*) FPERD
 
 !--  reduction fraction of Leaf Area index for scenario analysis
 
@@ -98,15 +103,12 @@
 1070  FORMAT ('CELL,RAIN,PET,',&
       'AET,RUNOFF,RUNOFF/P,ET/P,(RUN+ET)/P',&
        'RFACTOR,Y_n')
-
-       
+     
          WRITE (910,1080) 
          
 1080    FORMAT ('WATERSHEDID,YEAR,LADUSEID,',&
       'HUCRUNOFF,FLOWVOL,LAND%,HUCAREA')        
-       
-       
-       
+         
          WRITE (920,1090) 
          
 1090    FORMAT ('WATERSHEDID,YEAR,CROPFLOW,',&
@@ -146,13 +148,54 @@
 			
       RETURN
       END
+
+
+!**********************************************************************!
+!                                                                      !
+!     *** SUBROUTINE RPSWUE ***                                        !
+!     Read in WUE paramters for each landuse data from WUE_input.TXT   !
+!     landuse based on percent forest decrease (if desired), write     !
+!     to BASICOUT.TXT                                                  !
+!                                !
+!**********************************************************************!
+      SUBROUTINE RPSWUE 
+
+	  Use Common_var
+       implicit none
+
+      INTEGER I,K
+
+      CHARACTER*1000 DUMY(30),LCname
+      
+! --- Read and print land use data for each active cell IN THE BASIC.OUT FILE
+      WRITE(77,20001)
+20001  FORMAT(/'WUE paramters INFO FOR EACH SIMULATION CELL'/)
+
+      READ (9,5001) DUMY
+5001   FORMAT (1000A30)
+	print*,"Landcover ID,WUE,RECO_inter,RECO_slope,Land cover name"
+      DO 1011 K=1, NLC
+		
+	    READ(9,*) I, wue_k(K), reco_inter(K) , reco_slope(K),LCname
+
+      WRITE(77,11001) I, wue_k(K), reco_inter(K) , reco_slope(K),LCname
+	  !print*,I, wue_k(K), reco_inter(K) , reco_slope(K)
+	WRITE(*,11001) I, wue_k(K), reco_inter(K) , reco_slope(K),LCname
+11001  FORMAT(I5, 3F8.2,',',1000A30)    
+     
+1011    CONTINUE
+
+	RETURN
+	END
+
+	  
 !**********************************************************************!
 !                                                                      !
 !     *** SUBROUTINE RPSINT ***                                        !
 !     Read in landuse data from CELLINFO.TXT, calcuate change in       !
 !     landuse based on percent forest decrease (if desired), write     !
 !     to BASICOUT.TXT                                                  !
-!     基于设定的采伐值重计算土地利用情况。                             !
+!                                !
 !**********************************************************************!
       SUBROUTINE RPSINT 
 
@@ -161,7 +204,7 @@
 
       REAL CROP
 
-      INteger year, I , J,ID
+      INteger year, I , J,ID,K
 
 
       CHARACTER*1000 DUMY(30)
@@ -178,12 +221,18 @@
       WRITE (77,500) DUMY
              
       DO 10 I=1, NGRID
-
-      READ(2,*) ID, HUCNO(I), LATUDE(I), LONGI(I),LADUSE(I) !,HUCELE(I)
-      
-             
+		IF (modelscale==0) THEN
+		
+			READ(2,*) ID, HUCNO(I), LATUDE(I), LONGI(I),(LADUSE_lc(I,K),K=1, NLC)
+		
+		ELSE
+		
+			READ(2,*) ID, HUCNO(I), LATUDE(I), LONGI(I),LADUSE(I) !,HUCELE(I)
+			
+		ENDIF
+		
 !      WRITE(77,1100) ID, HUCNO(I),LATUDE(I), LONGI(I), 
-!     > (LADUSE(I,K),K=1, NLC)
+!     > (LADUSE_lc(I,K),K=1, NLC)
 
 1100  FORMAT(2I10, 2F10.4, I4)    
      
@@ -211,408 +260,15 @@
 !     LZPK(I), PFREE(I)
 !    print*,I 
 
-!! this part is used for soil data calibration
-           
-   !    UZTWM(I)=UZTWM(I)*1
-   !    UZFWM(I)=UZFWM(I)*1
-   !    UZK(I)=UZK(I)*1 
- !      ZPERC(I)=ZPERC(I)*1
-     !  REXP(I)=REXP(I)*1
-      LZTWM(I)=LZTWM(I)*1.3 !*(1+VAL_1(TUN1)) 
-    !  LZFSM(I)=LZFSM(I) !*
-       LZFPM(I)=LZFPM(I)*2.4
-       LZSK(I)= LZSK(I)*0.9 !*(1+VAL_2(TUN2)) 
-       LZPK(I)=LZPK(I)*1.2
-!      PFREE(I)=PFREE(I) !
-
 
 1150  FORMAT(I12, 11F10.4)    
      
 15    CONTINUE
 
-
-! ---- Converting forest to two types of croplands in the same watersheds
-!------根据设定的采伐率重计算植被类型中的某些变化植被类型
- 
-!      DO 20 I=1, NGRID
-!      
-!           
-!      CROP = LADUSE(I,1) + LADUSE(I,2)
-!     
-!      IF (CROP .NE. 0.) THEN
-! 
-!      LADUSE(I,1)=(LADUSE(I,1)/(LADUSE(I,1) + LADUSE(I,2))) 
-!     & * FPERD * (LADUSE(I,4) + LADUSE(I,5)+ LADUSE(I,6)+   
-!     &LADUSE(I,7) + LADUSE(I,8)+ LADUSE(I,11) ) 
-!     &+LADUSE(I,1)
-!             
-!      
-!      LADUSE(I,2)=(LADUSE(I,2)/(LADUSE(I,1) + LADUSE(I,2)))
-!     & * FPERD * (LADUSE(I,4) + LADUSE(I,5)+ LADUSE(I,6) +   
-!     & LADUSE(I,7) + LADUSE(I,8)+ LADUSE(I,11) ) 
-!     & + LADUSE(I,2)
-! 
-!      ELSEIF (CROP .EQ. 0.) THEN
-!     
-!         LADUSE(I,1) = 0.5*FPERD
-!     & *FPERD * (LADUSE(I,4) + LADUSE(I,5)+ LADUSE(I,6)   
-!     & +LADUSE(I,7)+LADUSE(I,8)+ LADUSE(I,11) ) 
-!     & +LADUSE(I,1)
-!      
-!        LADUSE(I,2) = 0.5
-!     & * FPERD * (LADUSE(I,4) + LADUSE(I,5)+ LADUSE(I,6)+   
-!     & LADUSE(I,7) + LADUSE(I,8)+ LADUSE(I,11))
-!     & + LADUSE(I,2)
-!     
-!         ENDIF 
-!                          
-!      LADUSE(I,4) = LADUSE(I,4)*(1-FPERD)
-!      LADUSE(I,5) = LADUSE(I,5)*(1-FPERD)
-!      LADUSE(I,6) = LADUSE(I,6)*(1-FPERD)
-!      LADUSE(I,7) = LADUSE(I,7)*(1-FPERD)
-!      LADUSE(I,8) = LADUSE(I,8)*(1-FPERD)
-!      LADUSE(I,11) = LADUSE(I,11)*(1-FPERD)
-!  20    CONTINUE
-
       RETURN
       END
 
       
-!**********************************************************************C
-!                                                                      C
-!C     *** SUBROUTINE RPSWATERUSE ***                                   C
-!C     Read in HUC area, elevation, and slope from HUCAREA.TXT          C
-!C     Read in return flow rate from RETURNFLOW.TXT                     C
-!C     Read in water use by water resource region from HUCREGION.TXT    C
-!C     Read in population info from POPULATION.TXT                      C
-!C     READ IN GROUNDWATER USE BY SECTOR from GROUNDWATER.TXT           C
-!C     READ IN SURFACE WATER USE BY SECTOR from WATERUSE.TXT            C
-!C     calculate change in irrigation water use if desired              C
-!C     Read in huc node info from NODEHUC.TXT                           C
-!C     Read in average monthly flows from AVGMONFLOW.TXT                C
-!C                                                                      C
-!C**********************************************************************C
-      SUBROUTINE RPSWATERUSE
-
-
-     Use Common_var
-      
-!c      COMMON/POPULATION/POPULATION(4000, 150)      
-!c      COMMON/HUCREGION/DMC(18,4),IRRC(18,4), PPC(18,4) 
-!c      COMMON/RETURNFLOW/ RETURNFLOW(4000,8)
-!c      COMMON/GROUNDWATER/ GROUNDWATER(4000,9), ALAFA      
-!c      COMMON/WATERUSE/ WATERUSE(4000,8), HUCWUSE(4000)
-!
-! 
-
-!      
-!c      COMMON/FLOWNETWORK/IDFHUC(4000), FHUC(4000), IDTHUC(4000), 
-!c     &THUC(4000)
-!     
-!c      COMMON/NODE/NONODE
-!          
-!c      COMMON/ROUTING/RECHUC(4000,50),NORECHUC(4000)
-!      
-!c      COMMON/IRRIGATION/DRIRR
-!      
-!c      REAL  POPULATION(4000,150)                   
-!c      REAL HUCAREA(4000), RETURNFLOW(4000,8), WATERUSE(4000, 8) 
-!c      REAL GROUNDWATER (4000, 9), HUCWUSE(4000)
-
-
-      
-!c      REAL DMC(18,4), IRRC(18,4), PPC(18,4)
-!c      REAL DRIRR     
-!      
-!c      INTEGER IDFHUC(4000), FHUC(4000), IDTHUC(4000), THUC(4000)
-!      
-!c      INTEGER K,RECHUC(4000, 50)
-!      
-!c      INTEGER NORECHUC(4000), POP_FLAG 
-      
-      
- !     CHARACTER*10 DUMY7(30)
-          
-
-      
-       
-!---READ IN HUC AREA, ELEV, and slope from HUCAREA.TXT
-      
-           
-!       READ (11, 50) DUMY7
-!50     FORMAT (30A10)
-! 
-!       WRITE (77, 50) DUMY7
-!             
-!       DO 60 I = 1, NGRID
-!       
-!       READ (11, *) ID, IDHUC, HUCAREA(I)   !,HUCELE(I)
-!       
-!       print *, ID, IDHUC, HUCAREA(I)    !,HUCELE(I)
-!      
-!60     CONTINUE
-
-
-!C---READ IN RETURN FLOW RATE from RETURNFLOW.TXT
-!
-!c       WRITE (77, 20)
-!c20    FORMAT (/'RETURNFLOW RATES BY SECTOR IN DECIMAL POINT'/)
-! 
-!c       READ (15, 50) DUMY7
-!c       WRITE (77, 50) DUMY7
-!               
-!c       DO 65 I=1, NGRID
-!       
-!c       READ (15, *) IDHUC, HUCN,(RETURNFLOW(I,J), J=1, 8)
-!       
-!C       WRITE (77,86) IDHUC, HUCN,(RETURNFLOW(I,J), J=1, 8)
-!       
-!c86     FORMAT(2I12, 8F10.3)
-!
-!c65     CONTINUE 
-!     
-!C-- READ IN water resource region water use info from HUCREGION.TXT
-!        
-!c       READ (12,50) DUMY7
-!c       WRITE (77, 50) DUMY7
-!            
-!c       DO 55 I = 1, 18
-!       
-!c       READ (12, *) IREGION, (DMC(I,J), J=1,4), 
-!c     >        (IRRC(I,J), J=1,4), (PPC(I,J), J=1,4)   
-!     
-!C       WRITE (77, 98) IREGION, (DMC(I,J), J=1,4), 
-!C     >        (IRRC(I,J), J=1,4), (PPC(I,J), J=1,4)       
-!          
-!c55    CONTINUE
-!
-!c98    FORMAT (I10, 12F10.5)
-!
-!C-- READ IN population info from POPULATION.TXT
-!    
-!
-!c      READ (13, 50) DUMY2
-!     
-!c      WRITE (77, 800)
-!       
-!c800   FORMAT (/'POPULATION DATA 10^3 People'/)
-!
-!c      WRITE (77,900) DUMY2
-!       
-!c900   FORMAT (30A10)
-!        
-!        
-!c      DO 300 I = 1, NGRID
-! 
-!C ---J=35 => YEAR = 1994
-!C ---J=91 => YEAR = 2050
-!
-!c         DO 400 J=35, 91
-!      
-!c            READ (13, *) HUCN, JYEAR, POPULATION(I, J) 
-!            
-!c1000        FORMAT(2I10, F12.3)
-!
-!c400       CONTINUE 
-!
-!c300   CONTINUE   
-!
-!
-!C ----POP_FLAG=3, TIME VARIABLE POPULATION 1994-2050
-!
-!c      IF (POP_FLAG .EQ. 3) THEN
-!
-!c      DO 211 I=1, NGRID
-!                
-!C --- ASSIGN YEAR 1994 POPULATION DATA TO YEARS BEFORE 1994
-!
-!c         DO 311 J=1, 34
-!
-!c            POPULATION(I,J) = POPULATION(I,35)
-!            
-!c311      CONTINUE
-!
-!C --- ASSIGN YEAR 2050 POPULATION DATA TO YEARS AFTER 2050 UP TO 2100
-!
-!c         DO 312 J=92, 141
-!
-!c            POPULATION(I,J) = POPULATION(I,91)
-!            
-!c312      CONTINUE
-!
-!c211   CONTINUE   
-!
-!
-!C ---POP_FLAG = 1, CONSTANT BASELINE POPULATION USING YEAR 2000 POPULATION
-!
-!c      ELSEIF (POP_FLAG .EQ. 1) THEN
-!      
-!c      DO 214 I=1,NGRID
-!      
-!c         DO 314 J=1,40
-!      
-!c            POPULATION(I,J) = POPULATION(I,41)
-!         
-!c314      CONTINUE
-!
-!c         DO 315 J=42,141
-!      
-!c            POPULATION(I,J) = POPULATION(I,41) 
-!           
-!c315      CONTINUE
-!
-!c214   CONTINUE
-!
-!C ---POP_FLAG = 2, CONSTANT FUTURE POPULATION USING YEAR 2050 POPULATION
-!
-!c      ELSEIF (POP_FLAG .EQ. 2) THEN
-!      
-!c      DO 216 I=1,NGRID
-!      
-!c         DO 316 J=1,90
-!      
-!c            POPULATION(I,J) = POPULATION(I,91)
-!         
-!c316      CONTINUE
-!
-!c         DO 317 J=92,141
-!      
-!c            POPULATION(I,J) = POPULATION(I,91) 
-!            
-!c317      CONTINUE
-!
-!c216   CONTINUE     
-!
-!C ---POP_FLAG = OTHER- POPULATION FLAG ERROR
-!
-!c      ELSE
-!      
-!c      WRITE (*,23)
-!      
-!c23    FORMAT(/'POPULATION FLAG ERROR'/) 
-!
-!c      ENDIF
-!      
-!C ----WRITE POPULATION DATA TO BASICOUT.TXT FOR VERIFICATION
-!
-!c      DO 218 I=1,NGRID
-!      
-!c         DO 318 J=1,141
-!      
-!C            WRITE(77,1069) I,J+1959,POPULATION(I,J)
-!            
-!c1069        FORMAT (2I10, F12.3)
-!
-!            
-!c318      CONTINUE
-!
-!c218   CONTINUE     
-!
-!        
-!C--READ IN GROUNDWATER WITHDRAWAL DATA BY SECTOR (8 SECTORS) IN MILLION GALON/day
-!c
-!c       WRITE (77, 820)
-!c820    FORMAT (/'GROUNDWATER WITHDRAWAL DATA'/)
-!       
-!c       READ (14, 50) DUMY4
-!       
-!c       WRITE (77, 50) DUMY4
-!       
-!c       DO 80 I = 1, NGRID
-!       
-!c       READ (14, *) IDHUC, HUCN, (GROUNDWATER(I, J), J=1, 9)     
-!
-!C       WRITE (77, 1100) IDHUC, HUCN, (GROUNDWATER(I, J), J=1, 9)
-!       
-!c1100   FORMAT (2I12, 9F12.3)                         
-!
-!c80    CONTINUE      
-!
-!C--READ IN SURFACE WATER USE BY SECTOR (8 SECTORS)
-!
-!c       WRITE (77, 830)
-!c830    FORMAT (/'WATERUSE DATA'/)
-!       
-!c       READ (16, 50) DUMY6
-!c       WRITE (77,50) DUMY6
-!      
-!c       DO 90 I = 1, NGRID
-!       
-!c       READ (16, *) IDHUC, HUCN, (WATERUSE(I,J), J=1, 9)
-!              
-!C       WRITE (77,1200)  IDHUC,HUCN, (WATERUSE (I,J), J=1,9)       
-!c1200   FORMAT(2I15, 9F12.3)
-!             
-!c90     CONTINUE
-!
-!C------WATER USE CHANGE IRRIGATION SECTOR REDUCED BY DRIRR
-!c       WRITE (77, 835)
-!c835    FORMAT (/'ALTERED IRRIGATION WATERUSE DATA'/)
-!
-!c       DO 99 I = 1, NGRID
-!       
-!c       WATERUSE(I,3) = WATERUSE(I,3) * (1-DRIRR)               
-!       
-!C       WRITE (77,1250) I, (WATERUSE (I,J), J=1,8), DRIRR
-!       
-!c1250   FORMAT(I10, 8F12.3, F5.2)
-!             
-!c99     CONTINUE
-!
-!
-!
-!C --- READ IN HUC NODE INFO FROM NODEHUC.TXT
-!
-!c      WRITE (77, 840)
-!c840   FORMAT (/'Stream Network Info'/)
-!       
-!c       READ (5, 50) DUMY7
-!c       WRITE (77,50) DUMY7
-!             
-!c       K=1
-!
-!C --  SET FIRST NODE = 99
-!
-!c       IDTHUC(0) = 99
-!       
-!c       DO 100 I = 1, NONODE
-!       
-!c          READ (5, *) IDFHUC(I), FHUC(I), IDTHUC(I), THUC(I)
-!       
-!C       WRITE(77,841) IDFHUC(I), FHUC(I), IDTHUC(I), THUC(I)
-!       
-!c841       FORMAT(4I10)
-!       
-!C ---  ESTABLISH RELATIONS AMONG NODE AND HUC       
-!       
-!c          IDHUCT = IDTHUC(I)
-!c          IDHUCF = IDFHUC(I)
-!
-!C -- IF THERE IS A DUPLICATED HUC THEN ESTIMATE NUMBER OF HUC RECEIVING FLOWS
-!       
-!c          IF (IDHUCT .EQ. IDTHUC(I-1) ) THEN  
-!       
-!c             K = K + 1
-!       
-!c             RECHUC(IDHUCT, K) = IDFHUC(I) 
-!             
-!c          ELSE
-!       
-!c             K=1
-!       
-!c             RECHUC(IDHUCT, K) = IDFHUC(I) 
-!       
-!c          ENDIF       
-!     
-!c          NORECHUC(IDHUCT) = K    
-!          
-!       
-!c100    CONTINUE
-!
-!C -----------------------------------------------------------
-
-      RETURN
-      END
       
 !C**********************************************************************C
 !C                                                                      C
@@ -621,46 +277,116 @@
 !C                                                                      C
 !C**********************************************************************C
       SUBROUTINE RPSLAI
-      
-      USE Common_var
-      implicit none             
-      INTEGER YEAR
-      
-      
-      INTEGER I, J, M,Mon
 
-      INTEGER Y_2000 ,Y_LAI_END ,Y_2014,Y_LAI_START     
-     
+      use Common_var
+      implicit none
+      INTEGER(kind=4) I
+      INTEGER(kind=8) NUM_DATA
+      INTEGER(kind=2) YEAR, J, M,Mon,K
+
+      INTEGER(kind=2) Y_LAI_END,Y_LAI_START
+
       CHARACTER*100 TEMPHEAD3 (11)
-            
-   
- 
+      
+    Print*, "For LAI, Start Year=",LAI_S_Y,"END Year=",LAI_E_Y,NEW_LINE('A')
+	
 !   Set default LAI for the year without LAI input-----
-
-
-      IF (BYEAR .LT. 2000 ) then
-           Y_LAI_START=2000-BYEAR+1
+      IF (BYEAR .LT. LAI_S_Y ) then
+           Y_LAI_START=LAI_S_Y-BYEAR+1
         ELSE
          Y_LAI_START=1
        ENDIF
-      If (IYEND .GT. 2014) then 
-        Y_LAI_END=2014-BYEAR+1
+      If (IYEND .GT. LAI_E_Y) then 
+        Y_LAI_END=LAI_E_Y-BYEAR+1
        Else
         Y_LAI_END=IYEND-BYEAR+1
       Endif
-
-      Y_2000=2000-BYEAR+1
-      Y_2014=2014-BYEAR+1
+	  
+    print*,"reading LAI",NEW_LINE('A')
 
 ! --- READ IN LAI DATA FROM LANDLAI.TXT
 
+	IF (modelscale ==0) THEN ! read multiple landcover LAI
+
+      DO 2011 I=1, NGRID
+                
+         DO 3011 J= Y_LAI_START,Y_LAI_END 
+         
+            DO 4011 M=1, 12
+				
+			! this is for reading the header
+            IF (I .EQ. 1 .AND. J .EQ. Y_LAI_START .AND. M .EQ. 1) THEN 
+
+               READ (8, 9021) TEMPHEAD3
+ 
+ 9021           FORMAT (100A11)
+ 
+            ENDIF
+                      
+ 
+! --- read all landuse LAIs
+
+			READ(8,*) HUCNO(I),YEAR,Mon,(LAI_lc(I,J,M,K), K=1, NLC)
+
+4011         CONTINUE 
+
+3011      CONTINUE
+
+2011   CONTINUE
+
+! --- ASSIGN YEAR LAI_S_Y LAI DATA TO YEARS BEFORE LAI_S_Y
+        IF  ( BYEAR .LT. LAI_S_Y)  then
+          DO 2021 I=1, NGRID
+
+             DO 3021 J=1, LAI_S_Y-1
+
+                DO 4021 M=1, 12
+					
+					DO 5021 K=1, NLC
+					
+					LAI_lc(I,J,M,K) = LAI_lc(I,LAI_S_Y,M,K)
+					
+5021				CONTINUE
+
+4021             CONTINUE
+
+3021          CONTINUE
+
+2021        CONTINUE
+!
+        ENDIF
+          
+!C--- ASSIGN YEAR Y_LAI_END LAI DATA TO YEARS AFTER Y_LAI_END
+      IF (IYEND .GT. Y_LAI_END) then
+          DO 2031 I=1, NGRID
+
+             DO 3031 J=Y_LAI_END+1, NYEAR
+
+                DO 4031 M=1, 12
+
+					DO 5031 K=1, NLC
+					
+					LAI_lc(I,J,M,K) = LAI_lc(I,Y_LAI_END,M,K)
+					
+5031				CONTINUE
+
+4031             CONTINUE
+
+3031          CONTINUE
+
+2031        CONTINUE
+
+      ENDIF
+	
+	ELSE 
 
       DO 201 I=1, NGRID
                 
          DO 301 J= Y_LAI_START,Y_LAI_END 
          
             DO 401 M=1, 12
-
+				
+			! this is for reading the header
             IF (I .EQ. 1 .AND. J .EQ. Y_LAI_START .AND. M .EQ. 1) THEN 
 
                READ (8, 902) TEMPHEAD3
@@ -670,7 +396,7 @@
             ENDIF
                       
  
-! --- LAI_* IS THE LAI FOR LANDUSE * (8 TOTAL IN LANDLAI.TXT)
+! --- Read monthly data for each grid
 
          READ(8,*) HUCNO(I),YEAR,Mon,LAI(I,J,M)  
             
@@ -685,84 +411,50 @@
 
 201   CONTINUE
 
-! --- ASSIGN YEAR 2000 LAI DATA TO YEARS BEFORE 2000
-! -----将2000年的数据赋给以前的年份
-        IF  ( BYEAR .LT. 2000)  then
+    
+    print*,"finished reading LAI",NEW_LINE('A')
+
+! --- ASSIGN YEAR LAI_S_Y LAI DATA TO YEARS BEFORE LAI_S_Y
+        IF  ( BYEAR .LT. LAI_S_Y)  then
           DO 202 I=1, NGRID
-                
-             DO 302 J=1, Y_2000-1
+
+             DO 302 J=1, LAI_S_Y-1
 
                 DO 402 M=1, 12
 
-                LAI(I,J,M) = LAI(I,Y_2000,M)
-                      
-     
-402             CONTINUE 
+                LAI(I,J,M) = LAI(I,LAI_S_Y,M)
+
+
+402             CONTINUE
 
 302          CONTINUE
 
 202        CONTINUE
 !
         ENDIF
-!          
-!C--- ASSIGN YEAR 2014 LAI DATA TO YEARS AFTER 2014
-!C--- 将2014年的数据赋给以后的年份
-      IF (IYEND .GT. 2014) then
+!
+!C--- ASSIGN YEAR Y_LAI_END LAI DATA TO YEARS AFTER Y_LAI_END
+      IF (IYEND .GT. Y_LAI_END) then
           DO 203 I=1, NGRID
-                
-             DO 303 J=Y_2014+1, NYEAR
+
+             DO 303 J=Y_LAI_END+1, NYEAR
 
                 DO 403 M=1, 12
 
-                LAI(I,J,M) = LAI(I,Y_2014,M)
-       
+                LAI(I,J,M) = LAI(I,Y_LAI_END,M)
 
-403             CONTINUE 
+
+403             CONTINUE
 
 303          CONTINUE
 
 203        CONTINUE
-!
+
       ENDIF
-	  
-	  
-	  	  
-	  
-! --- WRITE LAI DATA TO BASICOUT.TXT FOR VALIDATION
-            
 
-        WRITE (77, 801)
-       
-801    FORMAT (/'LAI DATA for each Cell'/)
-
- 
-      WRITE (77, 902) TEMPHEAD3
-      
-
-	  !************* -----------Read annual land cover data------------ ***************
-
-!      READ (3,5001) DUMY
-!5001   FORMAT (1000A30)
-
-! ----LANC = raw Landcover types    
-      
-           
- !     DO 105 I=1, NGRID   ! start and end year of land cover data
-        
-!        DO 106 J=Y_2000,Y_2014
-
-!      READ(3,*) HUCNO(I),YEAR,veg(I,J)  
-             
-     ! WRITE(*,*) HUCNO(I),YEAR,veg(I,J) 
- 
-!106    CONTINUE  
-!105    CONTINUE
-	  
-	  
-	  
-	  
-      RETURN
-      END
+	ENDIF
+    RETURN
+END
 
 !C**********************************************************************C
 !C                                                                      C
@@ -812,73 +504,25 @@
         
 900            FORMAT (10A10)
 !910            FORMAT  (/'CLIMATE DATA', 10A10)
-               
-              
+                            
                READ(4,*) HUCNO(I), YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
-		RAIN(I,J,M)=RAIN(I,J,M)*10
-		TEMP(I,J,M)=TEMP(I,J,M)*10 
                 
 !1015        FORMAT(3I10, 2F10.2) 
-                       
-            
+                                
                ANNPPT(I, J) = ANNPPT(I, J) + RAIN(I,J,M)
                
-
 5002        CONTINUE
 
             SUMANPPT(I) = SUMANPPT(I) + ANNPPT(I, J)
 
 5001     CONTINUE
 
-
          AAPPT(I) = SUMANPPT(I)/NYEAR
-                
-         
+		 
 !         WRITE(77,5004) HUCNO(I), AAPPT(I)
       
 !5004     FORMAT(I10,F10.2)
 5000  CONTINUE
-
-      RETURN
-      END
-
-!C**********************************************************************C
-!C                                                                      C
-!C     *** SUBROUTINE RPSVALID ***                                      C
-!C     Input MONTHLY YEAR FLOW  VALIDATION DATA,                        C
-!C                                                                      C
-!C**********************************************************************C
-      SUBROUTINE RPSVALID
-      
-      USE Common_var
-	  IMPLICIT NONE
-      INTEGER  YEAR
-            
-      INTEGER I, J, M,Mon
-     
-      REAL ANNPPT(MAX_GRIDS,MAX_YEARS)
-            
-      CHARACTER*10 TEMPHEAD (10)
-
-      
-    DO  J=19,25
-
-		DO  M=1,12
-
-          IF (J .eq. 1 .and. M .eq. 1) then
-          
-          READ (22, 29001) TEMPHEAD
-
-          ENDIF
-
-29001     FORMAT (10A10)
-
-!         READ(22,*) YEAR,Mon,RUNOFF_V(J,M)!,FLOW_V(J,M),BASEFLOW_V(J,M)
-!      READ (22, *) YEAR,Mon,RUNOFF_V(J,M), FLOW_V(J,M), BASEFLOW_V(J,M)
-
-		END DO
-	END DO
-
 
       RETURN
       END

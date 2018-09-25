@@ -46,7 +46,7 @@
       REAL TASM,AUZTWC,AUZFWC,ALZTWC,ALZFPC,ALZFSC,ASM           
             ! TAREA,TAREA,TAUZTWC,TAUZFWC,TALZTWC,TALZFPC,TALZFSC
            
-      INTEGER GEPFLAG
+      INTEGER GEPFLAG,LC_N
       
 	REAL :: RUNLAND(NGRID,NYEAR,12,31)
 	REAL :: ETLAND(NGRID,NYEAR,12,31)
@@ -54,9 +54,9 @@
            
 ! *****************************************************************************************************
 
-! ----   Allocates array RUNLAND,
-
-	  
+! Assign landcoer type to LC_N
+	LC_N=LADUSE(I)
+	!print*,I,LC_N
 
 ! --- INITIALIZE VARIABLES FOR START OF SIMULATION
 
@@ -207,7 +207,7 @@
 ! **************************----Trmperature > -0.1 -------------*******************************************************
 ! *****************************************************************************************************
 ! -- COMPUTE THE DAILY AVERAGE INFILTRATION FOR A GIVEN MONTH FOR EACH LAND USE
-!---流域植被类型日水分输入量=降水+融雪
+
                 INFIL = RAIN(I,J,M)/MNDAY + SNOWW/MNDAY
           
             
@@ -221,7 +221,7 @@
                
                    ET(J, M) = DPAET
                 
-!		开始计算植被类型K 每天的ET、
+
 ! --- COMPUTE ET FROM UZ TENSION WATER STORAGE, RECALCULATE UZTWC, CALCULATE RESIDUAL ET DEMAND
 
                    ETUZTW(J,M) = ET(J,M) * (UZTWC/UZTWM(I))
@@ -567,289 +567,15 @@
 !WRITE(99,*) I,J,M,Day,' ET=', ET(J,M),'TEMP=',TEMP (I,J, M),'UZTWC=',UZTWC,'PBF=',PBF,'SBF=',SBF,'LZFPC=',LZFPC ,&
 !'LZFSC=',LZFSC,'UZFWC=', UZFWC,'SURFRO=', SURFRO,'INF=', INF
 
-
-        GEPFLAG = 2
-            
-        IF (GEPFLAG .EQ. 1) THEN 
-
-! NOTE  the following is based on Law et al
-
 ! *****************************************************************************************************
-! *****************************************************************************************************
-! -- Caculate GEP based on Law et al (2002) paper, GEP =f(monthly ET, ECOSYSTEMS)
-! --- LUMPED CROP, GRASSLAND, SHRUB, SAVANNAH, AND WATER/URBAN/BARREN
-! --- MIXED FOREST SHOULD BE AVG OF DECID/EVERGREEN?  EVERGREEN?
+	! Calculate GEP based on ET and the equation
 
-! --  SHRUB, SAVANNAH, AND WATER/URBAN/BARREN
+		GEP(J,M) = wue_k(LC_N) * ET(J,M)
+		!print*,I,LADUSE(I)
+		RECO(J,M)= (reco_inter(LC_N) + reco_slope(LC_N) * GEP(J,M)*MNDAY)/MNDAY
+		
+        NEE(J,M)=  RECO(J,M)- GEP(J,M) 
 
-               IF (LADUSE(I).EQ. 9 .OR. LADUSE(I).EQ. 10 .OR. LADUSE(I) &
-			   .GE. 12) THEN 
-     
-               GEP(J,M) = (3.2 * ET(J,M) * MNDAY - 0.4)/MNDAY
-
-! -- DECIDUOUS FOREST
- 
-               ELSEIF (LADUSE(I) .EQ. 5  .OR. LADUSE(I) .EQ. 6) THEN 
-
-               GEP(J,M) = (3.2 * ET(J,M)*MNDAY - 0.4)/MNDAY
-
-
-! -- EVERGREEN FOREST
-
-               ELSEIF (LADUSE(I) .EQ. 4  .OR. LADUSE(I) .EQ. 8) THEN 
-
-               GEP(J,M) = (2.4 * ET(J,M)*MNDAY + 30.4)/MNDAY
-               
-! -- MIXED FOREST (SAME AS EVERGREEN)
-               
-               ELSEIF (LADUSE(I) .EQ. 7  .OR. LADUSE(I) .EQ. 11) THEN 
-               
-               GEP(J,M) = (2.4 * ET(J,M)*MNDAY + 30.4)/MNDAY
-
-
-! -- crop lands
-               ELSEIF (LADUSE(I) .EQ. 1  .OR. LADUSE(I) .EQ. 2) THEN 
-               
-               GEP(J,M) = (3.06 * ET(J,M)*MNDAY - 31.6)/MNDAY
-               
-
-! -- Grasslands
-
-               ELSEIF (LADUSE(I) .EQ. 3) THEN 
-               
-               GEP(J,M) = (3.39 * ET(J,M)*MNDAY - 67.88)/MNDAY
-
-              
-               ENDIF
-                     
-               IF (GEP(J,M) .LE. 0.) THEN
-               
-                GEP(J,M) = 0.                  
-               
-               ENDIF
-			   
-        ElSEIF (GEPFLAG .eq. 3) then
-! IF GEPFLAG= 3
-! CALCULATING DAILY GEP G C/M2/DAY
-! NOTE  the following is based on New Analysis by Asko (Aug 24, 2010)
-!----根据不同的植被类型重编写下面的代码
-
-! -- CROP
-
-               IF (LADUSE(I).EQ.1) THEN 
-
-               GEP(J,M) = 4.5 * ET(J,M)
-!---------论文中的公式
-               RECO(J,M)= 40.6 + 0.43 * GEP(J,M)*MNDAY
-!---------原始计算公式 		
-!               RECO(J,M)= VAL_1(TUN1) + VAL_2(TUN2) * GEP(J,M)*MNDAY      !11.14 1.85
-			  
-			   
-! -- Close SHRUBLANDS                   
-               
-               ELSEIF (LADUSE(I) .EQ. 4) THEN                
-
-               GEP(J,M) = 1.4 * ET(J,M)  
-                
-               RECO(J,M)= 11.4 + 0.69 * GEP(J,M)*MNDAY
-                
-! -- DECIDUOUS Broadleaf FOREST
- 
-               ELSEIF (LADUSE(I) .EQ. 3) THEN 
-
-               GEP(J,M) = 2.4* ET(J,M) 
-!-------论文公式				   
-               RECO(J,M)= 30.8 + 0.45 * GEP(J,M)*MNDAY	
-!-------原始计算公式
-!			   RECO(J,M)= 24.12 + 1.49 * ET(J,M)*MNDAY	
-
-
-! -- Evergreen Broadleaf FOREST
- 
-               ELSEIF (LADUSE(I) .EQ. 0) THEN 
-
-               GEP(J,M) = 2.6* ET(J,M)              
-               RECO(J,M)= 19.6 + 0.61 * GEP(J,M)*MNDAY			   
-
-!---- Evergreen Needleleaf Forest
-               ELSEIF (LADUSE(I) .EQ. 5) THEN                
-
-               GEP(J,M) = 2.14* ET(J,M)
-               RECO(J,M)= 9.9 + 0.68 * GEP(J,M)*MNDAY			   
-               
-! -- GRASSLANDS               
-                ELSEIF (LADUSE(I) .EQ. 6) THEN                
-               
-               GEP(J,M) = 2.25 * ET(J,M)
-!------ 论文公式
-              RECO(J,M)= 18.9 + 0.64*GEP(J,M)*MNDAY
-!-------原始计算公式	
-!			   RECO(J,M)= 14.2 + 1.42 * ET(J,M)*MNDAY	
-               
-!---- MIXED FOREST
-               
-               ELSEIF (LADUSE(I) .EQ. 7) THEN 
-               
-               GEP(J,M) =2.5 * ET(J,M)
-               IF (TEMP(I,J,M) .LE. -1.0) THEN 
-                
-                GEP(J,M) = 0.0
-                
-               ENDIF 
-                           
-               RECO(J,M)= 24.44 + 0.62 * GEP(J,M)*MNDAY
-
-! -- Open Shrublands                   
-               
-		      ELSEIF (LADUSE(I) .EQ. 8) THEN                
-
-               GEP(J,M) =  1.42* ET(J,M)
-               RECO(J,M)= 9.7 + 0.56 * GEP(J,M)*MNDAY
-                                           
-! -- SAVANNAS                   
-               
-	          ELSEIF (LADUSE(I).EQ.  9) THEN                
-
-               GEP(J,M) = 1.26* ET(J,M) !
-               RECO(J,M)= 25.2 + 0.53 * GEP(J,M)*MNDAY
-       
-         
-! -- Wetlands                     
-               
-	           ELSEIF (LADUSE(I) .EQ. 10) THEN                
-
-               GEP(J,M) = 1.66* ET(J,M)
-               RECO(J,M)= 7.8 + 0.56 * GEP(J,M)*MNDAY     
-! -- Wet Savanna                     
-               
-	           ELSEIF (LADUSE(I) .EQ. 11) THEN                
-
-               GEP(J,M) = 1.49* ET(J,M)
-               RECO(J,M)= 14.7 + 0.63 * GEP(J,M)*MNDAY
- 			   
-! -- URBAN/BARRENS/WATRE BODY (SAME AS OPEN SHRUB)                  
-               
-               ELSE
-               
-               GEP(J,M) = 0.
-               RECO(J,M) =0.
-              
-              
-               ENDIF
-
-               IF (GEP(J,M) .LE. 0.) THEN
-                      GEP(J,M) = 0.                  
-               ENDIF
-                                     
-        ELSE
-!*****************************************************************************************************
-! *****************************************************************************************************
-! IF GEPFLAG= 2
-! CALCULATING DAILY GEP G C/M2/DAY
-! NOTE  the following is based on New Analysis by Asko (Aug 24, 2010)
-!----根据不同的植被类型重编写下面的代码
-
-! -- CROP
-
-               IF (LADUSE(I).EQ.12.0) THEN 
-
-               GEP(J,M) = 4.5 * ET(J,M)
-!---------论文中的公式
-!              RECO(J,M)= 40.6 + 1.35 * ET(J,M)*MNDAY
-!---------原始计算公式 		
-               RECO(J,M)= 11.4 + 1.85 * GEP(J,M)*MNDAY      !11.14 1.85
-			  
-			   
-! -- Close SHRUBLANDS                   
-               
-               ELSEIF (LADUSE(I) .EQ. 6.0) THEN                
-
-               GEP(J,M) = 1.4 * ET(J,M)  
-                
-               RECO(J,M)= 11.4 + 0.95 * ET(J,M)*MNDAY
-                
-!-- DECIDUOUS Broadleaf FOREST
- 
-               ELSEIF (LADUSE(I) .EQ. 4.0) THEN 
-
-               GEP(J,M) = 2.4* ET(J,M) 
-!-------论文公式				   
-!               RECO(J,M)= 30.8 + 1.44 * ET(J,M)*MNDAY	
-!-------原始计算公式
-			   RECO(J,M)= 24.12 + 1.49 * ET(J,M)*MNDAY	
-
-
-! -- Evergreen Broadleaf FOREST
- 
-               ELSEIF (LADUSE(I) .EQ. 2) THEN 
-
-               GEP(J,M) = 2.6* ET(J,M)              
-               RECO(J,M)= 19.6 + 1.58 * ET(J,M)*MNDAY			   
-
-!---- Evergreen Needleleaf Forest
-               ELSEIF (LADUSE(I) .EQ. 1) THEN                
-
-               GEP(J,M) = 2.14* ET(J,M)
-               RECO(J,M)= 9.9 + 1.67 * ET(J,M)*MNDAY			   
-               
-! -- GRASSLANDS               
-                ELSEIF (LADUSE(I) .EQ. 8 .or. LADUSE(I) .EQ. 9 .or. LADUSE(I) .EQ. 10 ) THEN    
-               
-               GEP(J,M) = 2.25 * ET(J,M)
-!------ 论文公式
-!               RECO(J,M)= 18.9 + 1.36* ET(J,M)*MNDAY
-!-------原始计算公式	
-			   RECO(J,M)= 14.2 + 1.42 * ET(J,M)*MNDAY	
-               
-!---- MIXED FOREST
-               
-               ELSEIF (LADUSE(I) .EQ. 5) THEN 
-               
-               GEP(J,M) =2.5 * ET(J,M)                         
-               RECO(J,M)= 24.44 + 1.70 * GEP(J,M)*MNDAY
-
-! -- Open Shrublands                   
-               
-			   ELSEIF (LADUSE(I) .EQ. 7) THEN                
-
-               GEP(J,M) =  1.42* ET(J,M)
-               RECO(J,M)= 9.7 + 0.74 * ET(J,M)*MNDAY
-                                           
-! -- SAVANNAS                   
-               
-			   ELSEIF (LADUSE(I).EQ. 20  ) THEN                
-
-               GEP(J,M) = 1.26* ET(J,M) !
-               RECO(J,M)= 25.2 + 0.67 * ET(J,M)*MNDAY
-         
-! -- Wetlands                     
-               
-			   ELSEIF (LADUSE(I) .EQ. 11) THEN                
-
-               GEP(J,M) = 1.66* ET(J,M)
-               RECO(J,M)= 7.8 + 0.93 * ET(J,M)*MNDAY     
-! -- Wet Savanna                     
-               
-			   ELSEIF (LADUSE(I) .EQ. 20 ) THEN                
-
-               GEP(J,M) = 1.49* ET(J,M)
-               RECO(J,M)= 14.7 + 0.94 * ET(J,M)*MNDAY
- 			   
-! -- URBAN/BARRENS/WATRE BODY (SAME AS OPEN SHRUB)                  
-               
-			   ELSE
-               
-               GEP(J,M) = 0.
-               RECO(J,M) =0.
-              
-              
-			   ENDIF
-
-               IF (GEP(J,M) .LE. 0.) THEN
-                      GEP(J,M) = 0.                  
-               ENDIF
-                                   
-        ENDIF    
 
 ! **************************----Finish calculate Carbon balances--------************************************************
 		

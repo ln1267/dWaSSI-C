@@ -10,11 +10,11 @@
       USE common_var
       implicit none
                
-      INTEGER I,J,M,MNDAY  
+      INTEGER I,J,M,MNDAY,K  
                  
       INTEGER MONTHD(12),MONTHL(12), MJD(12), MMD
       
-      REAL PE,DEGLAT,DTEMP
+      REAL PE,DEGLAT,DTEMP,AETtemp,TPAET
              
 ! --- Number of days for each month during regular year
       DATA MONTHD/31,28,31,30,31,30,31,31,30,31,30,31/
@@ -25,69 +25,48 @@
       DATA MJD/15,46,76,107,137,168,198,229,259,290,321,351/      
 
 ! --- Calculate Monthly potential evapotranspiration
-                 
-        
-            DTEMP=TEMP(I,J,M)
-            
-            
-!			   PET=0.
                          
-              
+            DTEMP=TEMP(I,J,M)
 ! -- MMD = JULIAN DATE FOR MONTH M
                                
             MMD=MJD(M)
                      
-            DEGLAT = LATUDE(I)
-            
+            DEGLAT = LATUDE(I)   
 ! - DTEMP = AIR TEMP, HPEC = CORRECTION PARAMETER, PE =CALCUALTED PET (MM)--DAY
            
-            CALL HAMON(DTEMP,M,MMD,DEGLAT,PE)
-            
-            
-! ----PET (GRID,YEAR, MONTH) FOR THE CURRENT CELL)
+            CALL HAMON(DTEMP,M,MMD,DEGLAT,PE)	
+			
+! ---- convert daily PET to monthly
+			PET(I,J,M) = PE * MNDAY 		
+			
+	IF (modelscale == 0) THEN !catchment scale
+		
+		TPAET=0
+	!PET for each LANDUSE 		
+		DO 40 K=1, NLC                   
+	
+	! Latest model By Yuan Fang Sep 10,2015
+	!          R2=0.68, p<0.0001,RMSE=18.1 mm
+
+			AET_lc(J,M,K) = -4.79 + 0.75*PET(I,J,M) + 3.92*LAI_lc(I,J,M,K)
+
+	!C ----CALCULATE TOTAL PET AND PAET FOR THE HUC FOR A GIVEN YEAR AND MONTH
+				 
+			TPAET = TPAET + AET_lc(J,M,K) * LADUSE_lc(I,K)
+				 	 
+	   40      CONTINUE                   
+				  
+	! ------APAET =AVERAGE PAET FOR CURRENT CELL, FOR ALL YEAR, MONTH
+
+				  PAET(I,J,M) = TPAET
+
+	ELSE
            
-             PET(I,J,M) = PE  
-                  
-             PET(I,J,M) = PET(I,J,M) * MNDAY 
-               
-
-! ----CALCULATE PAET 
-! ----PAET (GRID,YEAR, MONTH) FOR THE CURRENT CELL)
-
-!  new model with coweeta Hamon ET Sep 10,2010
-! 对纬度>40的采用别的公式
-!       if (deglat .gt. 40) then
-
-!          paet(j,m) = 0.00169*pet(j,m)*lai(i,j,m)+ &
-!             0.4*pet(j,m) + 7.78*lai(i,j,m)
-
-!       else
-!              paet(j,m) = 0.0222*pet(j,m)*lai(i,j,m)+0.174*  &
-!             rain(i,j,m)+0.502*pet(j,m) + 5.31*lai(i,j,m)
-
-!       endif
-!           PRINT *, 'pet', LAI(I,J,M),RAIN(I,J,M), PET(I,J,M), PAET(I,J,M)
-     
-     
-!             ELSE
-             
-!     CALCULATE PAET FOR GRASSLAND AND LOW LAI
-!     R2=0.696
-             
-!             PAET(I,J,M) = 1.49 + 0.325*(PET(I,J,M))+0.353*(RAIN(I,J,M))
-             
-!             ENDIF
-          
-!             WRITE(910,5039)  HUCNO(I), J, M, K, PAET(I,J,M)
-!5039         FORMAT(4I10, F20.1)
-
-
 ! Latest model By Yuan Fang Sep 10,2015
 !          R2=0.68, p<0.0001,RMSE=18.1 mm
 
             PAET(I,J,M) = -4.79 + 0.75*PET(I,J,M) + 3.92*LAI(I,J,M)
    
-
 ! ------TEST OUTPUT
 
 
@@ -95,10 +74,11 @@
 !      
 !5050  FORMAT (3I10, 2F10.5)
 
-                              
-! --- Return
-      RETURN
-      END
+    ENDIF                          
+     
+	RETURN
+	
+    END
 
 
 !**********************************************************************C
