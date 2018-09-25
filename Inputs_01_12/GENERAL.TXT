@@ -1,8 +1,10 @@
-Minjaing watershed  Simulation by Cell, Feb. 2015 (Dumy line for your record only)
+Minjaing watershed Simulation by Cell or Catchment, Sep. 2018 (Ning Liu)
 0                                                Scenarios (See Explaination Below)
+1                                               Catchment or Grid scale (0 for Catchment, 1 for Grid)
 5168, 12, 2001, 16                             (No watersheds, NoYEARS, first year of climate data, number of land cover categories)
-2001, 2012                                      (Start and end years for  model outputs)
-2001, 2012  
+2001, 2012                                      (Start and end years for the whole dataset)
+2001, 2012                                      (Start and end years for LAI data)
+2001, 2012                                      (Start and end years for simulation)
 0.0,                                            (FOREST REDUCTION TO CONVERT CROPLAND (FRACTION 0-1))
 0.0                                             (Reduction fraction of Leaf Area Index, 0.0=no change, 1.0= convert to bared soil) 
 0.0                                               INTIAL SNOWPACK (MM)

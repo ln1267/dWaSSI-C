@@ -1,0 +1,17 @@
+LC,WUE,RECO_inter,RECO_slope,LCname
+1,1,2,3,#haha1
+2,1,2,3,#haha2
+3,1,2,3,#haha3
+4,1,2,3,#haha4
+5,1,2,3,#haha15
+6,1,2,3,#havha1
+7,1,2,3,#hraha1
+8,1,2,3,#hahga1
+1,1,2,3,#haher1
+2,1,2,3,#hahwa1
+3,1,2,3,#hah343
+4,1,2,3,#haha3
+5,1,2,3,#haha1
+6,1,2,3,#haha12
+7,1,2,3,#haha34
+8,1,2,3,#haha23

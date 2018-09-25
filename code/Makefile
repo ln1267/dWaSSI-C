@@ -12,6 +12,9 @@ else ifeq ($(PRGENV),GNU)
 else ifeq ($(PRGENV),CRAY)
 	OMPFLAG=-homp
 	DEBUG=-G2
+else
+	OMPFLAG=-fopenmp
+	DEBUG=-g
 #	CRAY_REVEAL="-h profile_generate"
 	
 endif 
@@ -20,7 +23,7 @@ FFLAGS = $(DEBUG)
 
 all: $(OBJ)
 	$(FC) $(FFLAGS)  $+ $(OMPFLAG) 
-%.o: %.f90 
+%.o: %.F90 
 	$(FC) $(FCFLAGS) -c $(OMPFLAGS) $<
 
 clean:
