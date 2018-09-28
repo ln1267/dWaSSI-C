@@ -8,12 +8,12 @@
 !C                                                                      C
 !C                                                                      C
 !C**********************************************************************C
-      SUBROUTINE SUMMARY_MONTH (I, J)
+      SUBROUTINE SUMMARY_MONTH (I, J_S)
       
 	     USE Common_var
          implicit none 
 ! -----------------------------------------------------------------------------     
-      INTEGER I,J,IM
+      INTEGER I,J,IM,J_S
       REAL TANURAIN, TANUPET,TANUAET,TANUPAET,TANURUN
       REAL ISM,TSP,TDM
 
@@ -22,10 +22,13 @@
       INTEGER IDY, ISNOWP
             
       REAL RAINSQ, F
-      
-!-----IDY = THE CALANDER YEAR, BYEAR = YEAR TO SATRT
+
+!----Set the simulate ID for the start year
+	  J=J_S+IYSTART-1-NWARMUP
+			!print*,J     
+!-----IDY = THE ID of the start YEAR, BYEAR = YEAR TO SATRT
          
-      IDY = J + BYEAR - 1
+      IDY = J
          
       TANURAIN =0.
       TANUPET= 0.
@@ -52,39 +55,8 @@
 				BASE_HRU(I,J,IM)=PRIBF(I,J,IM) + SECBF(I,J,IM)
 				TRUNOFF(I,J,IM)= RUNOFF(I,J,IM) + PRIBF(I,J,IM) + SECBF(I,J,IM) + INTF(I,J,IM)
 				BASEFLOW(I,J,IM)=PRIBF(I,J,IM) + SECBF(I,J,IM)
-!------PRINT MONTHLY WATER BALANCE DATA TO MONTHFLOW.TXT
-
-! For Water ballance output and Check
-				! WRITE(2003,2325) I,IDY,IM,RAIN(I,J,IM),SP(I,J,IM), PET(I,J,IM), &
-				! AET(I,J,IM),PAET(I,J,IM),RUNOFF(I,J,IM),PRIBF(I,J,IM),SECBF(I,J,IM),&
-				! INTF(I,J,IM),AVSMC(I,J,IM),EMUZTWC(I,J,IM), EMUZFWC(I,J,IM),&
-					! EMLZTWC(I,J,IM), EMLZFPC(I,J,IM), EMLZFSC(I,J,IM)
 					
-2325            FORMAT (I10, I6, I4,15F10.1)        
-				   
-			    ! WRITE(78,2025) I,IDY, IM, RAIN(I,J,IM),TEMP(I,J,IM),&
-				! AVSMC(I,J,IM), SP(I,J,IM), PET(I,J,IM), AET(I,J,IM),PAET(I,J,IM), TRUNOFF(I,J,IM), &
-				! BASEFLOW(I,J,IM),STRFLOW(I,J,IM)
-
-2025      		FORMAT (I10, ',',I6, ',', I6, ',', F10.1, ',', F10.1,',',&  
-                    F10.1, ',', F10.1,',', F8.1, ',', F8.1, ',',F8.1,',',F10.1,',',&
-                    F10.1,',', F10.1)         
-
-
-!------PRINT MONTHLY SOIL STORAGE DATA TO SOILSTORAGE.TXT
-
-			   ! WRITE(900,2035)  HUCNO(I), IDY, IM, AVUZTWC(I,J,IM), AVUZFWC(I,J,IM),&
-					! AVLZTWC(I,J,IM), AVLZFPC(I,J,IM), AVLZFSC(I,J,IM)
-        
-! TEST OUTPUT        
-!			    WRITE(*,2035)  HUCNO(I), IDY, IM, AVUZTWC(I,J,IM), AVUZFWC(I,J,IM),&
-!				   AVLZTWC(I,J,IM), AVLZFPC(I,J,IM)  
-				  
-2035    		FORMAT(I10, ',', I6, ',',I6, ',',F8.1, ',', F8.1,',' F8.1, ',',F8.1, ',',F8.1)
-
 !------SUM THE TOTAL RAIN, PET, AET, DISCHARGE, INT, SNOWP FOR YEAR
-
-
 
 			    IF (RAIN(I,J,IM) < -50.0 .or. TEMP(I,J,IM) < -50.0) then
 					
@@ -123,7 +95,6 @@
 100         CONTINUE
          
 !------ASSIGN TOTAL ANNUAL RAIN, PET, AET, DISCHARGE, INT, SNOWP
-! -----TANURUN 为流域的总出流量(RUNOFF(I,J,IM)+PRIBF(I,J,IM)+SECBF(I,J,IM)+INTF(I,J,IM))
          
 22200       ANURAIN(I,J) = TANURAIN
 		    ANUPET(I,J) = TANUPET
@@ -148,10 +119,7 @@
 				 
 			  HUCAET(I,J) = ANUAET(I,J)
 			  HUCPET(I,J) = ANUPET(I,J)     
-			  HUCPAET(I,J)=ANUPAET(I,J)
-!------PRINT ANNUAL WATER BALANCE COMPONENTS TO ANNUALFLOW.TXT
-
-                               
+			  HUCPAET(I,J)=ANUPAET(I,J)                   
 
 ! ---- CALCULATING R FACTOR
 
@@ -177,22 +145,6 @@
 			 RFACTOR(I,J) =0.
 		   
 		    ENDIF  
-
-
-		    ! WRITE (79,2100) HUCNO(I), IDY, ANURAIN(I,J),&
-			 ! ANUPET(I,J), ANUAET(I,J),ANUPAET(I,J), ANURUN(I,J), ARUNRT(I,J),  &
-			 ! AETRT(I,J),ETRATIO(I,J), NSPM(I,J), RFACTOR (I,J)
-
-! TEST OUTPUT
-!            WRITE (*,2100) HUCNO(I), IDY, ANURAIN(J),&
-!			 ANUPET(J), ANUAET(J),ANUPAET(J), ANURUN(J), ARUNRT(J),  &
-!			 AETRT(J),ETRATIO, NSPM(I,J), RFACTOR (J)
-
-
-
-2100        FORMAT(I10, ',', I10, ',',F10.1, ',', F8.1, ',', F8.1,',' F8.1, &
-',',F8.1, ',', F8.2, ',',F8.2,',',F8.2,',', I8, ',', F8.1)
-
 
         ENDIF 
         
@@ -227,22 +179,21 @@
       
       NUM_year(I)=0
       
-      ISTEP = IYEND - IYSTART + 1
           
-      DO 100 J = 1, ISTEP
-!------ 排除异常的气候值，异常值，气候和温度设置为-99999
+      DO 100 J = IYSTART, IYEND
+
        
-       IF  (ANURAIN(I,J+IYSTART-BYEAR) < -50.0 .or. &
-      ANUAET(I,J+IYSTART-BYEAR) < -50.0 .or. ANUPET(I,J+IYSTART-BYEAR) &
-        < -50.0 .or. ANURUN(I,J+IYSTART-BYEAR) < -50.0 ) then 
+       IF  (ANURAIN(I,J) < -50.0 .or. &
+      ANUAET(I,J) < -50.0 .or. ANUPET(I,J) &
+        < -50.0 .or. ANURUN(I,J) < -50.0 ) then 
       
       ELSE
-            RAINALL(I) = RAINALL(I) + ANURAIN(I,J+IYSTART-BYEAR)    
-            AETALL(I) = AETALL(I) + ANUAET(I,J+IYSTART-BYEAR)  
-            PETALL(I) = PETALL(I) + ANUPET(I,J+IYSTART-BYEAR)
-            RUNALL(I) = RUNALL(I) + ANURUN(I,J+IYSTART-BYEAR)
+            RAINALL(I) = RAINALL(I) + ANURAIN(I,J)    
+            AETALL(I) = AETALL(I) + ANUAET(I,J)  
+            PETALL(I) = PETALL(I) + ANUPET(I,J)
+            RUNALL(I) = RUNALL(I) + ANURUN(I,J)
             
-            RALL(I) = RALL(I) + RFACTOR(I,J+IYSTART-BYEAR)
+            RALL(I) = RALL(I) + RFACTOR(I,J)
                  
             NUM_year(I) = NUM_year(I) + 1
       ENDIF
@@ -250,6 +201,7 @@
 
 
 100   CONTINUE
+!print*,I,NUM_year(I) ,NYEAR_S
      
       RAINALL(I) = RAINALL(I) /NUM_year(I)  
       AETALL(I) = AETALL(I) / NUM_year(I)
@@ -272,23 +224,7 @@
 
       TRATIO(I) = RUNRATIO(I) + ETRATIO_GRD(I)
    
-!--WRITE TO FILE SUMMARRUNOFF.TXT
-
-         ! WRITE (80,250) HUCNO(I), RAINALL(I), PETALL(I), AETALL(I), RUNALL(I), &
-         ! RUNRATIO(I), ETRATIO_GRD(I), TRATIO(I), NUM_year(I)
-
-     
-250      FORMAT (I10, ',', F10.1, ',', F10.1,',',  &
-               F10.1, ',', F10.1,',', F8.3, ',', F8.3,',', F8.3,&
-          ',', I3)    
-    
-         RUNRATIO(I) = RUNRATIO(I) *100.
-          
-!         WRITE(*,300) HUCNO(I), RAINALL(I), RUNALL(I), RUNRATIO(I)
-         
-    
-300    FORMAT ('GRID=',I5,' PRECIP (MM)=',F6.0, '   RUNOFF(MM)=', F5.0, &
-         '  RUNOFF/PRECIP=', F4.1, '%')    
+      RUNRATIO(I) = RUNRATIO(I) *100.
 
       RETURN
       END
@@ -315,11 +251,11 @@
            
 ! ---------------------------------------------------------------      
       
-      REAL ANGEP, ANRECO, ANNEE
       REAL HUCGEP, HUCNEE, HUCRE
 
 !----------------------------------------------------------------      
-             
+
+		 
          HUCGEP =0.
          HUCNEE =0.
          HUCRE  = 0.
@@ -327,16 +263,13 @@
          NUM_YEAR_C(I)=0
 
                           
-         DO 200 J=1, NYEAR
+         DO 200 J=IYSTART, IYEND
    
-            IDY = J + BYEAR - 1 
-                  
+            IDY = J 
+			ANGEP(I,J) = 0.
+            ANRECO(I,J) = 0.
+            ANNEE(I,J) = 0.       
             IF (IDY .GE. IYSTART .AND. IDY .LE. IYEND) THEN        
-         
-            
-            ANGEP = 0.
-            ANRECO = 0.
-            ANNEE = 0.
                     
             DO 100 M=1, 12
                  
@@ -344,32 +277,32 @@
 !--- ACCUMULATE ANNUAL GEP FORM MONTHLY VALUES (g C/m2/mon)
 			  IF (RAIN(I,J,M) < -50.0 .or. TEMP(I,J,M) < -50.0) then
 
-					ANGEP = -999.0
-					ANRECO = -999.0
-					ANNEE = -999.0
-				   
+					ANGEP(I,J) = -999.0
+					ANRECO(I,J) = -999.0
+					ANNEE(I,J) = -999.0
+				   goto 1001
 
 			  ELSE
 
-					ANGEP = ANGEP + GEPM(I,J,M)  
-					ANRECO = ANRECO + RECOM(I,J,M) 
-					ANNEE = ANNEE + NEEM(I,J,M)     
+					ANGEP(I,J) = ANGEP(I,J) + GEPM(I,J,M)  
+					ANRECO(I,J) = ANRECO(I,J) + RECOM(I,J,M) 
+					ANNEE(I,J) = ANNEE(I,J) + NEEM(I,J,M)     
 							 
 			  ENDIF 
 		  			
 100         CONTINUE 
 
-			ENDIF
+1001		ENDIF
   
-			IF (ANGEP < -50.0 .or. ANRECO < -50.0 .or. ANRECO < -50.0 ) then
-
+			IF (ANGEP(I,J) < -50.0) then
+			
 			 
 			ELSE
-            HUCGEP = HUCGEP + ANGEP
+            HUCGEP = HUCGEP + ANGEP(I,J)
               
-            HUCRE = HUCRE + ANRECO
+            HUCRE = HUCRE + ANRECO(I,J)
               
-            HUCNEE = HUCNEE + ANNEE
+            HUCNEE = HUCNEE + ANNEE(I,J)
             
             NUM_YEAR_C(I) = NUM_YEAR_C(I) + 1
 			ENDIF
@@ -385,20 +318,10 @@
             
       
 
-            ! WRITE (600, 4000) HUCNO(I),NUM_YEAR_C(I), AHUCGEP(I), AHUCRE(I), AHUCNEE(I)
+             WRITE (*, 4000) HUCNO(I),NUM_YEAR_C(I), AHUCGEP(I), AHUCRE(I), AHUCNEE(I)
                                               
-! 4000        FORMAT (I12, ',', I12, ',',F14.2, ',', F14.2, ',', F14.2)       
-
-
-
-!            WRITE (*, 4100) HUCNO(I),AHUCGEP(I),AHUCRE(I), AHUCNEE(I)
-                                              
-4100        FORMAT ('CELL=',I12, '  GEP(gC/m2/yr.)=', F10.0, &
-            '  Reco=', F10.0,' NEE(gC/m2/yr.)=', F10.0)       
-
- 
-
-
+ 4000        FORMAT (I12, ',', I12, ',',F14.2, ',', F14.2, ',', F14.2)       
+   
 
       RETURN
       END

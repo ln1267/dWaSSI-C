@@ -5,12 +5,12 @@
 !     MONTHLY PET AND POTENTIAL AET                                    C
 !                                                                      C
 !**********************************************************************C
-      SUBROUTINE WARMPET(I, J, M, MNDAY)
+      SUBROUTINE WARMPET(I, J_S, M, MNDAY)
       
       USE common_var
       implicit none
                
-      INTEGER I,J,M,MNDAY,K  
+      INTEGER I,J,M,MNDAY,K,J_S  
                  
       INTEGER MONTHD(12),MONTHL(12), MJD(12), MMD
       
@@ -24,6 +24,9 @@
 !-----JULIAN DAY FOR MID-DAY OF EACH MONTH
       DATA MJD/15,46,76,107,137,168,198,229,259,290,321,351/      
 
+!----Set the simulate ID for the start year
+			J=J_S+IYSTART-1-NWARMUP
+			!print*,J
 ! --- Calculate Monthly potential evapotranspiration
                          
             DTEMP=TEMP(I,J,M)
@@ -59,6 +62,9 @@
 	! ------APAET =AVERAGE PAET FOR CURRENT CELL, FOR ALL YEAR, MONTH
 
 				  PAET(I,J,M) = TPAET
+			if (I.eq.1 .and. J.lt.IYSTART+2) then	  
+			Print*,I,J,M,TPAET
+			endif
 
 	ELSE
            

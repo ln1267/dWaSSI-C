@@ -148,17 +148,17 @@ Print*, "Please set the first parameter as '1' and '/' in you directory if you a
 !          
 !----------------------Modelling for each Cell and year start------------------------------------  
 
-      ALLOCATE (RUNLAND(NGRID,NYEAR,12,31))
-      ALLOCATE (ETLAND(NGRID,NYEAR,12,31))
-      ALLOCATE (GEPLAND(NGRID,NYEAR,12,31))
+      ALLOCATE (RUNLAND(NGRID,NYEAR_S+NWARMUP,12,31))
+      ALLOCATE (ETLAND(NGRID,NYEAR_S+NWARMUP,12,31))
+      ALLOCATE (GEPLAND(NGRID,NYEAR_S+NWARMUP,12,31))
 
 !$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(ICELL,IYEAR,IM,MNDAY)	      
 	DO 200 ICELL=1,NGRID       
 		
 		ICOUNT=0 
-					
-		DO 300 IYEAR=1, NYEAR
-            YEAR = IYSTART + ICOUNT
+
+		DO 300 IYEAR=1, NYEAR_S+NWARMUP
+            YEAR = YSTART + ICOUNT-NWARMUP
 			ICOUNT=ICOUNT+1 
             NDAY = 365
             IF(YEAR/4*4.NE.YEAR) GO TO 110
@@ -173,18 +173,16 @@ Print*, "Please set the first parameter as '1' and '/' in you directory if you a
                ELSE
                  MNDAY=MONTHL(IM)
                ENDIF
-                         
+              ! PRINT*,IYEAR,"OK1"          
                CALL WARMPET(ICELL, IYEAR, IM, MNDAY)  ! Caculate MONTHLY PET AND POTENTIAL AET 
-               CALL WATERBAL(ICELL, IYEAR, IM, MNDAY,RUNLAND,ETLAND,GEPLAND) ! Caculate MONTHLY GPP and ET
-
-400         CONTINUE ! END LOOP MONTH
-
-!    WRITE MONTHLY WATER BALANCE OUTPUT TO MONTHRUNOFF.TXT            
-!     WRITE MONTHLY SOIL STORAGE OUTPUT TO SOILSTORAGE.TXT             
-!     CALCULATE TOTAL ANNUAL RAIN, PET, AET, DISCHARGE, INT, SNOWP  
-!     PRINT ANNUAL WATER BALANCE COMPONENTS TO ANNUALFLOW.TXT  
-
-!     CALCULATE R FACTOR AND OUTPUT TO ANNUALFLOW.TXT           
+               !PRINT*,IYEAR,"OK2"  
+			   IF (modelscale .eq. 0) THEN
+			   
+					CALL WATERBAL_LC(ICELL, IYEAR, IM, MNDAY,RUNLAND,ETLAND,GEPLAND) ! Caculate MONTHLY GPP and ET
+				ELSE
+					CALL WATERBAL(ICELL, IYEAR, IM, MNDAY,RUNLAND,ETLAND,GEPLAND) ! Caculate MONTHLY GPP and ET
+				ENDIF
+400         CONTINUE ! END LOOP MONTH        
 
 			CALL SUMMARY_MONTH(ICELL,IYEAR)
 300		CONTINUE  ! END LOOP YEAR
@@ -202,28 +200,7 @@ Print*, "Please set the first parameter as '1' and '/' in you directory if you a
 
 	CALL OUTPUT !(ICELL,IYEAR)  ! Output Annual water and carbon balances
 
-	PRINT *, 'WATER BALANCE SECTION SUCCEEDED!'                      
-
-!     SIMULATE TOTAL FLOW FOR EACH MONTH AND EACH HUC                  
-!     WRITE ACCUMULATED FLOW TO MONTHACCFLOW.TXT                       
-!     PERFORM WATER SUPPLY/DEMAND AND WASSI CALCULATIONS               
-!     WRITE WASSI OUTPUT TO ANNUALWaSSI.TXT                            
-!     WRITE WASSI OUTPUT TO HUCWaSSI.TXT                               
-
-!            CALL FLOWROUTING
-                    
-!            PRINT *, 'FLOW ROUTING DONE'
-            
-!     Simulate GEP AND NEE for selected HUC                            
-!     WRITE GEP AND NEE TO MONTHCARBON.TXT, ANNUALCARBON.TXT, HUCCARBON.TXT        
-!     SIMULATE BIODIVERSITY FOR SELECTED HUC                           
-!     WRITE BIODIVERSITY TO HUCBIO.TXT                                 
-
-!            CALL CARBONBAL
-            
-	PRINT *, 'CARBON BALANCE AND BIODIVERSITY SIMULATION ENDS'
-                       
-!            CALL VALIDATION    
+	PRINT *, 'WATER BALANCE SECTION SUCCEEDED!'                              
            
 	WRITE(*,75)
 75	FORMAT('  CALCULATING FLOW BY LANDCOVER'/)

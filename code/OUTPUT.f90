@@ -3,7 +3,6 @@
 !C     *** SUBROUTINE SUMMARY_MONTH ***                                        C
 !C     WRITE MONTHLY WATER BALANCE OUTPUT TO MONTHRUNOFF.TXT            C
 !C     WRITE MONTHLY SOIL STORAGE OUTPUT TO SOILSTORAGE.TXT             C
-!C     CALCULATE TOTAL ANNUAL RAIN, PET, AET, DISCHARGE, INT, SNOWP     C
 !C     PRINT ANNUAL WATER BALANCE COMPONENTS TO ANNUALFLOW.TXT          C
 !C                                                                      C
 !C                                                                      C
@@ -18,15 +17,15 @@
 
      DO I= 1, NGRID
 	 
-		DO J=1, NYEAR
+		DO J=IYSTART, IYEND
 
 	 
 !-----IDY = THE CALANDER YEAR, BYEAR = YEAR TO SATRT
          
 		IDY = J + BYEAR - 1
     
-  
-        IF (IDY .GE. IYSTART .AND. IDY .LE. IYEND) THEN        
+
+        IF (IDY .GE. YSTART .AND. IDY .LE. YEND) THEN        
 
          
 		    DO  IM = 1, 12     
@@ -63,9 +62,8 @@
 	!MONTHCARBON.TXT
 				WRITE (400, 2000) HUCNO(I), IDY, IM, GEPM(I,J, IM), &
                 RECOM(I,J,IM), NEEM(I,J,IM)         
-     
-2000          	FORMAT (I10, ',',I6, ',', I6, ',', F10.2, ',',  &
-				F10.2,',',F10.2)
+				
+2000          	FORMAT (I10, ',',I6, ',', I6, ',', 3F10.2)
 				
 							
 			END DO ! END LOOP MONTH
@@ -75,14 +73,14 @@
 				WRITE (79,2100) HUCNO(I), IDY, ANURAIN(I,J),&
 				ANUPET(I,J), ANUAET(I,J),ANUPAET(I,J), ANURUN(I,J), ARUNRT(I,J),  &
 				AETRT(I,J),ETRATIO(I,J), NSPM(I,J), RFACTOR (I,J)
-
-! TEST OUTPUT
-!            WRITE (*,2100) HUCNO(I), IDY, ANURAIN(J),&
-!			 ANUPET(J), ANUAET(J),ANUPAET(J), ANURUN(J), ARUNRT(J),  &
-!			 AETRT(J),ETRATIO, NSPM(I,J), RFACTOR (J)
-
+				
 2100        	FORMAT(I10, ',', I10, ',',F10.1, ',', F8.1, ',', F8.1,',' F8.1, &
-				',',F8.1, ',', F8.2, ',',F8.2,',',F8.2,',', I8, ',', F8.1)			
+				',',F8.1, ',', F8.2, ',',F8.2,',',F8.2,',', I8, ',', F8.1)
+				IF (I==1) print*,I,IDY,ANUAET(I,J)
+				WRITE (500, 20001) HUCNO(I), IDY, ANGEP(I,J),ANRECO(I,J), ANNEE(I,J),ANUAET(I,J),ANUPAET(I,J)       
+20001          	FORMAT (I10, ',',I6, ',', 5F10.2)
+
+		
 		
 		ENDIF 
 				
@@ -103,25 +101,7 @@
                                          
 	
 	END DO  ! END LOOP GRID	 
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
+	   
 	  
 	  CONTINUE
 	  

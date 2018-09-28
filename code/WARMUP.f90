@@ -55,10 +55,18 @@
       WRITE(77,2051) LAI_S_Y,LAI_E_Y
 2051  FORMAT('FOR LAI input data, the first year',I10, ' , END ',I10)
            
-      READ (1,*) IYSTART, IYEND
-
-      WRITE(77,2050) IYSTART, IYEND
-2050  FORMAT('FOR SIMULATION SUMMARY, YEAR TO START',I10, ' , END ',I10)
+      READ (1,*) NWARMUP, YSTART, YEND
+	  
+		IYSTART=YSTART-BYEAR+1
+		
+		IYEND=YEND-BYEAR+1
+		
+		NYEAR_S=YEND-YSTART+1
+		
+      WRITE(77,2050) NYEAR_S,YSTART,IYSTART,YEND, IYEND
+	  
+	  WRITE(*,2050) NYEAR_S,YSTART,IYSTART,YEND, IYEND
+2050  FORMAT('FOR SIMULATION SUMMARY IN TOTAL',I10,' Years, YEAR TO START',I10,'(ID=',I10, ') , END ',I10,'ID=',I10)
    
 	  READ (1,*) FPERD
 
@@ -223,7 +231,7 @@
       DO 10 I=1, NGRID
 		IF (modelscale==0) THEN
 		
-			READ(2,*) ID, HUCNO(I), LATUDE(I), LONGI(I),(LADUSE_lc(I,K),K=1, NLC)
+			READ(2,*) ID, HUCNO(I),HUCAREA(I), LATUDE(I), LONGI(I),(LADUSE_lc(I,K),K=1, NLC)
 		
 		ELSE
 		
@@ -231,10 +239,10 @@
 			
 		ENDIF
 		
-!      WRITE(77,1100) ID, HUCNO(I),LATUDE(I), LONGI(I), 
-!     > (LADUSE_lc(I,K),K=1, NLC)
+     WRITE(77,1100) ID, HUCNO(I),HUCAREA(I),LATUDE(I), LONGI(I), &
+     (LADUSE_lc(I,K),K=1, NLC)
 
-1100  FORMAT(2I10, 2F10.4, I4)    
+1100  FORMAT(2I10, 13F10.2)    
      
 10    CONTINUE
 
@@ -506,7 +514,7 @@ END
 !910            FORMAT  (/'CLIMATE DATA', 10A10)
                             
                READ(4,*) HUCNO(I), YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
-                
+                !Print*,I,J,M, HUCNO(I), YEAR, Mon, RAIN(I,J,M), TEMP(I,J,M)
 !1015        FORMAT(3I10, 2F10.2) 
                                 
                ANNPPT(I, J) = ANNPPT(I, J) + RAIN(I,J,M)

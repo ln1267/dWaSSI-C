@@ -9,12 +9,12 @@
 !     IF MODEL in dynamic land cover then LADUSE(I) -----> VEG(I,J) total:38   C
 !**********************************************************************C
       
-      SUBROUTINE WATERBAL(I,J,M,MNDAY,RUNLAND,ETLAND,GEPLAND)
+      SUBROUTINE WATERBAL(I,J_S,M,MNDAY,RUNLAND,ETLAND,GEPLAND)
         Use Common_var
         implicit none       
 ! ----------------------------------------------------------------------------     
          
-      INTEGER I,J,M,IAM,DAY,MDAY,MNDAY
+      INTEGER I,J,M,IAM,DAY,MDAY,MNDAY,J_S
       
       REAL AETTEMP, RUNOFFTEMP, PBFTEMP, SBFTEMP,IFTEMP, GEPTEMP,&
             RECOTEMP, NEETEMP
@@ -48,13 +48,15 @@
            
       INTEGER GEPFLAG,LC_N
       
-	REAL :: RUNLAND(NGRID,NYEAR,12,31)
-	REAL :: ETLAND(NGRID,NYEAR,12,31)
-	REAL :: GEPLAND(NGRID,NYEAR,12,31) 
+	REAL :: RUNLAND(NGRID,NYEAR_S+NWARMUP,12,31)
+	REAL :: ETLAND(NGRID,NYEAR_S+NWARMUP,12,31)
+	REAL :: GEPLAND(NGRID,NYEAR_S+NWARMUP,12,31) 
            
 ! *****************************************************************************************************
 
 ! Assign landcoer type to LC_N
+!----Set the simulate ID for the start year
+	J=J_S+IYSTART-1-NWARMUP
 	LC_N=LADUSE(I)
 	!print*,I,LC_N
 
@@ -80,24 +82,24 @@
            LZFSC = 0.75*LZFSM(I)
            LZFPC = 0.75*LZFPM(I)
            SNOWPACK=0.0
-		ELSE
-			IF(M .EQ. 1) then
-			IAM =0						  
-			   UZTWC = EMUZTWC(I,J-1,12)
-			   UZFWC = EMUZFWC(I,J-1,12)
-			   LZTWC = EMLZTWC(I,J-1,12)
-			   LZFSC = EMLZFSC(I,J-1,12)
-			   LZFPC = EMLZFPC(I,J-1,12)
-			   SNOWPACK=SP(I,J-1,12)
-			ELSE
-			IAM =0
-			   UZTWC = EMUZTWC(I,J,M-1)
-			   UZFWC = EMUZFWC(I,J,M-1)
-			   LZTWC = EMLZTWC(I,J,M-1)
-			   LZFSC = EMLZFSC(I,J,M-1)
-			   LZFPC = EMLZFPC(I,J,M-1)
-			   SNOWPACK=SP(I,J,M-1)
-			ENDIF
+		! ELSE
+			! IF(M .EQ. 1) then
+			! IAM =0						  
+			   ! UZTWC = EMUZTWC(I,J-1,12)
+			   ! UZFWC = EMUZFWC(I,J-1,12)
+			   ! LZTWC = EMLZTWC(I,J-1,12)
+			   ! LZFSC = EMLZFSC(I,J-1,12)
+			   ! LZFPC = EMLZFPC(I,J-1,12)
+			   ! SNOWPACK=SP(I,J-1,12)
+			! ELSE
+			! IAM =0
+			   ! UZTWC = EMUZTWC(I,J,M-1)
+			   ! UZFWC = EMUZFWC(I,J,M-1)
+			   ! LZTWC = EMLZTWC(I,J,M-1)
+			   ! LZFSC = EMLZFSC(I,J,M-1)
+			   ! LZFPC = EMLZFPC(I,J,M-1)
+			   ! SNOWPACK=SP(I,J,M-1)
+			! ENDIF
 		
         ENDIF 
          
@@ -571,6 +573,9 @@
 	! Calculate GEP based on ET and the equation
 
 		GEP(J,M) = wue_k(LC_N) * ET(J,M)
+		IF (GEP(J,M) .LE. 0)   THEN
+			GEP(J,M)=0.0 
+		ENDIF 		
 		!print*,I,LADUSE(I)
 		RECO(J,M)= (reco_inter(LC_N) + reco_slope(LC_N) * GEP(J,M)*MNDAY)/MNDAY
 		
@@ -622,9 +627,9 @@
                IFTEMP = IFTEMP + INF                   
 ! *****************************************************************************************************
 
-            RUNLAND(I,J,M,DAY) = SURFRO + PBF + SBF + INF
-            ETLAND(I,J,M,DAY) = ET(J,M)
-            GEPLAND(I,J,M,DAY) = GEP(J,M)
+            RUNLAND(I,J_S,M,DAY) = SURFRO + PBF + SBF + INF
+            ETLAND(I,J_S,M,DAY) = ET(J,M)
+            GEPLAND(I,J_S,M,DAY) = GEP(J,M)
 			
 !--- calculate the monthly total soil moisture 
               
